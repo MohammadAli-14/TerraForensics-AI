@@ -62,7 +62,7 @@ const SOVEREIGN_MAP_STYLE = {
       source: "carto-dark-base",
       minzoom: 0,
       maxzoom: 20,
-      layout: { visibility: "visible" },
+      layout: { visibility: "none" },
     },
     {
       id: "esri-dark-base-layer",
@@ -70,7 +70,7 @@ const SOVEREIGN_MAP_STYLE = {
       source: "esri-dark-base",
       minzoom: 0,
       maxzoom: 20,
-      layout: { visibility: "none" },
+      layout: { visibility: "visible" },
     },
     {
       id: "esri-dark-ref-layer",
@@ -78,7 +78,7 @@ const SOVEREIGN_MAP_STYLE = {
       source: "esri-dark-ref",
       minzoom: 0,
       maxzoom: 20,
-      layout: { visibility: "none" },
+      layout: { visibility: "visible" },
     },
   ],
 };
