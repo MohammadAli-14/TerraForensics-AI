@@ -1,0 +1,2316 @@
+{
+  "totalGTDQueries": 90,
+  "validFilterRate": 92.22222222222223,
+  "exactFieldMatchRate": 67.77777777777779,
+  "entityMetrics": {
+    "country": {
+      "precision": 82.6086956521739,
+      "recall": 100,
+      "f1": 90.47619047619047
+    },
+    "year": {
+      "precision": 95.58823529411765,
+      "recall": 100,
+      "f1": 97.74436090225565
+    },
+    "attackType": {
+      "precision": 66.66666666666666,
+      "recall": 36.36363636363637,
+      "f1": 47.05882352941176
+    },
+    "casualty": {
+      "precision": 100,
+      "recall": 8.333333333333332,
+      "f1": 15.384615384615383
+    }
+  },
+  "queryDetails": [
+    {
+      "id": 1,
+      "query": "How many attacks occurred in Iraq between 2010 and 2015?",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "iraq"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "$expr"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 2,
+      "query": "Total suicide bombings in Pakistan in 2014",
+      "category": "attack_type_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "pakistan"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "suicide",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 3,
+      "query": "Bombings in Afghanistan resulting in more than 10 casualties",
+      "category": "casualty_filter",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": true,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "afghanistan"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": true
+      },
+      "filterKeys": [
+        "country_txt",
+        "$expr"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 4,
+      "query": "List attacks carried out by Boko Haram in Nigeria",
+      "category": "perpetrator_group",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": true,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "nigeria"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "gname"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 5,
+      "query": "Count of terrorist incidents in Colombia in 1999",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "colombia"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 6,
+      "query": "Attacks in India in 2008 including Mumbai attacks",
+      "category": "perpetrator_location",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": true,
+        "isWorldwide": false,
+        "country": "india"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 7,
+      "query": "Fatalities from armed assaults in the Philippines",
+      "category": "attack_type_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "philippines"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "attacktype1_txt"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 8,
+      "query": "Hostage takings in Somalia from 2005 to 2012",
+      "category": "attack_type_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "somalia"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "$expr"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 9,
+      "query": "Mishaps and terrorist incidents globally in 2016",
+      "category": "global_stats",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": true
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 10,
+      "query": "Suicide attacks in Syria resulting in fatalities",
+      "category": "attack_type_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": true,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "syria"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "suicide"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 11,
+      "query": "Attacks in Paris France during 2015",
+      "category": "city_year",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": true,
+        "isWorldwide": false,
+        "country": "france"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 12,
+      "query": "Bombings in Baghdad between 2003 and 2007",
+      "category": "city_year",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": true,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "$expr"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 13,
+      "query": "Number of attacks in Egypt in 2017",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "egypt"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 14,
+      "query": "Total injured in terrorist events in London",
+      "category": "city_casualty",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": true,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [],
+      "matchesExpectation": true
+    },
+    {
+      "id": 15,
+      "query": "Attacks in Yemen attributed to Al-Qaeda in the Arabian Peninsula",
+      "category": "perpetrator_group",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": true,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "yemen"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "gname"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 16,
+      "query": "Hijackings worldwide between 1970 and 1985",
+      "category": "attack_type_stats",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": true
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "attacktype1_txt",
+        "$expr"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 17,
+      "query": "Incidents in Northern Ireland during the Troubles in 1972",
+      "category": "region_historical",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "northern ireland"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 18,
+      "query": "Assassinations targeting government officials in Peru in 1989",
+      "category": "target_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "peru"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "attacktype1_txt",
+        "targtype1_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 19,
+      "query": "Facility and infrastructure attacks in Algeria in 1994",
+      "category": "target_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "algeria"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 20,
+      "query": "Suicide bombings in Kabul Afghanistan in 2016",
+      "category": "city_attack_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": true,
+        "isWorldwide": false,
+        "country": "afghanistan"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "suicide",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 21,
+      "query": "Incidents in Spain attributed to ETA",
+      "category": "perpetrator_group",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": true,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "spain"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "gname"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 22,
+      "query": "Attacks in Sri Lanka involving Liberation Tigers of Tamil Eelam",
+      "category": "perpetrator_group",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": true,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "sri lanka"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 23,
+      "query": "Terrorist attacks in Israel between 2000 and 2005",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "israel"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "$expr"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 24,
+      "query": "Armed assaults in Kenya from 2011 to 2015",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "kenya"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "attacktype1_txt",
+        "$expr"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 25,
+      "query": "Incidents with explosive weapons in Turkey in 2016",
+      "category": "weapon_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "turkey"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 26,
+      "query": "Attacks in Russia in 2004",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "russia"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 27,
+      "query": "Bombings in Lebanon between 1980 and 1985",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "lebanon"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "$expr"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 28,
+      "query": "Total casualties from terrorist incidents in Germany in 2016",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "germany"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 29,
+      "query": "Kidnappings in Mexico in 2011",
+      "category": "attack_type_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "mexico"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 30,
+      "query": "Attacks in Thailand southern provinces in 2007",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "thailand"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 31,
+      "query": "Incidents in Indonesia Bali 2002",
+      "category": "city_year",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "indonesia"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 32,
+      "query": "Terrorist activity in Mali in 2015",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "mali"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 33,
+      "query": "Attacks in Libya after 2011",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 34,
+      "query": "Total deaths from attacks in Sudan in 2003",
+      "category": "country_casualty",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 35,
+      "query": "Attacks in Bangladesh in 2016",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "bangladesh"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 36,
+      "query": "Hostage incidents in Uganda in 1996",
+      "category": "attack_type_stats",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 37,
+      "query": "Incidents in Myanmar involving insurgent groups",
+      "category": "country_perpetrator",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [],
+      "matchesExpectation": true
+    },
+    {
+      "id": 38,
+      "query": "Bombings in Greece during the 1970s",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": false,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "$expr"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 39,
+      "query": "Attacks in Japan including Tokyo subway sarin attack 1995",
+      "category": "historical_event",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 40,
+      "query": "Total terrorist incidents in United States in 2001",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 41,
+      "query": "Suicide bombings in Chechnya between 2000 and 2003",
+      "category": "region_attack_type",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "suicide",
+        "$expr"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 42,
+      "query": "Attacks in DR Congo in 2014",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "targtype1_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 43,
+      "query": "Incidents in Cameroon attributed to Boko Haram",
+      "category": "perpetrator_group",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": true,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "gname"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 44,
+      "query": "Terrorist attacks in Chad in 2015",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 45,
+      "query": "Bombings in Brussels Belgium in 2016",
+      "category": "city_year",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 46,
+      "query": "Attacks in Saudi Arabia in 2004",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 47,
+      "query": "Incidents in Tunisia in 2015",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 48,
+      "query": "Total wounded in attacks in Norway in 2011",
+      "category": "country_casualty",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 49,
+      "query": "Attacks in Burkina Faso in 2016",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 50,
+      "query": "Attacks across South Asia in 2013",
+      "category": "region_year",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "region_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 51,
+      "query": "What is event ID 197000000001?",
+      "category": "event_id",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [],
+      "matchesExpectation": true
+    },
+    {
+      "id": 52,
+      "query": "Show details for incident 201501010001",
+      "category": "event_id",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": true,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [],
+      "matchesExpectation": true
+    },
+    {
+      "id": 53,
+      "query": "Lookup GTD record 200811260001",
+      "category": "event_id",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [],
+      "matchesExpectation": true
+    },
+    {
+      "id": 54,
+      "query": "Event details for 201406100001",
+      "category": "event_id",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": true,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [],
+      "matchesExpectation": true
+    },
+    {
+      "id": 55,
+      "query": "Get incident 199302260001",
+      "category": "event_id",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [],
+      "matchesExpectation": true
+    },
+    {
+      "id": 56,
+      "query": "Number of bombings in Peshawar Pakistan in 2014",
+      "category": "city_attack_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": true,
+        "isWorldwide": false,
+        "country": "pakistan"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 57,
+      "query": "How many casualties from terror attacks in France between 2014 and 2016?",
+      "category": "casualty_filter",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "france"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "$expr"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 58,
+      "query": "Count of assassinated journalists in Colombia",
+      "category": "target_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "colombia"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 59,
+      "query": "Terrorist incidents in Madrid Spain in March 2004",
+      "category": "city_year",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": true,
+        "isWorldwide": false,
+        "country": "spain"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear",
+        "imonth"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 60,
+      "query": "Attacks with firearms in the United States in 2016",
+      "category": "weapon_type",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "weaptype1_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 61,
+      "query": "Total killed by Al-Shabaab in Kenya",
+      "category": "perpetrator_group",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "kenya"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "gname"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 62,
+      "query": "Suicide bombings targeting police stations in Iraq",
+      "category": "target_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "iraq"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "targtype1_txt",
+        "suicide"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 63,
+      "query": "How many terror incidents occurred in Nepal during 2002?",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "nepal"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 64,
+      "query": "IED explosions in Helmand Afghanistan in 2011",
+      "category": "weapon_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "afghanistan"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 65,
+      "query": "Hostage takings in Beslan Russia 2004",
+      "category": "historical_event",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "russia"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 66,
+      "query": "Incidents attributed to Shining Path in Peru during the 1980s",
+      "category": "perpetrator_group",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "peru"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "$expr"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 67,
+      "query": "Attacks on educational institutions in Pakistan between 2008 and 2014",
+      "category": "target_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "pakistan"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "targtype1_txt",
+        "$expr"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 68,
+      "query": "Bomb blasts in Istanbul Turkey in 2016",
+      "category": "city_attack_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "turkey"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 69,
+      "query": "Car bombings in Beirut Lebanon during 1983",
+      "category": "city_attack_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": true,
+        "isWorldwide": false,
+        "country": "lebanon"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 70,
+      "query": "Terrorist attacks targeting diplomatic missions in Jordan",
+      "category": "target_type",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "targtype1_txt"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 71,
+      "query": "Casualties from drone attacks or bombings in Yemen 2015",
+      "category": "weapon_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "yemen"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 72,
+      "query": "Massacres carried out in Algeria during 1997",
+      "category": "attack_type_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "algeria"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 73,
+      "query": "Attacks targeting oil pipelines in Nigeria by militant groups",
+      "category": "target_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "nigeria"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 74,
+      "query": "Armed clashes and assaults in Mindanao Philippines in 2017",
+      "category": "region_attack_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "philippines"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 75,
+      "query": "Total casualties from terror attacks in London during July 2005",
+      "category": "city_year",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": true,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "iyear",
+        "imonth"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 76,
+      "query": "Kidnappings by Abu Sayyaf in Malaysia and Philippines",
+      "category": "perpetrator_group",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "philippines"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 77,
+      "query": "Attacks using chemical or biological weapons in the database",
+      "category": "weapon_type",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "weaptype1_txt"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 78,
+      "query": "Total suicide bombings in Sri Lanka before 2009",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "sri lanka"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "suicide",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 79,
+      "query": "Incidents of maritime piracy or terror in Somalia coastal waters",
+      "category": "target_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": false,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "somalia"
+      },
+      "detected": {
+        "country": true,
+        "year": false,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "targtype1_txt"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 80,
+      "query": "Terrorist activity in Nice France in 2016",
+      "category": "city_year",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "france"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 81,
+      "query": "How many bombings occurred in Belfast Northern Ireland in 1975?",
+      "category": "city_attack_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "northern ireland"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 82,
+      "query": "Total injured in the Boston Marathon bombing 2013",
+      "category": "historical_event",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "attacktype1_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 83,
+      "query": "Attacks against government buildings in Kabul between 2010 and 2016",
+      "category": "target_type",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": true,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": false,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "targtype1_txt",
+        "$expr"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 84,
+      "query": "Gun attacks in Sousse Tunisia in 2015",
+      "category": "city_attack_type",
+      "gt": {
+        "hasCountry": false,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 85,
+      "query": "Number of bombings in Bogota Colombia in 1990",
+      "category": "city_attack_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "colombia"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": false
+    },
+    {
+      "id": 86,
+      "query": "Attacks in Kirkuk Iraq during 2012",
+      "category": "city_year",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "iraq"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 87,
+      "query": "Casualties from terror incidents in Munich Germany in 2016",
+      "category": "city_casualty",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": true,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "germany"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 88,
+      "query": "Suicide bombings in Maiduguri Nigeria in 2015",
+      "category": "city_attack_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": true,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "nigeria"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": true,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "suicide",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 89,
+      "query": "Total terrorist incidents recorded in Indonesia between 2000 and 2010",
+      "category": "country_year_stats",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "indonesia"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "$expr"
+      ],
+      "matchesExpectation": true
+    },
+    {
+      "id": 90,
+      "query": "Attacks targeting religious figures in Egypt in 2017",
+      "category": "target_type",
+      "gt": {
+        "hasCountry": true,
+        "hasYear": true,
+        "hasAttackType": false,
+        "hasCasualties": false,
+        "hasGroup": false,
+        "hasCity": false,
+        "isWorldwide": false,
+        "country": "egypt"
+      },
+      "detected": {
+        "country": true,
+        "year": true,
+        "attackType": false,
+        "casualty": false
+      },
+      "filterKeys": [
+        "country_txt",
+        "targtype1_txt",
+        "iyear"
+      ],
+      "matchesExpectation": true
+    }
+  ]
+}

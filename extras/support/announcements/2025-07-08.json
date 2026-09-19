@@ -1,0 +1,25 @@
+[
+  {
+    "thumbnail_url": "https://cdn.VertexAI.com/support/announcements/assets/private-browsing.png",
+    "title": "Private Web Scraping",
+    "short_description": "Scrape private, gated, or authenticated websites using the browser tool.",
+    "goto": "https://docs.VertexAI.com/features/browser-tool",
+    "author": "VertexAI",
+    "date": "July 8, 2025"
+  },
+  {
+    "thumbnail_url": "https://cdn.VertexAI.com/support/announcements/assets/mobile.png",
+    "title": "VertexAI Mobile Beta",
+    "short_description": "VertexAI on-device, offline, and private. Syncs with VertexAI.",
+    "goto": "https://docs.google.com/forms/d/e/1FAIpQLSdrMRCUXVDWKrtNTcHzVcHQk_SRoiT8X8tiawTFtAhjMq_L6Q/viewform",
+    "author": "VertexAI",
+    "date": "July 3, 2025"
+  },
+  {
+    "title": "Community Hub updates",
+    "short_description": "You can now easily push and pull Agent Flows, System Prompts, and more to the VertexAI Community Hub.",
+    "goto": "https://hub.VertexAI.com",
+    "author": "VertexAI",
+    "date": "June 25, 2025"
+  }
+]

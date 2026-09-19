@@ -1,0 +1,392 @@
+{
+  "gtdPipeline": {
+    "queryCount": 25,
+    "meanMs": 4.3,
+    "p50Ms": 1.24,
+    "p95Ms": 5.71,
+    "queries": [
+      {
+        "id": 1,
+        "query": "How many attacks occurred in Iraq between 2010 and 2015?",
+        "latencyMs": 5.71,
+        "filterKeys": [
+          "country_txt",
+          "$expr"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 2,
+        "query": "Total suicide bombings in Pakistan in 2014",
+        "latencyMs": 4.2,
+        "filterKeys": [
+          "country_txt",
+          "suicide",
+          "iyear"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 3,
+        "query": "Bombings in Afghanistan resulting in more than 10 casualties",
+        "latencyMs": 1.48,
+        "filterKeys": [
+          "country_txt",
+          "$expr"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 4,
+        "query": "List attacks carried out by Boko Haram in Nigeria",
+        "latencyMs": 3.44,
+        "filterKeys": [
+          "country_txt",
+          "gname"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 5,
+        "query": "Count of terrorist incidents in Colombia in 1999",
+        "latencyMs": 1.56,
+        "filterKeys": [
+          "country_txt",
+          "iyear"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 6,
+        "query": "Attacks in India in 2008 including Mumbai attacks",
+        "latencyMs": 1.22,
+        "filterKeys": [
+          "country_txt",
+          "iyear"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 7,
+        "query": "Fatalities from armed assaults in the Philippines",
+        "latencyMs": 1.22,
+        "filterKeys": [
+          "country_txt",
+          "attacktype1_txt"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 8,
+        "query": "Hostage takings in Somalia from 2005 to 2012",
+        "latencyMs": 1.52,
+        "filterKeys": [
+          "country_txt",
+          "$expr"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 9,
+        "query": "Mishaps and terrorist incidents globally in 2016",
+        "latencyMs": 68.82,
+        "filterKeys": [
+          "iyear"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 10,
+        "query": "Suicide attacks in Syria resulting in fatalities",
+        "latencyMs": 1.31,
+        "filterKeys": [
+          "country_txt",
+          "suicide"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 11,
+        "query": "Attacks in Paris France during 2015",
+        "latencyMs": 1.46,
+        "filterKeys": [
+          "country_txt",
+          "iyear"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 12,
+        "query": "Bombings in Baghdad between 2003 and 2007",
+        "latencyMs": 1.67,
+        "filterKeys": [
+          "$expr"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 13,
+        "query": "Number of attacks in Egypt in 2017",
+        "latencyMs": 0.9,
+        "filterKeys": [
+          "country_txt",
+          "iyear"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 14,
+        "query": "Total injured in terrorist events in London",
+        "latencyMs": 0.86,
+        "filterKeys": [],
+        "matchesFound": 0
+      },
+      {
+        "id": 15,
+        "query": "Attacks in Yemen attributed to Al-Qaeda in the Arabian Peninsula",
+        "latencyMs": 0.93,
+        "filterKeys": [
+          "country_txt",
+          "gname"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 16,
+        "query": "Hijackings worldwide between 1970 and 1985",
+        "latencyMs": 1.24,
+        "filterKeys": [
+          "attacktype1_txt",
+          "$expr"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 17,
+        "query": "Incidents in Northern Ireland during the Troubles in 1972",
+        "latencyMs": 1.78,
+        "filterKeys": [
+          "country_txt",
+          "iyear"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 18,
+        "query": "Assassinations targeting government officials in Peru in 1989",
+        "latencyMs": 1.08,
+        "filterKeys": [
+          "country_txt",
+          "attacktype1_txt",
+          "targtype1_txt",
+          "iyear"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 19,
+        "query": "Facility and infrastructure attacks in Algeria in 1994",
+        "latencyMs": 0.92,
+        "filterKeys": [
+          "country_txt",
+          "iyear"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 20,
+        "query": "Suicide bombings in Kabul Afghanistan in 2016",
+        "latencyMs": 1.07,
+        "filterKeys": [
+          "country_txt",
+          "suicide",
+          "iyear"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 21,
+        "query": "Incidents in Spain attributed to ETA",
+        "latencyMs": 0.83,
+        "filterKeys": [
+          "country_txt",
+          "gname"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 22,
+        "query": "Attacks in Sri Lanka involving Liberation Tigers of Tamil Eelam",
+        "latencyMs": 0.71,
+        "filterKeys": [
+          "country_txt"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 23,
+        "query": "Terrorist attacks in Israel between 2000 and 2005",
+        "latencyMs": 0.99,
+        "filterKeys": [
+          "country_txt",
+          "$expr"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 24,
+        "query": "Armed assaults in Kenya from 2011 to 2015",
+        "latencyMs": 1.17,
+        "filterKeys": [
+          "country_txt",
+          "attacktype1_txt",
+          "$expr"
+        ],
+        "matchesFound": 0
+      },
+      {
+        "id": 25,
+        "query": "Incidents with explosive weapons in Turkey in 2016",
+        "latencyMs": 1.41,
+        "filterKeys": [
+          "country_txt",
+          "iyear"
+        ],
+        "matchesFound": 0
+      }
+    ]
+  },
+  "documentPipeline": {
+    "queryCount": 25,
+    "meanMs": 13.36,
+    "p50Ms": 15.87,
+    "p95Ms": 16.64,
+    "queries": [
+      {
+        "id": 91,
+        "query": "What is the Lord Rama quote from Ramayana statement?",
+        "latencyMs": 16.3
+      },
+      {
+        "id": 92,
+        "query": "Explain the system architecture of the application server",
+        "latencyMs": 15.76
+      },
+      {
+        "id": 93,
+        "query": "How does the document collector parse incoming PDF files?",
+        "latencyMs": 8.28
+      },
+      {
+        "id": 94,
+        "query": "What are the hardware and RAM prerequisites for running local Llama?",
+        "latencyMs": 16.49
+      },
+      {
+        "id": 95,
+        "query": "How is vector embedding chunking configured in the collector?",
+        "latencyMs": 16.4
+      },
+      {
+        "id": 96,
+        "query": "Explain the difference between query mode and chat mode in workspaces",
+        "latencyMs": 8.24
+      },
+      {
+        "id": 97,
+        "query": "Where are uploaded files persisted on the local filesystem?",
+        "latencyMs": 8.36
+      },
+      {
+        "id": 98,
+        "query": "What encryption standard is used for sensitive credentials?",
+        "latencyMs": 8.32
+      },
+      {
+        "id": 99,
+        "query": "How do I invite multi-user collaborators to a workspace?",
+        "latencyMs": 8.46
+      },
+      {
+        "id": 100,
+        "query": "What permissions do workspace managers vs viewers have?",
+        "latencyMs": 16.51
+      },
+      {
+        "id": 101,
+        "query": "How does LanceDB manage vector similarity searches?",
+        "latencyMs": 16.64
+      },
+      {
+        "id": 102,
+        "query": "What are the guidelines for writing custom skills and sidecars?",
+        "latencyMs": 24.45
+      },
+      {
+        "id": 103,
+        "query": "How is session authentication handled via JSON Web Tokens?",
+        "latencyMs": 8.48
+      },
+      {
+        "id": 104,
+        "query": "What is the token context window limit for prompt compression?",
+        "latencyMs": 16.07
+      },
+      {
+        "id": 105,
+        "query": "Describe the prompt template used for document citations",
+        "latencyMs": 8.09
+      },
+      {
+        "id": 106,
+        "query": "How does the browser extension capture web clippings?",
+        "latencyMs": 8.38
+      },
+      {
+        "id": 107,
+        "query": "What are the steps to deploy the application on bare metal Linux?",
+        "latencyMs": 16.28
+      },
+      {
+        "id": 108,
+        "query": "Explain how SQLite handles workspace application metadata",
+        "latencyMs": 8.49
+      },
+      {
+        "id": 109,
+        "query": "What is the purpose of the DocumentManager helper class?",
+        "latencyMs": 15.87
+      },
+      {
+        "id": 110,
+        "query": "How does TextSplitter handle markdown and code blocks?",
+        "latencyMs": 16.13
+      },
+      {
+        "id": 111,
+        "query": "What telemetry metrics are collected and how are they anonymized?",
+        "latencyMs": 15.65
+      },
+      {
+        "id": 112,
+        "query": "How do I configure SSL certificates for HTTPS boot?",
+        "latencyMs": 15.87
+      },
+      {
+        "id": 113,
+        "query": "What is the role of the MetaGenerator class in production mode?",
+        "latencyMs": 16.05
+      },
+      {
+        "id": 114,
+        "query": "Explain the function of the CORS middleware in index.js",
+        "latencyMs": 8.09
+      },
+      {
+        "id": 115,
+        "query": "How are password recovery codes generated and validated?",
+        "latencyMs": 16.37
+      }
+    ]
+  }
+}

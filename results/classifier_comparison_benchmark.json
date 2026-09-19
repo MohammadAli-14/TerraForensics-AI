@@ -1,0 +1,38 @@
+{
+  "dataset_size": 180,
+  "cv_folds": 5,
+  "results": [
+    {
+      "method": "Rule-Based Regex Router (Production)",
+      "accuracy": 84.44,
+      "precision": 76.6,
+      "recall": 100.0,
+      "f1_score": 86.65,
+      "latency_ms": 0.0779
+    },
+    {
+      "method": "TF-IDF + Logistic Regression",
+      "accuracy": 97.78,
+      "precision": 100.0,
+      "recall": 95.56,
+      "f1_score": 97.68,
+      "latency_ms": 1.5916
+    },
+    {
+      "method": "TF-IDF + Linear SVM",
+      "accuracy": 98.89,
+      "precision": 100.0,
+      "recall": 97.78,
+      "f1_score": 98.82,
+      "latency_ms": 2.0471
+    },
+    {
+      "method": "TF-IDF + Multinomial Naive Bayes",
+      "accuracy": 98.89,
+      "precision": 100.0,
+      "recall": 97.78,
+      "f1_score": 98.82,
+      "latency_ms": 1.8965
+    }
+  ]
+}

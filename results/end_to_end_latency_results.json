@@ -1,0 +1,224 @@
+{
+  "timestamp": "2026-09-18T05:13:22.934Z",
+  "llmProvider": "OpenRouterLLM",
+  "model": "meta-llama/llama-3.1-8b-instruct",
+  "concurrency": "Sequential (Single-User)",
+  "gtdPipeline": {
+    "count": 10,
+    "meanMs": 16719.03,
+    "minMs": 3948.82,
+    "maxMs": 48913.78,
+    "p90Ms": 24896.51,
+    "details": [
+      {
+        "id": 1,
+        "type": "gtd",
+        "query": "How many attacks occurred in Iraq between 2010 and 2015?",
+        "latencyMs": 48913.78,
+        "isGTD": true,
+        "contextLength": 2914,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:09:49.487Z"
+      },
+      {
+        "id": 2,
+        "type": "gtd",
+        "query": "Total suicide bombings in Pakistan in 2014",
+        "latencyMs": 9315.49,
+        "isGTD": true,
+        "contextLength": 2426,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:09:58.806Z"
+      },
+      {
+        "id": 3,
+        "type": "gtd",
+        "query": "List attacks carried out by Boko Haram in Nigeria",
+        "latencyMs": 24896.51,
+        "isGTD": true,
+        "contextLength": 15274,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:10:23.703Z"
+      },
+      {
+        "id": 4,
+        "type": "gtd",
+        "query": "Bombings in Afghanistan resulting in more than 10 casualties",
+        "latencyMs": 16131.39,
+        "isGTD": true,
+        "contextLength": 2327,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:10:39.835Z"
+      },
+      {
+        "id": 5,
+        "type": "gtd",
+        "query": "Attacks in Paris France during 2015",
+        "latencyMs": 11896.58,
+        "isGTD": true,
+        "contextLength": 2412,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:10:51.731Z"
+      },
+      {
+        "id": 6,
+        "type": "gtd",
+        "query": "Suicide attacks in Syria resulting in fatalities",
+        "latencyMs": 3948.82,
+        "isGTD": true,
+        "contextLength": 2354,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:10:55.681Z"
+      },
+      {
+        "id": 7,
+        "type": "gtd",
+        "query": "Total terrorist incidents in United States in 2001",
+        "latencyMs": 9947.9,
+        "isGTD": true,
+        "contextLength": 2392,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:11:05.631Z"
+      },
+      {
+        "id": 8,
+        "type": "gtd",
+        "query": "Armed assaults in Kenya from 2011 to 2015",
+        "latencyMs": 9786.8,
+        "isGTD": true,
+        "contextLength": 3030,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:11:15.418Z"
+      },
+      {
+        "id": 9,
+        "type": "gtd",
+        "query": "Bombings in Brussels Belgium in 2016",
+        "latencyMs": 10919.33,
+        "isGTD": true,
+        "contextLength": 2438,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:11:26.338Z"
+      },
+      {
+        "id": 10,
+        "type": "gtd",
+        "query": "Incidents in Indonesia Bali 2002",
+        "latencyMs": 21433.75,
+        "isGTD": true,
+        "contextLength": 2362,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:11:47.772Z"
+      }
+    ]
+  },
+  "documentPipeline": {
+    "count": 10,
+    "meanMs": 9515.83,
+    "minMs": 1372.66,
+    "maxMs": 23180.91,
+    "p90Ms": 15608.97,
+    "details": [
+      {
+        "id": 11,
+        "type": "document",
+        "query": "Explain the system architecture of the application server",
+        "latencyMs": 23180.91,
+        "isGTD": false,
+        "contextLength": 179,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:12:10.954Z"
+      },
+      {
+        "id": 12,
+        "type": "document",
+        "query": "How does the document collector parse incoming PDF files?",
+        "latencyMs": 9278.14,
+        "isGTD": false,
+        "contextLength": 179,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:12:20.233Z"
+      },
+      {
+        "id": 13,
+        "type": "document",
+        "query": "What are the hardware and RAM prerequisites for running local Llama?",
+        "latencyMs": 15608.97,
+        "isGTD": false,
+        "contextLength": 179,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:12:35.842Z"
+      },
+      {
+        "id": 14,
+        "type": "document",
+        "query": "How is vector embedding chunking configured in the collector?",
+        "latencyMs": 10034.72,
+        "isGTD": false,
+        "contextLength": 179,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:12:45.877Z"
+      },
+      {
+        "id": 15,
+        "type": "document",
+        "query": "Explain the difference between query mode and chat mode in workspaces",
+        "latencyMs": 13313.43,
+        "isGTD": true,
+        "contextLength": 179,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:12:59.189Z"
+      },
+      {
+        "id": 16,
+        "type": "document",
+        "query": "Where are uploaded files persisted on the local filesystem?",
+        "latencyMs": 14026.27,
+        "isGTD": false,
+        "contextLength": 179,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:13:13.216Z"
+      },
+      {
+        "id": 17,
+        "type": "document",
+        "query": "What encryption standard is used for sensitive credentials?",
+        "latencyMs": 3452.91,
+        "isGTD": false,
+        "contextLength": 179,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:13:16.669Z"
+      },
+      {
+        "id": 18,
+        "type": "document",
+        "query": "How do I invite multi-user collaborators to a workspace?",
+        "latencyMs": 1944.07,
+        "isGTD": false,
+        "contextLength": 179,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:13:18.613Z"
+      },
+      {
+        "id": 19,
+        "type": "document",
+        "query": "What permissions do workspace managers vs viewers have?",
+        "latencyMs": 2946.25,
+        "isGTD": false,
+        "contextLength": 179,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:13:21.560Z"
+      },
+      {
+        "id": 20,
+        "type": "document",
+        "query": "Summarize section 2 of the operational security manual",
+        "latencyMs": 1372.66,
+        "isGTD": false,
+        "contextLength": 179,
+        "responseLength": 0,
+        "timestamp": "2026-09-18T05:13:22.933Z"
+      }
+    ]
+  }
+}

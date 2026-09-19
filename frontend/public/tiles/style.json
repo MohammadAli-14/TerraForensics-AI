@@ -1,0 +1,5 @@
+{
+  "version": 8,
+  "name": "PMTiles Basemap",
+  "notes": "This file is no longer used. The GTD map page generates a style at runtime using @protomaps/basemaps."
+}
