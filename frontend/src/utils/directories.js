@@ -19,13 +19,15 @@ export function formatDateTimeAsMoment(dateString, format = "LLL") {
 }
 
 export function getFileExtension(path) {
-  const hasExtension = path?.includes(".");
+  if (!path || typeof path !== "string") return "FILE";
+  const hasExtension = path.includes(".");
   if (!hasExtension) return "FILE";
-  const extension = path?.split(".")?.slice(-1)?.[0];
+  const extension = path.split(".").slice(-1)?.[0];
   return extension?.toUpperCase() || "FILE";
 }
 
 export function middleTruncate(str, n) {
+  if (!str || typeof str !== "string") return "";
   const fileExtensionPattern = /([^.]*)$/;
   const extensionMatch = str.includes(".") && str.match(fileExtensionPattern);
 

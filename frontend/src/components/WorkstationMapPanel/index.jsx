@@ -88,7 +88,7 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
   const mapRef = useRef(null);
   const [activeData, setActiveData] = useState(null);
   const [mapMode, setMapMode] = useState("clusters"); // "clusters" | "heatmap"
-  const [basemap, setBasemap] = useState("carto"); // "carto" | "esri"
+  const [basemap, setBasemap] = useState("esri"); // "esri" | "carto"
   const [selectedIncident, setSelectedIncident] = useState(null);
   const [mapReady, setMapReady] = useState(false);
   const [loadingPoints, setLoadingPoints] = useState(false);
@@ -199,38 +199,42 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
             "interpolate",
             ["linear"],
             ["get", "nkill"],
-            0, 0.2,
-            5, 0.5,
-            25, 0.8,
-            100, 1.0,
+            0, 1,
+            2, 2,
+            10, 4,
+            50, 8,
+            200, 15,
           ],
           "heatmap-intensity": [
             "interpolate",
             ["linear"],
             ["zoom"],
-            0, 1,
-            9, 3,
+            0, 2.5,
+            5, 3.5,
+            9, 5,
           ],
           "heatmap-color": [
             "interpolate",
             ["linear"],
             ["heatmap-density"],
-            0, "rgba(15, 23, 42, 0)",
-            0.15, "rgba(56, 189, 248, 0.4)",
-            0.35, "rgba(245, 158, 11, 0.6)",
-            0.65, "rgba(239, 68, 68, 0.8)",
-            0.9, "rgba(220, 38, 38, 0.95)",
+            0, "rgba(0, 0, 0, 0)",
+            0.05, "rgba(56, 189, 248, 0.6)",
+            0.2, "rgba(245, 158, 11, 0.8)",
+            0.45, "rgba(239, 68, 68, 0.9)",
+            0.75, "rgba(220, 38, 38, 0.98)",
             1.0, "rgba(254, 240, 138, 1.0)",
           ],
           "heatmap-radius": [
             "interpolate",
             ["linear"],
             ["zoom"],
-            0, 4,
-            9, 22,
-            15, 35,
+            0, 18,
+            3, 25,
+            6, 35,
+            10, 50,
+            15, 65,
           ],
-          "heatmap-opacity": 0.85,
+          "heatmap-opacity": 0.9,
         },
         layout: { visibility: "none" },
       });
