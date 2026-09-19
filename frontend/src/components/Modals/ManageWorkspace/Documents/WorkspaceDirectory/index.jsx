@@ -177,7 +177,7 @@ function WorkspaceDirectory({
                     <WorkspaceFileRow
                       key={item.id}
                       item={item}
-                      folderName={folder.name}
+                      folderName={folder?.name || item?.folderName || "custom-documents"}
                       workspace={workspace}
                       setLoading={setLoading}
                       setLoadingMessage={setLoadingMessage}
@@ -411,12 +411,18 @@ function RenderFileRows({ files, movedItems, children, workspace }) {
   }
 
   return (files?.items || [])
-    .flatMap((folder) => folder?.items || [])
+    .flatMap((folder) =>
+      (folder?.items || []).map((file) => ({
+        ...file,
+        folderName: folder?.name || file?.folderName || "custom-documents",
+      }))
+    )
     .sort(sortMovedItemsAndFiles)
     .map((item) => {
-      const folder = (files?.items || []).find((f) =>
-        (f?.items || []).includes(item)
-      );
+      const folder =
+        (files?.items || []).find((f) =>
+          (f?.items || []).some((file) => file.id === item.id)
+        ) || { name: item.folderName || "custom-documents" };
       return children({ item, folder });
     });
 }

@@ -93,7 +93,9 @@ const ManageWorkspace = ({ hideModal = noop, providedSlug = null }) => {
     <ModalWrapper isOpen={true}>
       <div
         className="w-full h-full flex justify-center items-center"
-        onClick={hideModal}
+        onClick={(e) => {
+          if (e.target === e.currentTarget) hideModal();
+        }}
       >
         <div
           className="relative max-h-[95vh] w-fit overflow-y-auto py-6"

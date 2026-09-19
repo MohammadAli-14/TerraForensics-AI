@@ -108,10 +108,10 @@ function Directory({
         // select all files in the folder
         if (newSelectedItems[item.name]) {
           delete newSelectedItems[item.name];
-          item.items.forEach((file) => delete newSelectedItems[file.id]);
+          (item?.items || []).forEach((file) => delete newSelectedItems[file.id]);
         } else {
           newSelectedItems[item.name] = true;
-          item.items.forEach((file) => (newSelectedItems[file.id] = true));
+          (item?.items || []).forEach((file) => (newSelectedItems[file.id] = true));
         }
       } else {
         // single file selections
@@ -132,7 +132,7 @@ function Directory({
       if (!selectedItems[item.name]) {
         return false;
       }
-      return item.items.every((file) => selectedItems[file.id]);
+      return (item?.items || []).every((file) => selectedItems[file.id]);
     }
 
     return !!selectedItems[id];

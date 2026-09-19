@@ -16,3 +16,11 @@ yarn.lock
 .agents/
 *.timestamp-*.mjs
 vite.config.js.timestamp*
+
+# Secrets & sensitive archives
+*.zip
+*.key
+*.pem
+server/inspect_coords*.js
+server/inspect_coords*.cjs
+

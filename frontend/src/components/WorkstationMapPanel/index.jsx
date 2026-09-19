@@ -178,79 +178,52 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
           "circle-opacity": 0.95,
         },
       });
-    }
-
-    // 2. Raw unclustered source for Casualty Heatmap
-    if (!map.getSource("gtd-raw-source")) {
-      map.addSource("gtd-raw-source", {
-        type: "geojson",
-        data: { type: "FeatureCollection", features: [] },
-        cluster: false,
-      });
 
       // Casualty Heatmap Layer
       map.addLayer({
         id: "gtd-heatmap",
         type: "heatmap",
-        source: "gtd-raw-source",
-        maxzoom: 15,
+        source: "gtd-clustered-source",
+        maxzoom: 16,
         paint: {
           "heatmap-weight": [
             "interpolate",
             ["linear"],
-            ["get", "nkill"],
-            0, 1,
-            2, 2,
-            10, 4,
-            50, 8,
-            200, 15,
+            ["case", ["has", "point_count"], ["get", "point_count"], 1],
+            1, 0.5,
+            25, 1.5,
+            100, 3,
+            1000, 6,
           ],
           "heatmap-intensity": [
             "interpolate",
             ["linear"],
             ["zoom"],
-            0, 2.5,
-            5, 3.5,
-            9, 5,
+            0, 1.2,
+            3, 2,
+            9, 4,
           ],
           "heatmap-color": [
             "interpolate",
             ["linear"],
             ["heatmap-density"],
             0, "rgba(0, 0, 0, 0)",
-            0.05, "rgba(56, 189, 248, 0.6)",
-            0.2, "rgba(245, 158, 11, 0.8)",
-            0.45, "rgba(239, 68, 68, 0.9)",
-            0.75, "rgba(220, 38, 38, 0.98)",
+            0.1, "rgba(56, 189, 248, 0.6)",
+            0.3, "rgba(245, 158, 11, 0.8)",
+            0.6, "rgba(239, 68, 68, 0.92)",
+            0.85, "rgba(220, 38, 38, 0.98)",
             1.0, "rgba(254, 240, 138, 1.0)",
           ],
           "heatmap-radius": [
             "interpolate",
             ["linear"],
             ["zoom"],
-            0, 18,
-            3, 25,
-            6, 35,
-            10, 50,
-            15, 65,
+            0, 20,
+            3, 28,
+            6, 38,
+            9, 50,
           ],
-          "heatmap-opacity": 0.9,
-        },
-        layout: { visibility: "none" },
-      });
-
-      // Zoomed-in precision dots under heatmap
-      map.addLayer({
-        id: "gtd-heatmap-points",
-        type: "circle",
-        source: "gtd-raw-source",
-        minzoom: 8,
-        paint: {
-          "circle-radius": 3.5,
-          "circle-color": "#fb7185",
-          "circle-opacity": 0.7,
-          "circle-stroke-width": 1,
-          "circle-stroke-color": "#ffffff",
+          "heatmap-opacity": 0.92,
         },
         layout: { visibility: "none" },
       });
@@ -351,13 +324,11 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
     if (!mapRef.current || !mapReady) return;
     const map = mapRef.current;
     const clusterSource = map.getSource("gtd-clustered-source");
-    const rawSource = map.getSource("gtd-raw-source");
-    if (!clusterSource || !rawSource) return;
+    if (!clusterSource) return;
 
     const points = dataset?.geo_points || dataset?.geo_samples || [];
     if (!Array.isArray(points) || points.length === 0) {
       clusterSource.setData({ type: "FeatureCollection", features: [] });
-      rawSource.setData({ type: "FeatureCollection", features: [] });
       return;
     }
 
@@ -411,7 +382,6 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
     };
 
     clusterSource.setData(featureCollection);
-    rawSource.setData(featureCollection);
 
     if (!bounds.isEmpty()) {
       map.fitBounds(bounds, { padding: 45, maxZoom: 10, duration: 1200 });
@@ -459,7 +429,6 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
     setVisibility("gtd-unclustered-points", showClusters);
 
     setVisibility("gtd-heatmap", showHeatmap);
-    setVisibility("gtd-heatmap-points", showHeatmap);
   };
 
   // Toggle Basemap (Carto Dark vs Esri Canvas)

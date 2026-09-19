@@ -1,0 +1,159 @@
+{
+  "benchmarkTarget": "Local Edge Sovereign Stack",
+  "hardwareSpecs": {
+    "cpu": "12th Gen Intel Core i5-1235U (10 cores, 12 threads)",
+    "ram": "24.0 GB DDR4",
+    "model": "llama3.2:3b",
+    "host": "127.0.0.1:11434 (Zero WAN)"
+  },
+  "results": [
+    {
+      "id": 1,
+      "type": "gtd",
+      "query": "How many attacks occurred in Iraq between 2010 and 2015?",
+      "routingMs": 1.5622,
+      "retrievalMs": 3379.88,
+      "promptAssemblyMs": 0.0362,
+      "ttftMs": 34074.42,
+      "genDurationMs": 39754.64,
+      "tokens": 39,
+      "tokensPerSec": 6.87,
+      "totalPipelineMs": 43136.12
+    },
+    {
+      "id": 2,
+      "type": "gtd",
+      "query": "Total suicide bombings in Pakistan in 2014",
+      "routingMs": 1.8151,
+      "retrievalMs": 6111.43,
+      "promptAssemblyMs": 0.0423,
+      "ttftMs": 29795.06,
+      "genDurationMs": 30819.93,
+      "tokens": 7,
+      "tokensPerSec": 6.83,
+      "totalPipelineMs": 36933.22
+    },
+    {
+      "id": 4,
+      "type": "gtd",
+      "query": "List attacks carried out by Boko Haram in Nigeria",
+      "routingMs": 0.8798,
+      "retrievalMs": 2768.22,
+      "promptAssemblyMs": 0.0494,
+      "ttftMs": 30879.95,
+      "genDurationMs": 43841.08,
+      "tokens": 93,
+      "tokensPerSec": 7.18,
+      "totalPipelineMs": 46610.23
+    },
+    {
+      "id": 5,
+      "type": "gtd",
+      "query": "Count of terrorist incidents in Colombia in 1999",
+      "routingMs": 0.0525,
+      "retrievalMs": 696,
+      "promptAssemblyMs": 0.0137,
+      "ttftMs": 31518.67,
+      "genDurationMs": 38795.16,
+      "tokens": 53,
+      "tokensPerSec": 7.28,
+      "totalPipelineMs": 39491.23
+    },
+    {
+      "id": 7,
+      "type": "gtd",
+      "query": "Fatalities from armed assaults in the Philippines",
+      "routingMs": 0.7002,
+      "retrievalMs": 2253.04,
+      "promptAssemblyMs": 0.0166,
+      "ttftMs": 39532.5,
+      "genDurationMs": 45128.68,
+      "tokens": 39,
+      "tokensPerSec": 6.97,
+      "totalPipelineMs": 47382.44
+    },
+    {
+      "id": 91,
+      "type": "document",
+      "query": "What are the system requirements for deploying AnythingLLM on bare metal?",
+      "routingMs": 4.2259,
+      "retrievalMs": 25.54,
+      "promptAssemblyMs": 0.0072,
+      "ttftMs": 2632.34,
+      "genDurationMs": 21119.52,
+      "tokens": 150,
+      "tokensPerSec": 8.11,
+      "totalPipelineMs": 21149.29
+    },
+    {
+      "id": 92,
+      "type": "document",
+      "query": "Explain the architecture of the vector database integration in AnythingLLM",
+      "routingMs": 3.1226,
+      "retrievalMs": 26.79,
+      "promptAssemblyMs": 0.0048,
+      "ttftMs": 2651.29,
+      "genDurationMs": 20734.37,
+      "tokens": 150,
+      "tokensPerSec": 8.3,
+      "totalPipelineMs": 20764.29
+    },
+    {
+      "id": 93,
+      "type": "document",
+      "query": "How does the document collector process PDF uploads?",
+      "routingMs": 0.4858,
+      "retrievalMs": 27.82,
+      "promptAssemblyMs": 0.0058,
+      "ttftMs": 2203.27,
+      "genDurationMs": 20305.87,
+      "tokens": 150,
+      "tokensPerSec": 8.29,
+      "totalPipelineMs": 20334.18
+    },
+    {
+      "id": 94,
+      "type": "document",
+      "query": "What embedding models are supported natively by AnythingLLM?",
+      "routingMs": 0.4176,
+      "retrievalMs": 25.72,
+      "promptAssemblyMs": 0.0054,
+      "ttftMs": 2380.49,
+      "genDurationMs": 5801.5,
+      "tokens": 30,
+      "tokensPerSec": 8.77,
+      "totalPipelineMs": 5827.64
+    },
+    {
+      "id": 95,
+      "type": "document",
+      "query": "How do workspace permissions work for multi-user setups?",
+      "routingMs": 0.472,
+      "retrievalMs": 28.6,
+      "promptAssemblyMs": 0.0044,
+      "ttftMs": 2592.44,
+      "genDurationMs": 22009.87,
+      "tokens": 150,
+      "tokensPerSec": 7.73,
+      "totalPipelineMs": 22038.95
+    }
+  ],
+  "gtdSummary": {
+    "routingMs": 1,
+    "retrievalMs": 3041.71,
+    "promptAssemblyMs": 0.03,
+    "ttftMs": 33160.12,
+    "genDurationMs": 39667.9,
+    "tokensPerSec": 7.03,
+    "totalPipelineMs": 42710.65
+  },
+  "docSummary": {
+    "routingMs": 1.74,
+    "retrievalMs": 26.89,
+    "promptAssemblyMs": 0.01,
+    "ttftMs": 2491.97,
+    "genDurationMs": 17994.23,
+    "tokensPerSec": 8.24,
+    "totalPipelineMs": 18022.87
+  }
+}

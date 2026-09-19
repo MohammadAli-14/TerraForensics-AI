@@ -66,7 +66,7 @@ export default function FolderRow({
       </tr>
       {expanded && (
         <>
-          {item.items.map((fileItem) => (
+          {(item?.items || []).map((fileItem) => (
             <FileRow
               key={fileItem.id}
               item={fileItem}

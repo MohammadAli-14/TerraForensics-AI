@@ -1,8 +1,9 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 
 async function inspect() {
     try {
-        const mongoUri = 'mongodb+srv://rajaaliking789_db_user:DBf6KUg3Jt8f6kv9@cluster0.htbeolp.mongodb.net/?appName=Cluster0';
+        const mongoUri = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/GTD_Database';
         console.log(`Connecting to MongoDB...`);
         await mongoose.connect(mongoUri, { dbName: 'GTD_Database' });
         const db = mongoose.connection.db;

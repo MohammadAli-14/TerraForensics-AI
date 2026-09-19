@@ -73,6 +73,16 @@ function ShowWorkspaceChat() {
   }, [slug, tab]);
 
   if (loading) return <FullScreenLoader />;
+  if (!workspace) {
+    return (
+      <div className="w-screen h-screen flex flex-col items-center justify-center bg-[#0B0F19] text-white">
+        <p className="text-base font-semibold mb-2">Workspace not found</p>
+        <Link to="/" className="text-xs text-cyan-400 hover:text-cyan-300 underline">
+          Return to Home
+        </Link>
+      </div>
+    );
+  }
 
   const TabContent = TABS[tab];
   return (
