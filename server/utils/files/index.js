@@ -381,69 +381,122 @@ const FILE_READ_SIZE_THRESHOLD = 150 * (1024 * 1024);
  * @param {boolean} liveSyncAvailable - Whether live sync is available
  * @returns {Promise<{name: string, type: string, [string]: any, cached: boolean, canWatch: boolean}>} - The picker data
  */
+const PICKER_METADATA_CACHE = new Map();
+
+function fastExtractJsonMetadata(pathToFile, fileSize) {
+  let fd = null;
+  try {
+    fd = fs.openSync(pathToFile, "r");
+    const headBuf = Buffer.alloc(8192);
+    fs.readSync(fd, headBuf, 0, 8192, 0);
+
+    const tailBuf = Buffer.alloc(2048);
+    fs.readSync(fd, tailBuf, 0, 2048, Math.max(0, fileSize - 2048));
+    fs.closeSync(fd);
+    fd = null;
+
+    const headStr = headBuf.toString("utf8");
+    const tailStr = tailBuf.toString("utf8");
+
+    const idMatch = headStr.match(/"id"\s*:\s*"([^"]+)"/);
+    const titleMatch = headStr.match(/"title"\s*:\s*"([^"]+)"/);
+    if (!idMatch || !titleMatch) return null;
+
+    const docAuthorMatch = headStr.match(/"docAuthor"\s*:\s*"([^"]+)"/);
+    const descriptionMatch = headStr.match(/"description"\s*:\s*"([^"]+)"/);
+    const docSourceMatch = headStr.match(/"docSource"\s*:\s*"([^"]+)"/);
+    const chunkSourceMatch = headStr.match(/"chunkSource"\s*:\s*"([^"]*)"/);
+    const publishedMatch = headStr.match(/"published"\s*:\s*"([^"]+)"/);
+    const wordCountMatch = headStr.match(/"wordCount"\s*:\s*([0-9]+)/);
+    const tokenCountMatch = tailStr.match(/"token_count_estimate"\s*:\s*([0-9]+)/);
+
+    return {
+      id: idMatch[1],
+      url: headStr.match(/"url"\s*:\s*"([^"]+)"/)?.[1] || "",
+      title: titleMatch[1],
+      docAuthor: docAuthorMatch ? docAuthorMatch[1] : "",
+      description: descriptionMatch ? descriptionMatch[1] : "",
+      docSource: docSourceMatch ? docSourceMatch[1] : "",
+      chunkSource: chunkSourceMatch ? chunkSourceMatch[1] : "",
+      published: publishedMatch ? publishedMatch[1] : "",
+      wordCount: wordCountMatch ? Number(wordCountMatch[1]) : 0,
+      token_count_estimate: tokenCountMatch ? Number(tokenCountMatch[1]) : 0,
+    };
+  } catch {
+    if (fd !== null) {
+      try {
+        fs.closeSync(fd);
+      } catch {}
+    }
+    return null;
+  }
+}
+
 async function fileToPickerData({
   pathToFile,
   liveSyncAvailable = false,
   cachefilename = null,
 }) {
-  let metadata = {};
   const filename = path.basename(pathToFile);
   const fileStats = fs.statSync(pathToFile);
+  const cacheKey = `${pathToFile}:${fileStats.mtimeMs}:${fileStats.size}`;
   const cachedStatus = await cachedVectorInformation(cachefilename, true);
 
-  if (fileStats.size < FILE_READ_SIZE_THRESHOLD) {
-    const rawData = fs.readFileSync(pathToFile, "utf8");
-    try {
-      metadata = JSON.parse(rawData);
-      // Remove the pageContent field from the metadata - it is large and not needed for the picker
-      delete metadata.pageContent;
-    } catch (err) {
-      console.error("Error parsing file", err);
-      return null;
-    }
+  let metadata = PICKER_METADATA_CACHE.get(cacheKey);
 
-    return {
-      name: filename,
-      type: "file",
-      ...metadata,
-      cached: cachedStatus,
-      canWatch: liveSyncAvailable
-        ? DocumentSyncQueue.canWatch(metadata)
-        : false,
-      // pinnedWorkspaces: [], // This is the list of workspaceIds that have pinned this document
-      // watched: false, // boolean to indicate if this document is watched in ANY workspace
-    };
-  }
-
-  console.log(
-    `Stream-parsing ${path.basename(pathToFile)} because it exceeds the ${FILE_READ_SIZE_THRESHOLD} byte limit.`
-  );
-  const stream = fs.createReadStream(pathToFile, { encoding: "utf8" });
-  try {
-    let fileContent = "";
-    metadata = await new Promise((resolve, reject) => {
-      stream
-        .on("data", (chunk) => {
-          fileContent += chunk;
-        })
-        .on("end", () => {
-          metadata = JSON.parse(fileContent);
-          // Remove the pageContent field from the metadata - it is large and not needed for the picker
-          delete metadata.pageContent;
-          resolve(metadata);
-        })
-        .on("error", (err) => {
+  if (!metadata) {
+    if (fileStats.size < FILE_READ_SIZE_THRESHOLD) {
+      const rawData = fs.readFileSync(pathToFile, "utf8");
+      try {
+        metadata = JSON.parse(rawData);
+        // Remove the pageContent field from the metadata - it is large and not needed for the picker
+        delete metadata.pageContent;
+        PICKER_METADATA_CACHE.set(cacheKey, metadata);
+      } catch (err) {
+        console.error("Error parsing file", err);
+        return null;
+      }
+    } else {
+      // Try fast header/footer metadata extraction first (avoids buffering hundreds of MBs in memory)
+      const fastMeta = fastExtractJsonMetadata(pathToFile, fileStats.size);
+      if (fastMeta) {
+        metadata = fastMeta;
+        PICKER_METADATA_CACHE.set(cacheKey, metadata);
+      } else {
+        console.log(
+          `Stream-parsing ${path.basename(pathToFile)} because it exceeds the ${FILE_READ_SIZE_THRESHOLD} byte limit.`
+        );
+        const stream = fs.createReadStream(pathToFile, { encoding: "utf8" });
+        try {
+          let fileContent = "";
+          metadata = await new Promise((resolve, reject) => {
+            stream
+              .on("data", (chunk) => {
+                fileContent += chunk;
+              })
+              .on("end", () => {
+                metadata = JSON.parse(fileContent);
+                delete metadata.pageContent;
+                resolve(metadata);
+              })
+              .on("error", (err) => {
+                console.error("Error parsing file", err);
+                reject(null);
+              });
+          }).catch((err) => {
+            console.error("Error parsing file", err);
+          });
+          if (metadata) {
+            PICKER_METADATA_CACHE.set(cacheKey, metadata);
+          }
+        } catch (err) {
           console.error("Error parsing file", err);
-          reject(null);
-        });
-    }).catch((err) => {
-      console.error("Error parsing file", err);
-    });
-  } catch (err) {
-    console.error("Error parsing file", err);
-    metadata = null;
-  } finally {
-    stream.destroy();
+          metadata = null;
+        } finally {
+          stream.destroy();
+        }
+      }
+    }
   }
 
   // If the metadata is empty or something went wrong, return null

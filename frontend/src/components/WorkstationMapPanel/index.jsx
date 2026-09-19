@@ -329,6 +329,7 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
 
     map.on("load", () => {
       mapRef.current = map;
+      window.__workstationMap = map;
       setupMapLayers(map);
       setMapReady(true);
     });
