@@ -1,0 +1,43 @@
+{
+  "comparisonSummary": {
+    "totalQueries": 180,
+    "preFix": {
+      "tp": 90,
+      "fp": 31,
+      "tn": 59,
+      "fn": 0,
+      "precision": 0.7438,
+      "recall": 1,
+      "accuracy": 0.8278,
+      "f1Score": 0.8531
+    },
+    "postFix": {
+      "tp": 90,
+      "fp": 28,
+      "tn": 62,
+      "fn": 0,
+      "precision": 0.7627,
+      "recall": 1,
+      "accuracy": 0.8444,
+      "f1Score": 0.8654
+    },
+    "delta": {
+      "fpReduction": 3,
+      "precisionGainPercent": 1.89
+    }
+  },
+  "flippedQueries": [
+    {
+      "id": 101,
+      "query": "How does LanceDB manage vector similarity searches?"
+    },
+    {
+      "id": 108,
+      "query": "Explain how SQLite handles workspace application metadata"
+    },
+    {
+      "id": 125,
+      "query": "How does the system prevent prompt injection in document text?"
+    }
+  ]
+}

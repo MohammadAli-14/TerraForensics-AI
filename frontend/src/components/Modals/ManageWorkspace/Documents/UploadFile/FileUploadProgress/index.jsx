@@ -50,8 +50,9 @@ function FileUploadProgressComponent({
       if (!response.ok) {
         setStatus("failed");
         clearInterval(timer);
-        onUploadError(data.error);
-        setError(data.error);
+        const errorMsg = data?.error || data?.message || "Failed to upload file.";
+        onUploadError(errorMsg);
+        setError(errorMsg);
       } else {
         setLoading(false);
         setLoadingMessage("");

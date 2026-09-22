@@ -438,7 +438,6 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/document-processing-status",
-    [validatedRequest],
     async (_, response) => {
       try {
         const online = await new CollectorApi().online();
@@ -452,7 +451,6 @@ function systemEndpoints(app) {
 
   app.get(
     "/system/accepted-document-types",
-    [validatedRequest],
     async (_, response) => {
       try {
         const types = await new CollectorApi().acceptedFileTypes();

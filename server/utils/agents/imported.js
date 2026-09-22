@@ -3,10 +3,12 @@ const path = require("path");
 const { safeJsonParse } = require("../http");
 const { isWithin, normalizePath } = require("../files");
 const { CollectorApi } = require("../collectorApi");
+const defaultStorageDir = path.resolve(__dirname, "../../storage");
+const storageDir = process.env.STORAGE_DIR || defaultStorageDir;
 const pluginsPath =
-  process.env.NODE_ENV === "development"
+  process.env.NODE_ENV === "development" || !process.env.STORAGE_DIR
     ? path.resolve(__dirname, "../../storage/plugins/agent-skills")
-    : path.resolve(process.env.STORAGE_DIR, "plugins", "agent-skills");
+    : path.resolve(storageDir, "plugins", "agent-skills");
 const sharedWebScraper = new CollectorApi();
 
 class ImportedPlugin {

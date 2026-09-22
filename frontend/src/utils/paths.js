@@ -174,4 +174,10 @@ export default {
       return "https://docs.VertexAI.com/chatting-with-documents/introduction#you-exceed-the-context-window---what-now";
     },
   },
+
+  experimental: {
+    liveDocumentSync: {
+      manage: () => "/settings/system-preferences",
+    },
+  },
 };

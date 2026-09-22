@@ -26,7 +26,10 @@ class CollectorApi {
   constructor() {
     const { CommunicationKey } = require("../comKey");
     this.comkey = new CommunicationKey();
-    this.endpoint = `http://0.0.0.0:${process.env.COLLECTOR_PORT || 8888}`;
+    const host =
+      process.env.COLLECTOR_HOST ||
+      (process.env.NODE_ENV === "development" ? "127.0.0.1" : "0.0.0.0");
+    this.endpoint = `http://${host}:${process.env.COLLECTOR_PORT || 8888}`;
   }
 
   log(text, ...args) {

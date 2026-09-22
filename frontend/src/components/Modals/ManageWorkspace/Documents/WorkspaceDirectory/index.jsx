@@ -372,7 +372,7 @@ const DocumentWatchAlert = memo(() => {
             <p>
               {t("connectors.watching.watch_explained_block3_start")}
               <Link
-                to={paths.experimental.liveDocumentSync.manage()}
+                to={paths?.experimental?.liveDocumentSync?.manage?.() || "#"}
                 className="text-blue-600 underline"
               >
                 {t("connectors.watching.watch_explained_block3_link")}
