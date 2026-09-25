@@ -81,6 +81,16 @@ class ResponseProxy extends EventEmitter {
     if (!token) return "";
     let output = "";
 
+    const isQuoteChar = (c) =>
+      c === '"' ||
+      c === "'" ||
+      c === "\u201C" ||
+      c === "\u201D" ||
+      c === "\u201E" ||
+      c === "\u201F" ||
+      c === "\u2018" ||
+      c === "\u2019";
+
     for (let i = 0; i < token.length; i++) {
       const char = token[i];
 
@@ -88,7 +98,7 @@ class ResponseProxy extends EventEmitter {
         // We are currently stripping a JSON block
         // Maintain JSON parsing state to find the end
         if (this.inString) {
-          if (char === '"' && !this.isEscaping) {
+          if (isQuoteChar(char) && !this.isEscaping) {
             this.inString = false;
           } else if (char === "\\" && !this.isEscaping) {
             this.isEscaping = true;
@@ -96,15 +106,16 @@ class ResponseProxy extends EventEmitter {
             this.isEscaping = false;
           }
         } else {
-          if (char === '"') {
+          if (isQuoteChar(char)) {
             this.inString = true;
           } else if (char === "{") {
             this.braceCount++;
           } else if (char === "}") {
             this.braceCount--;
-            if (this.braceCount === 0) {
+            if (this.braceCount <= 0) {
               // End of the hidden JSON block
               this.isHiding = false;
+              this.braceCount = 0;
               this.buffer = ""; // Clear buffer as we consumed the block
               continue; // Skip the closing brace itself
             }
@@ -134,9 +145,14 @@ class ResponseProxy extends EventEmitter {
           // We need enough chars to decide.
           const bufferContent = this.buffer.replace(/\s+/g, ""); // Compact for checking
 
+          // Normalize curly/smart quotes for detection
+          const normalizedContent = bufferContent
+            .replace(/[\u201C\u201D\u201E\u201F\u2033\u2036]/g, '"')
+            .replace(/[\u2018\u2019\u201A\u201B\u2032\u2035]/g, "'");
+
           // Check if it definitely matches one of our targets
           const isTargetMatch = this.targetKeys.some((key) =>
-            bufferContent.startsWith("{" + key)
+            normalizedContent.startsWith("{" + key)
           );
 
           if (isTargetMatch) {
@@ -147,13 +163,11 @@ class ResponseProxy extends EventEmitter {
             // Check if it's a partial match (could be one of ours)
             // e.g. '{"' or '{"ans'
             const isPartialMatch = this.targetKeys.some((key) =>
-              ("{" + key).startsWith(bufferContent)
+              ("{" + key).startsWith(normalizedContent)
             );
 
             if (!isPartialMatch) {
-              // It's not one of ours. Flush specific chars that disqualified it.
-              // We only flush the '{' if we are sure it's not ours.
-              // Actually, simpler: if not partial match, flush the buffer (it's normal text)
+              // It's not one of ours. Flush buffer as normal text.
               output += this.buffer;
               this.buffer = "";
             }

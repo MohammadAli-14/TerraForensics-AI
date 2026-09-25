@@ -672,6 +672,37 @@ async function streamChatWithWorkspace(
       thread
     );
 
+    if (mongoContext && mongoContext.isUnavailable) {
+      console.log(
+        `[STREAM DEBUG] MongoDB is unavailable. Sending clean notification to user.`
+      );
+      const refusalText =
+        "The Global Terrorism Database is currently reconnecting or temporarily unavailable. Please wait a moment and try your query again.";
+      writeResponseChunk(response, {
+        uuid,
+        sources: [],
+        type: "textResponseChunk",
+        textResponse: refusalText,
+        close: true,
+        error: false,
+      });
+
+      await WorkspaceChats.new({
+        workspaceId: workspace.id,
+        prompt: message,
+        response: {
+          text: refusalText,
+          sources: [],
+          type: chatMode,
+          chatModel: workspace?.chatModel,
+          performance: { duration: 0 },
+        },
+        threadId: thread ? thread.id : null,
+        user,
+      });
+      return;
+    }
+
     if (mongoContext && mongoContext.context) {
       console.log(
         `[STREAM DEBUG] ═══════════════════════════════════════════════════`

@@ -922,7 +922,11 @@ function requiresForceMode(_, forceModeEnabled = false) {
 }
 
 async function validDockerizedUrl(input = "") {
-  if (process.env.ANYTHING_LLM_RUNTIME !== "docker") return null;
+  if (
+    process.env.TERRAFORENSICS_RUNTIME !== "docker" &&
+    process.env.ANYTHING_LLM_RUNTIME !== "docker"
+  )
+    return null;
 
   try {
     // load portAvailabilityChecker defensively

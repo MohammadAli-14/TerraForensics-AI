@@ -1,92 +1,189 @@
 // server/utils/mongoDB/initialize.js
 const mongoose = require("mongoose");
 
-async function initMongoDBIntegration() {
-  try {
-    console.log("🔧 Initializing MongoDB integration...");
+let isConnecting = false;
+let connectionPromise = null;
+let reconnectTimer = null;
+let retryAttempt = 0;
 
+async function initMongoDBIntegration(isRetry = false) {
+  try {
     if (!process.env.MONGODB_URI) {
       console.log("ℹ️ MONGODB_URI not set, skipping MongoDB integration");
       return { success: false, reason: "No URI" };
     }
 
-    // Get connection without circular dependencies
-    const MongoDBConnection = require("./connection");
+    if (mongoose.connection && mongoose.connection.readyState === 1) {
+      return { success: true, connection: mongoose.connection };
+    }
 
-    // Set global mongoose options
+    if (isConnecting && connectionPromise) {
+      console.log("🔗 MongoDB connection already in progress, awaiting existing promise...");
+      return await connectionPromise;
+    }
+
+    isConnecting = true;
+    console.log(
+      isRetry
+        ? `🔄 Retrying MongoDB connection (attempt ${retryAttempt})...`
+        : "🔧 Initializing MongoDB integration..."
+    );
+
     mongoose.set("strictQuery", false);
     mongoose.set("bufferCommands", false);
 
     console.log("🔗 Connecting to MongoDB...");
 
-    try {
-      await mongoose.connect(process.env.MONGODB_URI, {
-        serverSelectionTimeoutMS: 10000,
-        socketTimeoutMS: 45000,
-        maxPoolSize: 10,
-      });
+    connectionPromise = (async () => {
+      try {
+        await mongoose.connect(process.env.MONGODB_URI, {
+          serverSelectionTimeoutMS: 30000,
+          socketTimeoutMS: 45000,
+          connectTimeoutMS: 30000,
+          maxPoolSize: 10,
+        });
 
-      console.log("✅ MongoDB connected successfully");
+        console.log("✅ MongoDB connected successfully");
+        retryAttempt = 0;
+        if (reconnectTimer) {
+          clearTimeout(reconnectTimer);
+          reconnectTimer = null;
+        }
 
-      // Wait a moment for connection to stabilize
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+        // Wait a moment for connection to stabilize
+        await new Promise((resolve) => setTimeout(resolve, 500));
 
-      // Test the connection
-      const db = mongoose.connection.db;
-      if (!db) {
-        throw new Error("Database connection not established");
-      }
+        // Test the connection
+        const db = mongoose.connection.db;
+        if (!db) {
+          throw new Error("Database connection not established");
+        }
 
-      console.log(`📊 Connected to database: ${db.databaseName}`);
+        console.log(`📊 Connected to database: ${db.databaseName}`);
 
-      // List collections
-      const collections = await db.listCollections().toArray();
-      console.log(
-        `📊 Available collections: ${collections.map((c) => c.name).join(", ")}`
-      );
-
-      // Get the attacks collection directly
-      const attacksCollection = db.collection("attacks");
-      const count = await attacksCollection.estimatedDocumentCount();
-      console.log(`📊 Attacks collection has ${count} documents`);
-
-      // Test a specific query
-      const testDoc = await attacksCollection.findOne({
-        eventid: "197000000001",
-      });
-      if (testDoc) {
+        // List collections
+        const collections = await db.listCollections().toArray();
         console.log(
-          `✅ Test query successful: Found eventid ${testDoc.eventid}`
+          `📊 Available collections: ${collections.map((c) => c.name).join(", ")}`
         );
-      } else {
-        console.log("⚠️ Test query returned no results (might be expected)");
+
+        // Get the attacks collection directly
+        const attacksCollection = db.collection("attacks");
+        const count = await attacksCollection.estimatedDocumentCount();
+        console.log(`📊 Attacks collection has ${count} documents`);
+
+        // Test a specific query
+        const testDoc = await attacksCollection.findOne({
+          eventid: "197000000001",
+        });
+        if (testDoc) {
+          console.log(
+            `✅ Test query successful: Found eventid ${testDoc.eventid}`
+          );
+        } else {
+          console.log("⚠️ Test query returned no results (might be expected)");
+        }
+
+        // Load the Attack model AFTER connection is established
+        const Attack = require("./models/Attack");
+
+        // Sync indexes
+        await Attack.syncIndexes();
+        console.log("✅ MongoDB indexes synchronized");
+
+        // Setup disconnect listeners once
+        if (!mongoose.connection._listenersSetup) {
+          mongoose.connection._listenersSetup = true;
+
+          mongoose.connection.on("disconnected", () => {
+            console.log("⚠️ MongoDB disconnected. Scheduling auto-reconnect...");
+            scheduleAutoReconnect();
+          });
+
+          mongoose.connection.on("error", (err) => {
+            console.error("❌ MongoDB connection error:", err.message);
+          });
+        }
+
+        return {
+          success: true,
+          connection: mongoose.connection,
+          count,
+        };
+      } catch (connectError) {
+        console.error("❌ MongoDB connection failed:", connectError.message);
+        scheduleAutoReconnect();
+        return {
+          success: false,
+          error: connectError.message,
+          reason: "Connection failed",
+        };
+      } finally {
+        isConnecting = false;
+        connectionPromise = null;
       }
+    })();
 
-      // Load the Attack model AFTER connection is established
-      const Attack = require("./models/Attack");
-
-      // Sync indexes
-      await Attack.syncIndexes();
-      console.log("✅ MongoDB indexes synchronized");
-
-      return {
-        success: true,
-        connection: mongoose.connection,
-        count,
-      };
-    } catch (connectError) {
-      console.error("❌ MongoDB connection failed:", connectError.message);
-
-      // Don't throw, just return failure
-      return {
-        success: false,
-        error: connectError.message,
-        reason: "Connection failed",
-      };
-    }
+    return await connectionPromise;
   } catch (error) {
+    isConnecting = false;
+    connectionPromise = null;
     console.error("❌ MongoDB integration failed:", error.message);
+    scheduleAutoReconnect();
     return { success: false, error: error.message };
+  }
+}
+
+function scheduleAutoReconnect() {
+  if (reconnectTimer) return;
+  if (!process.env.MONGODB_URI) return;
+  if (mongoose.connection && mongoose.connection.readyState === 1) return;
+
+  const delay = Math.min(3000 * Math.pow(1.5, retryAttempt), 30000);
+  retryAttempt++;
+  console.log(
+    `⏱️ MongoDB auto-reconnect scheduled in ${Math.round(delay / 1000)}s (attempt ${retryAttempt})...`
+  );
+
+  reconnectTimer = setTimeout(async () => {
+    reconnectTimer = null;
+    if (!mongoose.connection || mongoose.connection.readyState !== 1) {
+      await initMongoDBIntegration(true);
+    }
+  }, delay);
+}
+
+/**
+ * Ensures MongoDB is connected, waiting up to timeoutMs if a connection is currently pending
+ * or initiating a connection if disconnected.
+ */
+async function ensureMongoDBConnected(timeoutMs = 15000) {
+  if (mongoose.connection && mongoose.connection.readyState === 1) {
+    return true;
+  }
+
+  if (isConnecting && connectionPromise) {
+    try {
+      await Promise.race([
+        connectionPromise,
+        new Promise((resolve) => setTimeout(resolve, timeoutMs)),
+      ]);
+      return mongoose.connection && mongoose.connection.readyState === 1;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  try {
+    const res = await Promise.race([
+      initMongoDBIntegration(false),
+      new Promise((resolve) =>
+        setTimeout(() => resolve({ success: false, reason: "Timeout" }), timeoutMs)
+      ),
+    ]);
+    return Boolean(res && res.success && mongoose.connection && mongoose.connection.readyState === 1);
+  } catch (e) {
+    return false;
   }
 }
 
@@ -118,6 +215,8 @@ async function checkMongoDBHealth() {
 
 module.exports = {
   initMongoDBIntegration,
+  ensureMongoDBConnected,
   checkMongoDBHealth,
   mongoose,
 };
+

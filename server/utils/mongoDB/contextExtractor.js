@@ -2100,10 +2100,16 @@ class MongoDBContextExtractor {
       try {
         const mongoose = require("mongoose");
         if (mongoose.connection.readyState !== 1) {
-          console.log(
-            "[Context Extractor] MongoDB not connected, skipping cache load"
-          );
-          return;
+          try {
+            const { ensureMongoDBConnected } = require("./initialize");
+            await ensureMongoDBConnected(5000);
+          } catch (e) {}
+          if (mongoose.connection.readyState !== 1) {
+            console.log(
+              "[Context Extractor] MongoDB not connected, skipping cache load"
+            );
+            return;
+          }
         }
 
         const db = mongoose.connection.db;
@@ -4177,6 +4183,22 @@ class MongoDBContextExtractor {
     console.log(`[GTD Extractor] Checking query: "${userQuery}"`);
 
     try {
+      const mongoose = require("mongoose");
+      if (!mongoose.connection || mongoose.connection.readyState !== 1) {
+        console.log(
+          "[GTD Extractor] MongoDB not connected, attempting to connect..."
+        );
+        try {
+          const { ensureMongoDBConnected } = require("./initialize");
+          await ensureMongoDBConnected(15000);
+        } catch (e) {
+          console.error(
+            "[GTD Extractor] Error ensuring MongoDB connection:",
+            e.message
+          );
+        }
+      }
+
       const sessionKey = this._buildContextKey(workspace, user, thread);
       // Parse the query FIRST to extract all conditions (now async)
       let conditions = await this.parseNaturalLanguageQuery(userQuery);
@@ -4313,8 +4335,7 @@ DO NOT state "between ${start} and ${end}" without this explicit qualification.`
         }
       }
 
-      // Get mongoose connection for direct queries
-      const mongoose = require("mongoose");
+      // Check mongoose connection for direct queries
       if (!mongoose.connection || mongoose.connection.readyState !== 1) {
         console.error(
           "[GTD Extractor] MongoDB connection not ready (readyState:",
@@ -4323,8 +4344,9 @@ DO NOT state "between ${start} and ${end}" without this explicit qualification.`
         );
         return {
           context:
-            "The database connection is not available right now. Please try again in a moment.",
+            "The Global Terrorism Database is currently unavailable. Please try your request again in a few moments.",
           sources: [],
+          isUnavailable: true,
         };
       }
       const db = mongoose.connection.db;
@@ -4344,7 +4366,7 @@ DO NOT state "between ${start} and ${end}" without this explicit qualification.`
             : [{ $sample: { size: 1 } }];
 
         const randomAttacks = await attacksCollection
-          .aggregate(pipeline)
+          .aggregate(pipeline, { allowDiskUse: true })
           .toArray();
 
         if (randomAttacks.length > 0) {
@@ -4484,8 +4506,10 @@ VERIFICATION CODE: GTD-SAMPLE-${attack.eventid}
                   },
                 },
               },
-            ])
-            .toArray();
+            ],
+            { allowDiskUse: true }
+          )
+          .toArray();
 
           const killed = statsResult[0]?.totalKilled || 0;
           const wounded = statsResult[0]?.totalWounded || 0;
@@ -4513,46 +4537,51 @@ VERIFICATION CODE: GTD-SAMPLE-${attack.eventid}
               const geoLimitConfig =
                 parseInt(process.env.GTD_WORLDWIDE_GEO_LIMIT) || 200000;
               const geoLimit = Math.min(recordsWithCoordinates, geoLimitConfig);
+              // Cap random sampling to 5000 to prevent MongoDB in-memory sort 32MB limit error
+              const sampleSize = Math.min(geoLimit, 5000);
               const geoResults = await attacksCollection
-                .aggregate([
-                  { $match: matchStage },
-                  {
-                    $match: {
-                      latitude: {
-                        $exists: true,
-                        $ne: null,
-                        $ne: "",
-                        $ne: "NaN",
-                      },
-                      longitude: {
-                        $exists: true,
-                        $ne: null,
-                        $ne: "",
-                        $ne: "NaN",
+                .aggregate(
+                  [
+                    { $match: matchStage },
+                    {
+                      $match: {
+                        latitude: {
+                          $exists: true,
+                          $ne: null,
+                          $ne: "",
+                          $ne: "NaN",
+                        },
+                        longitude: {
+                          $exists: true,
+                          $ne: null,
+                          $ne: "",
+                          $ne: "NaN",
+                        },
                       },
                     },
-                  },
-                  { $sample: { size: geoLimit } },
-                  {
-                    $project: {
-                      eventid: 1,
-                      latitude: 1,
-                      longitude: 1,
-                      iyear: 1,
-                      country_txt: 1,
-                      city: 1,
-                      region_txt: 1,
-                      provstate: 1,
-                      attacktype1_txt: 1,
-                      targtype1_txt: 1,
-                      weaptype1_txt: 1,
-                      gname: 1,
-                      nkill: 1,
-                      nwound: 1,
-                      summary: 1,
+                    { $sample: { size: sampleSize } },
+                    {
+                      $project: {
+                        eventid: 1,
+                        latitude: 1,
+                        longitude: 1,
+                        iyear: 1,
+                        country_txt: 1,
+                        city: 1,
+                        region_txt: 1,
+                        provstate: 1,
+                        attacktype1_txt: 1,
+                        targtype1_txt: 1,
+                        weaptype1_txt: 1,
+                        gname: 1,
+                        nkill: 1,
+                        nwound: 1,
+                        summary: 1,
+                      },
                     },
-                  },
-                ])
+                  ],
+                  { allowDiskUse: true }
+                )
                 .toArray();
 
               preComputedGeoPoints = geoResults
@@ -4714,23 +4743,26 @@ VERIFICATION CODE: GTD-SAMPLE-${attack.eventid}
               `[GTD Extractor] User requested list - fetching Top 5 sample for context`
             );
             const top5Attacks = await attacksCollection
-              .aggregate([
-                { $match: matchStage },
-                {
-                  $addFields: {
-                    numericKill: {
-                      $convert: {
-                        input: "$nkill",
-                        to: "int",
-                        onError: 0,
-                        onNull: 0,
+              .aggregate(
+                [
+                  { $match: matchStage },
+                  {
+                    $addFields: {
+                      numericKill: {
+                        $convert: {
+                          input: "$nkill",
+                          to: "int",
+                          onError: 0,
+                          onNull: 0,
+                        },
                       },
                     },
                   },
-                },
-                { $sort: { numericKill: -1, iyear: -1 } },
-                { $limit: 5 },
-              ])
+                  { $sort: { numericKill: -1, iyear: -1 } },
+                  { $limit: 5 },
+                ],
+                { allowDiskUse: true }
+              )
               .toArray();
 
             if (top5Attacks.length > 0) {
@@ -4749,27 +4781,30 @@ VERIFICATION CODE: GTD-SAMPLE-${attack.eventid}
             if (/\bby\s+(?:perpetrator\s+)?groups?\b/i.test(lowerQuery)) {
               try {
                 const topGroups = await attacksCollection
-                  .aggregate([
-                    { $match: matchStage },
-                    {
-                      $group: {
-                        _id: "$gname",
-                        attackCount: { $sum: 1 },
-                        killed: {
-                          $sum: {
-                            $convert: {
-                              input: "$nkill",
-                              to: "int",
-                              onError: 0,
-                              onNull: 0,
+                  .aggregate(
+                    [
+                      { $match: matchStage },
+                      {
+                        $group: {
+                          _id: "$gname",
+                          attackCount: { $sum: 1 },
+                          killed: {
+                            $sum: {
+                              $convert: {
+                                input: "$nkill",
+                                to: "int",
+                                onError: 0,
+                                onNull: 0,
+                              },
                             },
                           },
                         },
                       },
-                    },
-                    { $sort: { killed: -1, attackCount: -1 } },
-                    { $limit: 5 },
-                  ])
+                      { $sort: { killed: -1, attackCount: -1 } },
+                      { $limit: 5 },
+                    ],
+                    { allowDiskUse: true }
+                  )
                   .toArray();
 
                 if (topGroups.length > 0) {
@@ -4884,33 +4919,36 @@ ${compassFilterString}
           const totalCount = await attacksCollection.estimatedDocumentCount();
 
           const statsResult = await attacksCollection
-            .aggregate([
-              {
-                $group: {
-                  _id: null,
-                  totalKilled: {
-                    $sum: {
-                      $convert: {
-                        input: "$nkill",
-                        to: "int",
-                        onError: 0,
-                        onNull: 0,
+            .aggregate(
+              [
+                {
+                  $group: {
+                    _id: null,
+                    totalKilled: {
+                      $sum: {
+                        $convert: {
+                          input: "$nkill",
+                          to: "int",
+                          onError: 0,
+                          onNull: 0,
+                        },
                       },
                     },
-                  },
-                  totalWounded: {
-                    $sum: {
-                      $convert: {
-                        input: "$nwound",
-                        to: "int",
-                        onError: 0,
-                        onNull: 0,
+                    totalWounded: {
+                      $sum: {
+                        $convert: {
+                          input: "$nwound",
+                          to: "int",
+                          onError: 0,
+                          onNull: 0,
+                        },
                       },
                     },
                   },
                 },
-              },
-            ])
+              ],
+              { allowDiskUse: true }
+            )
             .toArray();
 
           const killed = statsResult[0]?.totalKilled || 0;
@@ -4931,42 +4969,47 @@ ${compassFilterString}
               const geoLimitConfig =
                 parseInt(process.env.GTD_WORLDWIDE_GEO_LIMIT) || 200000;
               const geoLimit = Math.min(recordsWithCoordinates, geoLimitConfig);
+              // Cap random sampling to 5000 to prevent MongoDB in-memory sort 32MB limit error
+              const sampleSize = Math.min(geoLimit, 5000);
 
               const geoResults = await attacksCollection
-                .aggregate([
-                  {
-                    $match: {
-                      latitude: {
-                        $exists: true,
-                        $nin: [null, "", "NaN"],
-                      },
-                      longitude: {
-                        $exists: true,
-                        $nin: [null, "", "NaN"],
+                .aggregate(
+                  [
+                    {
+                      $match: {
+                        latitude: {
+                          $exists: true,
+                          $nin: [null, "", "NaN"],
+                        },
+                        longitude: {
+                          $exists: true,
+                          $nin: [null, "", "NaN"],
+                        },
                       },
                     },
-                  },
-                  { $sample: { size: geoLimit } },
-                  {
-                    $project: {
-                      eventid: 1,
-                      latitude: 1,
-                      longitude: 1,
-                      iyear: 1,
-                      country_txt: 1,
-                      city: 1,
-                      region_txt: 1,
-                      provstate: 1,
-                      attacktype1_txt: 1,
-                      targtype1_txt: 1,
-                      weaptype1_txt: 1,
-                      gname: 1,
-                      nkill: 1,
-                      nwound: 1,
-                      summary: 1,
+                    { $sample: { size: sampleSize } },
+                    {
+                      $project: {
+                        eventid: 1,
+                        latitude: 1,
+                        longitude: 1,
+                        iyear: 1,
+                        country_txt: 1,
+                        city: 1,
+                        region_txt: 1,
+                        provstate: 1,
+                        attacktype1_txt: 1,
+                        targtype1_txt: 1,
+                        weaptype1_txt: 1,
+                        gname: 1,
+                        nkill: 1,
+                        nwound: 1,
+                        summary: 1,
+                      },
                     },
-                  },
-                ])
+                  ],
+                  { allowDiskUse: true }
+                )
                 .toArray();
 
               preComputedGeoPoints = geoResults
@@ -5128,7 +5171,9 @@ The server uses needs_geo_data to return geo_points for the heatmap.`;
             { $sort: { totalCasualties: -1, iyear: -1, imonth: -1, iday: -1 } },
             { $limit: 10 },
           ];
-          attacks = await attacksCollection.aggregate(pipeline).toArray();
+          attacks = await attacksCollection
+            .aggregate(pipeline, { allowDiskUse: true })
+            .toArray();
         } else {
           attacks = await attacksCollection
             .find(searchFilters)

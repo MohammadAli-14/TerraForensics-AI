@@ -243,7 +243,10 @@ class MCPHypervisor {
     };
 
     // Docker-specific environment setup
-    if (process.env.ANYTHING_LLM_RUNTIME === "docker") {
+    if (
+      process.env.TERRAFORENSICS_RUNTIME === "docker" ||
+      process.env.ANYTHING_LLM_RUNTIME === "docker"
+    ) {
       baseEnv = {
         // Fixed: NODE_PATH should point to modules directory, not node binary
         NODE_PATH: "/usr/local/lib/node_modules",

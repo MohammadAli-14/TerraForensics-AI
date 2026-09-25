@@ -713,6 +713,20 @@ async function chatSync({
       sourcesCount: mongoContext?.sources?.length || 0,
     });
 
+    if (mongoContext && mongoContext.isUnavailable) {
+      console.log(
+        `[API CHAT DEBUG] MongoDB is unavailable. Returning clean notification to user.`
+      );
+      return {
+        textResponse:
+          "The Global Terrorism Database is currently reconnecting or temporarily unavailable. Please wait a moment and try your query again.",
+        sources: [],
+        type: chatMode,
+        close: true,
+        error: null,
+      };
+    }
+
     if (
       mongoContext &&
       mongoContext.context &&
