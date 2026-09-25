@@ -5,6 +5,7 @@ import {
   Fire,
   CirclesThreePlus,
   ArrowsIn,
+  ArrowsOut,
   ShieldCheck,
   WarningCircle,
   Database,
@@ -146,8 +147,16 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
     return null;
   });
   const autoRefetchTrackerRef = useRef(new Set());
+  const [basemap, setBasemap] = useState(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("tf_preferred_basemap");
+      if (saved && ["dark", "satellite", "carto"].includes(saved)) {
+        return saved;
+      }
+    }
+    return "dark";
+  });
   const [mapMode, setMapMode] = useState("clusters"); // "clusters" | "heatmap"
-  const [basemap, setBasemap] = useState("dark"); // "dark" | "satellite" | "carto"
   const [selectedIncident, setSelectedIncident] = useState(null);
   const [mapReady, setMapReady] = useState(false);
   const [loadingPoints, setLoadingPoints] = useState(false);
@@ -364,6 +373,12 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
       window.__workstationMap = map;
       setupMapLayers(map);
       setMapReady(true);
+      const initialBasemap = typeof window !== "undefined"
+        ? localStorage.getItem("tf_preferred_basemap") || "dark"
+        : "dark";
+      if (initialBasemap !== "dark") {
+        toggleBasemap(initialBasemap);
+      }
     });
 
     map.on("error", (e) => {
@@ -525,6 +540,9 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
   // Toggle Basemap (Dark Canvas vs Satellite Recon vs optional Carto)
   const toggleBasemap = (nextBasemap) => {
     setBasemap(nextBasemap);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tf_preferred_basemap", nextBasemap);
+    }
     if (!mapRef.current || !mapReady) return;
     const map = mapRef.current;
 
@@ -765,6 +783,19 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
             >
               <ArrowsIn size={14} />
             </button>
+
+            {/* Expand to Fullscreen Map */}
+            {workspace?.slug && (
+              <a
+                href={`/workspace/${workspace.slug}/gtd-map?basemap=${basemap === "satellite" ? "satellite" : "dark"}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 rounded text-slate-400 hover:text-cyan-300 hover:bg-slate-800 transition-colors cursor-pointer inline-flex items-center"
+                title="Expand to Fullscreen Geospatial Intelligence Map"
+              >
+                <ArrowsOut size={14} />
+              </a>
+            )}
           </div>
 
           {/* Dedicated High-Visibility Close Button */}

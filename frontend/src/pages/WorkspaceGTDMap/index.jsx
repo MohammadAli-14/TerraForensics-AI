@@ -75,10 +75,10 @@ function calculateBounds(points = []) {
 }
 
 // ─── Build basemap style object for MapLibre ───
-// Supports 4 combinations: PMTiles dark/light, CARTO dark raster, OSM light raster
-function buildMapStyle(isDark, pmtilesOk) {
-  if (pmtilesOk) {
-    const flavor = isDark ? "dark" : "light";
+// Supports: Esri Satellite Recon raster, Esri Dark Gray Canvas raster, CARTO dark raster, OSM light raster, and PMTiles vector
+function buildMapStyle(basemapMode, pmtilesOk) {
+  if (pmtilesOk && basemapMode !== "satellite") {
+    const flavor = basemapMode === "light" ? "light" : "dark";
     return {
       version: 8,
       glyphs: "https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf",
@@ -93,7 +93,38 @@ function buildMapStyle(isDark, pmtilesOk) {
       layers: basemaps.layers("basemap", basemaps.namedFlavor(flavor), { lang: "en" })
     };
   }
-  if (isDark) {
+
+  // 1. High-Resolution Satellite Reconnaissance (Esri World Imagery + Boundaries & Places)
+  if (basemapMode === "satellite") {
+    return {
+      version: 8,
+      sources: {
+        "esri-satellite-base": {
+          type: "raster",
+          tiles: [
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+          ],
+          tileSize: 256,
+          attribution: "\u00a9 Esri, Maxar, Earthstar Geographics"
+        },
+        "esri-satellite-ref": {
+          type: "raster",
+          tiles: [
+            "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+          ],
+          tileSize: 256,
+          attribution: "\u00a9 Esri, HERE, Garmin"
+        }
+      },
+      layers: [
+        { id: "esri-sat-base-tiles", type: "raster", source: "esri-satellite-base", minzoom: 0, maxzoom: 19 },
+        { id: "esri-sat-ref-tiles", type: "raster", source: "esri-satellite-ref", minzoom: 0, maxzoom: 19 }
+      ]
+    };
+  }
+
+  // 2. Tactical Dark Canvas (Esri Dark Gray Base + Reference Labels, or optional Carto)
+  if (basemapMode === "dark" || !basemapMode) {
     const cartoKey = import.meta.env.VITE_CARTO_API_KEY;
     if (cartoKey) {
       return {
@@ -141,7 +172,8 @@ function buildMapStyle(isDark, pmtilesOk) {
       ]
     };
   }
-  // Light raster fallback (OSM)
+
+  // 3. Light raster fallback (OSM)
   return {
     version: 8,
     sources: {
@@ -269,9 +301,22 @@ export default function WorkspaceGTDMap() {
   const [loadMoreProgress, setLoadMoreProgress] = useState(0);
   const [renderLimit, setRenderLimit] = useState(MAX_RENDER_POINTS);
   const [allLoaded, setAllLoaded] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(true);  // dark by default (world-monitor style)
+  const [basemapMode, setBasemapMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      const urlParam = searchParams.get("basemap");
+      if (urlParam && ["dark", "satellite", "light"].includes(urlParam)) {
+        return urlParam;
+      }
+      const saved = localStorage.getItem("tf_preferred_basemap");
+      if (saved && ["dark", "satellite", "light"].includes(saved)) {
+        return saved;
+      }
+    }
+    return "dark";
+  });
+  const isDarkMode = basemapMode !== "light";
   const pmtilesAvailableRef = useRef(false);
-  const darkModeInitRef = useRef(true);   // skip first style-switch effect (initMap handles it)
+  const basemapInitRef = useRef(true);   // skip first style-switch effect (initMap handles it)
   const geoJsonRef = useRef(null);        // mutable ref for style-switch closure
   const showHeatmapRef = useRef(false);   // mutable ref for style-switch closure
 
@@ -283,7 +328,7 @@ export default function WorkspaceGTDMap() {
   const bounds = useMemo(() => calculateBounds(geoPoints), [geoPoints]);
 
   // Reliably detect whether there's more data to load
-  const totalExpected = payload?.total_count || 0;
+  const totalExpected = payload?.records_with_coordinates || payload?.total_count || 0;
   const hasMoreData = !allLoaded && totalExpected > 0 && geoPoints.length < totalExpected;
   const hasFilter = Boolean(payload?.filter || payload?.simpleFilter);
   const yearRange = useMemo(() => {
@@ -533,113 +578,7 @@ export default function WorkspaceGTDMap() {
     };
   }, [key, slug]);
 
-  const loadGlobalCatalog = async () => {
-    try {
-      setStatus("Loading global GTD dataset (1970–2017)...");
-      setError(null);
 
-      const res = await fetch(`${API_BASE}/gtd/public/pipeline`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          limit: 5000,
-          skip: 0,
-          includeGeoJSON: true,
-          includeClusters: true,
-        }),
-      });
-
-      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
-      const result = await res.json();
-      if (!result.success) throw new Error(result.error || "Failed to load GTD database");
-
-      const points = result.geo_points || [];
-      const total = result.total_count || 181691;
-      const totalKilled = points.reduce((sum, p) => sum + (Number(p.nkill) || 0), 0);
-      const totalWounded = points.reduce((sum, p) => sum + (Number(p.nwound) || 0), 0);
-
-      setPayload({
-        total_count: total,
-        total_killed: result.total_killed || totalKilled,
-        total_wounded: result.total_wounded || totalWounded,
-        query: "Global Terrorism Database (1970–2017)",
-        geo_points: points,
-      });
-      setGeoPoints(points);
-      setAllLoaded(false);
-      setPage(0);
-      setSelectedPoint(null);
-      setClusterPoints([]);
-      setClusterInfo(null);
-      setStatus(`Showing ${points.length.toLocaleString()} of ${total.toLocaleString()} global incident records`);
-    } catch (fetchError) {
-      console.error("Global GTD load failed:", fetchError);
-      setError("Failed to load GTD map data. Ensure MongoDB is connected.");
-      setStatus("Failed to load data");
-    }
-  };
-
-  const loadActiveChatQuery = async () => {
-    let stored = null;
-    if (typeof window !== "undefined" && window.__tfLatestGtdData) {
-      stored = JSON.stringify(window.__tfLatestGtdData);
-    } else if (slug) {
-      stored = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
-    }
-    if (!stored) return;
-    try {
-      const parsed = JSON.parse(stored);
-      setPayload(parsed);
-      setGeoPoints(parsed.geo_points || []);
-      setAllLoaded(false);
-      setPage(0);
-      setSelectedPoint(null);
-      setClusterPoints([]);
-      setClusterInfo(null);
-      setError(null);
-
-      if (Array.isArray(parsed.geo_points) && parsed.geo_points.length > 0) {
-        setStatus(`Showing ${parsed.geo_points.length.toLocaleString()} points for query: "${parsed.query || "Chat Query"}"`);
-        return;
-      }
-
-      const filter = parsed.filter || parsed.simpleFilter || parsed.originalFilter;
-      if (filter) {
-        setStatus("Plotting query points from database...");
-        const res = await fetch(`${API_BASE}/workspace/${slug}/gtd-refetch`, {
-          method: "POST",
-          headers: { ...baseHeaders(), "Content-Type": "application/json" },
-          body: JSON.stringify({
-            mongo_filter: filter,
-            limit: MAX_REFETCH_LIMIT,
-            page_size: MAX_REFETCH_LIMIT,
-          }),
-        });
-
-        if (res.ok) {
-          const result = await res.json();
-          if (result.success) {
-            const refetchedPoints = result.geo_points || [];
-            setGeoPoints(refetchedPoints);
-            setPayload((prev) => ({
-              ...prev,
-              total_count: result.total_count || prev.total_count,
-              ...(result.total_killed != null && { total_killed: result.total_killed }),
-              ...(result.total_wounded != null && { total_wounded: result.total_wounded }),
-              geo_points: refetchedPoints,
-            }));
-            setStatus(
-              `Showing ${refetchedPoints.length.toLocaleString()} of ${(
-                result.total_count || refetchedPoints.length
-              ).toLocaleString()} points`
-            );
-          }
-        }
-      }
-    } catch (e) {
-      console.error("Failed to load active chat query:", e);
-    }
-  };
 
   const showPointPopup = (point, coordinatesOverride = null) => {
     const map = mapRef.current;
@@ -1076,8 +1015,8 @@ export default function WorkspaceGTDMap() {
         // Store PMTiles availability for later style switches
         pmtilesAvailableRef.current = pmtilesAvailable;
 
-        // Build initial style — dark by default
-        const style = buildMapStyle(true, pmtilesAvailable);
+        // Build initial style from active basemapMode (dark, satellite, or light)
+        const style = buildMapStyle(basemapMode, pmtilesAvailable);
 
         const map = new maplibregl.Map({
           container: mapContainerRef.current,
@@ -1106,7 +1045,7 @@ export default function WorkspaceGTDMap() {
           setStatus("Map ready");
 
           // Add data layers (source + clusters/points/heatmap) using shared helper
-          addGTDDataLayers(map, true);
+          addGTDDataLayers(map, isDarkMode);
 
           map.on("click", "gtd-clusters", (event) => {
             const features = map.queryRenderedFeatures(event.point, {
@@ -1222,17 +1161,21 @@ export default function WorkspaceGTDMap() {
     }
   }, [showHeatmap]);
 
-  // ─── Style switch effect: swap basemap when isDarkMode changes ───
+  // ─── Style switch effect: swap basemap when basemapMode changes ───
   // Skips the initial render (initMap handles first load). Only fires on toggle.
   useEffect(() => {
-    if (darkModeInitRef.current) {
-      darkModeInitRef.current = false;
+    if (basemapInitRef.current) {
+      basemapInitRef.current = false;
       return;
     }
     const map = mapRef.current;
     if (!map) return;
 
-    const newStyle = buildMapStyle(isDarkMode, pmtilesAvailableRef.current);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tf_preferred_basemap", basemapMode);
+    }
+
+    const newStyle = buildMapStyle(basemapMode, pmtilesAvailableRef.current);
     map.setStyle(newStyle);
 
     // After setStyle() all custom sources/layers are removed.
@@ -1267,7 +1210,7 @@ export default function WorkspaceGTDMap() {
     };
 
     map.once("styledata", () => requestAnimationFrame(reAddLayers));
-  }, [isDarkMode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [basemapMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─── Popup CSS: override MapLibre popup container colors for dark/light mode ───
   useEffect(() => {
@@ -1300,52 +1243,51 @@ export default function WorkspaceGTDMap() {
   }, [isDarkMode]);
 
   return (
-    <div className={`w-full h-screen text-theme-text-primary ${isDarkMode ? "bg-gray-900" : "bg-theme-bg-primary"}`}>
-      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
+    <div className={`w-full h-screen text-theme-text-primary ${isDarkMode ? "bg-gray-900" : "bg-slate-100"}`}>
+      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-auto">
         <Link
           to={`/workspace/${slug}`}
-          className="text-xs px-3 py-2 rounded bg-theme-bg-secondary border border-theme-sidebar-border hover:text-theme-text-primary"
+          className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border shadow-sm transition-all w-fit font-medium ${
+            isDarkMode
+              ? "bg-slate-900/90 text-slate-200 border-slate-700/80 hover:bg-slate-800 hover:text-white"
+              : "bg-white/95 text-slate-800 border-slate-200 hover:bg-slate-50 hover:text-slate-950"
+          }`}
         >
-          Back to chat
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          </svg>
+          <span>Back to chat</span>
         </Link>
-        <div className="text-xs px-3 py-2 rounded bg-theme-bg-secondary border border-theme-sidebar-border max-w-sm shadow-xl backdrop-blur-sm">
-          <div className="flex items-center justify-between gap-2 border-b border-theme-sidebar-border pb-1.5 mb-1.5">
-            <div className="font-semibold text-slate-100 flex items-center gap-1.5">
-              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-              <span>GTD Geospatial Intelligence</span>
-            </div>
-            {payload?.query && payload.query !== "Global Terrorism Database (1970–2017)" ? (
-              <button
-                onClick={loadGlobalCatalog}
-                className="text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 transition-colors"
-                title="Switch to full global database catalog (181,691 incidents)"
-              >
-                Global Radar
-              </button>
-            ) : (
-              typeof window !== "undefined" &&
-              (window.__tfLatestGtdData || localStorage.getItem(`tf:latest-gtd-data:${slug}`)) && (
-                <button
-                  onClick={loadActiveChatQuery}
-                  className="text-[10px] px-2 py-0.5 rounded bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-700/60 transition-colors"
-                  title="Switch to active chat query records"
-                >
-                  Chat Query
-                </button>
-              )
-            )}
+        <div
+          className={`text-xs px-3.5 py-2.5 rounded-lg border max-w-sm shadow-xl backdrop-blur-md transition-colors w-fit ${
+            isDarkMode
+              ? "bg-slate-900/90 border-slate-700/80 text-slate-200"
+              : "bg-white/95 border-slate-200 text-slate-800"
+          }`}
+        >
+          <div
+            className={`flex items-center gap-2 border-b pb-1.5 mb-2 ${
+              isDarkMode ? "border-slate-800" : "border-slate-200"
+            }`}
+          >
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <span className={`font-semibold tracking-wide ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}>
+              GTD Geospatial Intelligence
+            </span>
           </div>
-          <div className="text-theme-text-secondary leading-snug">{status}</div>
+          <div className={`leading-snug text-[11px] ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>
+            {status}
+          </div>
           {hasMoreData && !loadingMore && (
-            <div className="text-yellow-500">
-              <div>
+            <div className="text-amber-500 mt-1.5">
+              <div className="text-[11px] font-medium">
                 Showing {geoPoints.length.toLocaleString()} of {totalExpected.toLocaleString()} points
               </div>
               {hasFilter && (
-                <div className="flex flex-col gap-1 mt-1">
+                <div className="flex flex-col gap-1 mt-1.5">
                   <button
                     onClick={handleLoadMore}
-                    className="px-2 py-1 text-[11px] rounded bg-yellow-600 hover:bg-yellow-700 text-white"
+                    className="px-2.5 py-1 text-[11px] rounded font-medium bg-amber-600 hover:bg-amber-700 text-white transition-colors"
                   >
                     {totalExpected - geoPoints.length > LOAD_MORE_CHUNK
                       ? `Load Next ${LOAD_MORE_CHUNK.toLocaleString()} Records`
@@ -1353,7 +1295,7 @@ export default function WorkspaceGTDMap() {
                   </button>
                   <button
                     onClick={handleLoadAll}
-                    className="px-2 py-1 text-[11px] rounded bg-blue-600 hover:bg-blue-700 text-white"
+                    className="px-2.5 py-1 text-[11px] rounded font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors"
                   >
                     Load All {totalExpected.toLocaleString()} Records
                   </button>
@@ -1361,24 +1303,21 @@ export default function WorkspaceGTDMap() {
               )}
             </div>
           )}
-          {allLoaded && (
-            <div className="text-green-400 text-[11px]">
-              All {geoPoints.length.toLocaleString()} records loaded
-            </div>
-          )}
           {loadingMore && (
-            <div className="text-blue-400">
-              <div className="mb-1">{status}</div>
-              <div className="w-full h-2 bg-theme-bg-primary rounded overflow-hidden">
+            <div className="text-cyan-400 mt-1.5">
+              <div className="mb-1 text-[11px]">{status}</div>
+              <div className={`w-full h-1.5 rounded overflow-hidden ${isDarkMode ? "bg-slate-800" : "bg-slate-200"}`}>
                 <div
-                  className="h-full bg-blue-500 transition-all duration-300"
+                  className="h-full bg-cyan-500 transition-all duration-300"
                   style={{ width: `${loadMoreProgress}%` }}
                 />
               </div>
-              <div className="mt-1 text-[10px] text-theme-text-secondary">{loadMoreProgress}% complete</div>
+              <div className={`mt-1 text-[10px] ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
+                {loadMoreProgress}% complete
+              </div>
             </div>
           )}
-          {error && <div className="text-red-500">{error}</div>}
+          {error && <div className="text-rose-500 mt-1 text-[11px] font-medium">{error}</div>}
         </div>
       </div>
 
@@ -1401,12 +1340,45 @@ export default function WorkspaceGTDMap() {
             >
               {showHeatmap ? "Points" : "Heatmap"}
             </button>
-            <button
-              onClick={() => setIsDarkMode((prev) => !prev)}
-              className="px-2 py-1 rounded border border-theme-sidebar-border"
-            >
-              {isDarkMode ? "\u2600\uFE0F Light" : "\uD83C\uDF19 Dark"}
-            </button>
+            {/* Tactical 3-Way Basemap Controller */}
+            <div className="flex items-center gap-0.5 bg-slate-950/70 p-0.5 rounded border border-slate-800/80 font-mono text-[11px]">
+              <button
+                type="button"
+                onClick={() => setBasemapMode("dark")}
+                className={`px-2 py-1 rounded transition-all cursor-pointer ${
+                  basemapMode === "dark"
+                    ? "bg-slate-800 text-cyan-400 font-semibold border border-cyan-500/50 shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+                title="Tactical Dark Canvas (Esri)"
+              >
+                DARK
+              </button>
+              <button
+                type="button"
+                onClick={() => setBasemapMode("satellite")}
+                className={`px-2 py-1 rounded transition-all cursor-pointer ${
+                  basemapMode === "satellite"
+                    ? "bg-cyan-500/20 text-cyan-300 font-semibold border border-cyan-500/50 shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+                title="Satellite Orbital Recon (Esri World Imagery)"
+              >
+                SAT
+              </button>
+              <button
+                type="button"
+                onClick={() => setBasemapMode("light")}
+                className={`px-2 py-1 rounded transition-all cursor-pointer ${
+                  basemapMode === "light"
+                    ? "bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/50 shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+                title="Daylight Cartographic (OSM)"
+              >
+                OSM
+              </button>
+            </div>
             <button
               onClick={() => {
                 const map = mapRef.current;
