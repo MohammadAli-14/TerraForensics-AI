@@ -3,7 +3,7 @@ import { API_BASE, AUTH_TOKEN } from "@/utils/constants";
 
 const BUTTON_SIZE = 48;
 
-// Custom fetch that adds AnythingLLM auth headers.
+// Custom fetch that adds TerraForensics AI auth headers.
 // Page-Agent calls fetch(url, opts) internally — we intercept to add auth.
 function makeCustomFetch() {
   return async function customFetch(url, options = {}) {
