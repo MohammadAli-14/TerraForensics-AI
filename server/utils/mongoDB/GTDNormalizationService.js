@@ -100,9 +100,24 @@ class GTDNormalizationService {
       return exactMatch; // Return the properly cased DB value
     }
 
-    // 2. Starts With Check (e.g. "Bombing" -> "Bombing/Explosion")
+    // 1b. Singular Form Check (e.g. "bombings" -> "bombing")
+    const singularInput = cleanInput.replace(/e?s$/, "");
+    if (singularInput !== cleanInput && singularInput.length >= 3) {
+      const singularExact = sortedValues.find(
+        (val) => val.toLowerCase() === singularInput
+      );
+      if (singularExact) {
+        console.log(
+          `[GTD Normalizer] ${typeLabel} Singular Exact Match: "${input}" -> "${singularExact}"`
+        );
+        return singularExact;
+      }
+    }
+
+    // 2. Starts With Check (e.g. "Bombing" -> "Bombing/Explosion", or "bombings" -> "Bombing/Explosion")
     const startsWithMatch = sortedValues.find((val) =>
-      val.toLowerCase().startsWith(cleanInput)
+      val.toLowerCase().startsWith(cleanInput) ||
+      (singularInput.length >= 3 && val.toLowerCase().startsWith(singularInput))
     );
     if (startsWithMatch) {
       console.log(

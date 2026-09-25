@@ -199,6 +199,36 @@ describe('MongoDBContextExtractor', () => {
       expect(filter).toHaveProperty('attacktype1_txt');
     });
   });
+
+  describe('parseQuery edge cases', () => {
+    test('should match plural attack type "bombings" as Bombing/Explosion', async () => {
+      const result = await contextExtractor.parseQuery('Deadliest Bombings in Iraq?');
+
+      expect(result.country_txt).toBe('Iraq');
+      expect(result.attacktype1_txt).toBe('Bombing/Explosion');
+      expect(result.gname).toBeUndefined();
+    });
+
+    test('should not extract generic "group" as a terrorist group name', async () => {
+      const result = await contextExtractor.parseQuery('Deadliest Bombings in Iraq Show deadliest bombings in Iraq by group');
+
+      expect(result.country_txt).toBe('Iraq');
+      expect(result.attacktype1_txt).toBe('Bombing/Explosion');
+      expect(result.gname).toBeUndefined();
+      expect(result._potentialGroup).toBeUndefined();
+    });
+
+    test('lookupGroupInDatabase should return null for generic word "group"', async () => {
+      const result = await contextExtractor.lookupGroupInDatabase('group');
+      expect(result).toBeNull();
+    });
+
+    test('GTDNormalizer should normalize plural "bombings" to "Bombing/Explosion"', () => {
+      const normalizer = require('../../../utils/mongoDB/GTDNormalizationService');
+      const normalized = normalizer.normalizeFilter({ attacktype1_txt: 'bombings' });
+      expect(normalized.attacktype1_txt).toBe('Bombing/Explosion');
+    });
+  });
 });
 
 describe('GTD Config', () => {

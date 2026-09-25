@@ -1643,6 +1643,53 @@ class MongoDBContextExtractor {
         "\\$&"
       );
 
+      // Block generic dimension or common category words from being looked up as groups
+      const genericStopwords = [
+        "group",
+        "groups",
+        "organization",
+        "organizations",
+        "faction",
+        "factions",
+        "militant",
+        "militants",
+        "terrorist",
+        "terrorists",
+        "party",
+        "parties",
+        "country",
+        "countries",
+        "year",
+        "years",
+        "type",
+        "types",
+        "weapon",
+        "weapons",
+        "target",
+        "targets",
+        "region",
+        "regions",
+        "city",
+        "cities",
+        "state",
+        "states",
+        "province",
+        "provinces",
+        "all",
+        "any",
+        "deadliest",
+        "top",
+        "sample",
+        "list",
+        "show",
+      ];
+      if (genericStopwords.includes(normalizedKeywords)) {
+        console.log(
+          `[Query Parser] ⚠️ Skipping group lookup for generic word: "${groupKeywords}"`
+        );
+        return null;
+      }
+
       console.log(
         `[Query Parser] Looking up group: "${groupKeywords}" (normalized: "${normalizedKeywords}")`
       );
@@ -3259,6 +3306,43 @@ class MongoDBContextExtractor {
             "to",
             "have",
             "been",
+            // Aggregation and metadata dimension nouns
+            "group",
+            "groups",
+            "country",
+            "countries",
+            "year",
+            "years",
+            "type",
+            "types",
+            "target",
+            "targets",
+            "weapon",
+            "weapons",
+            "region",
+            "regions",
+            "city",
+            "cities",
+            "state",
+            "states",
+            "province",
+            "provinces",
+            "month",
+            "months",
+            "day",
+            "days",
+            "date",
+            "dates",
+            "casualty",
+            "casualties",
+            "death",
+            "deaths",
+            "fatalities",
+            "fatality",
+            "deadliest",
+            "wounded",
+            "injured",
+            "injuries",
           ];
           if (skipWords.includes(potentialGroup.toLowerCase())) continue;
 
@@ -3310,8 +3394,8 @@ class MongoDBContextExtractor {
         for (const part of parts) {
           if (ignoredParts.includes(part)) continue;
 
-          // Use Regex to ensure whole word match for short parts to avoid false positives
-          const pattern = new RegExp(`\\b${part}\\b`, "i");
+          // Use Regex to ensure whole word match (with optional plural 's' or 'es') to avoid false positives
+          const pattern = new RegExp(`\\b${part}(?:e?s)?\\b`, "i");
           if (pattern.test(query)) return item;
         }
       }
@@ -4485,7 +4569,19 @@ VERIFICATION CODE: GTD-SAMPLE-${attack.eventid}
             const top5Attacks = await attacksCollection
               .aggregate([
                 { $match: matchStage },
-                { $sort: { nkill: -1, iyear: -1 } }, // Sort by casualties then date
+                {
+                  $addFields: {
+                    numericKill: {
+                      $convert: {
+                        input: "$nkill",
+                        to: "int",
+                        onError: 0,
+                        onNull: 0,
+                      },
+                    },
+                  },
+                },
+                { $sort: { numericKill: -1, iyear: -1 } },
                 { $limit: 5 },
               ])
               .toArray();
@@ -4500,6 +4596,45 @@ VERIFICATION CODE: GTD-SAMPLE-${attack.eventid}
                 sampleListContext += `   Summary: ${c.summary ? c.summary.substring(0, 150) + "..." : "N/A"}\n`;
               });
               sampleListContext += `\n(User can see all ${count.toLocaleString()} points on the map)`;
+            }
+
+            // If user asked "by group", also provide Top 5 perpetrator groups
+            if (/\bby\s+(?:perpetrator\s+)?groups?\b/i.test(lowerQuery)) {
+              try {
+                const topGroups = await attacksCollection
+                  .aggregate([
+                    { $match: matchStage },
+                    {
+                      $group: {
+                        _id: "$gname",
+                        attackCount: { $sum: 1 },
+                        killed: {
+                          $sum: {
+                            $convert: {
+                              input: "$nkill",
+                              to: "int",
+                              onError: 0,
+                              onNull: 0,
+                            },
+                          },
+                        },
+                      },
+                    },
+                    { $sort: { killed: -1, attackCount: -1 } },
+                    { $limit: 5 },
+                  ])
+                  .toArray();
+
+                if (topGroups.length > 0) {
+                  sampleListContext += `\n\n=== DEADLIEST ATTACKS BREAKDOWN BY GROUP ===\n`;
+                  sampleListContext += `Top perpetrator groups for this query:\n`;
+                  topGroups.forEach((g, i) => {
+                    sampleListContext += `${i + 1}. ${g._id || "Unknown"}: ${g.attackCount.toLocaleString()} attacks, ${g.killed.toLocaleString()} killed\n`;
+                  });
+                }
+              } catch (grpErr) {
+                console.warn("[GTD Extractor] Failed to aggregate top groups:", grpErr.message);
+              }
             }
           }
 
