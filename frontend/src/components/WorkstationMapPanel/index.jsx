@@ -86,7 +86,20 @@ const SOVEREIGN_MAP_STYLE = {
 export default function WorkstationMapPanel({ workspace, onClose }) {
   const mapContainerRef = useRef(null);
   const mapRef = useRef(null);
-  const [activeData, setActiveData] = useState(null);
+  const [activeData, setActiveData] = useState(() => {
+    if (typeof window !== "undefined") {
+      if (window.__tfLatestGtdData) return window.__tfLatestGtdData;
+      const slug = workspace?.slug || window.location.pathname.split("/workspace/")[1]?.split("/")[0];
+      if (slug) {
+        try {
+          const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
+          if (cached) return JSON.parse(cached);
+        } catch (e) {}
+      }
+    }
+    return null;
+  });
+  const autoRefetchTrackerRef = useRef(new Set());
   const [mapMode, setMapMode] = useState("clusters"); // "clusters" | "heatmap"
   const [basemap, setBasemap] = useState("esri"); // "esri" | "carto"
   const [selectedIncident, setSelectedIncident] = useState(null);
@@ -397,6 +410,22 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
     }
   }, [activeData, mapReady, updateMapData]);
 
+  // Sync if workspace changes or if initialized after mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.__tfLatestGtdData && !activeData) {
+      setActiveData(window.__tfLatestGtdData);
+      return;
+    }
+    const slug = workspace?.slug || window.location.pathname.split("/workspace/")[1]?.split("/")[0];
+    if (slug && !activeData) {
+      try {
+        const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
+        if (cached) setActiveData(JSON.parse(cached));
+      } catch (e) {}
+    }
+  }, [workspace?.slug, activeData]);
+
   // Listen for broadcasted GTD events from chat
   useEffect(() => {
     const handleActiveGtdData = (event) => {
@@ -408,6 +437,22 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
     window.addEventListener("aegis:active-gtd-data", handleActiveGtdData);
     return () => window.removeEventListener("aegis:active-gtd-data", handleActiveGtdData);
   }, []);
+
+  // Automatic coordinate refetching for historical or storage-optimized records
+  useEffect(() => {
+    if (!activeData || loadingPoints) return;
+    const points = activeData.geo_points || activeData.geo_samples || [];
+    const hasFilter = Boolean(activeData.filter || activeData.originalFilter || activeData.simpleFilter);
+    const isMissingPoints = points.length === 0 && (activeData._storageOptimized || hasFilter || (activeData.total_count > 0));
+
+    if (isMissingPoints) {
+      const querySig = JSON.stringify(activeData.filter || activeData.originalFilter || activeData.simpleFilter || activeData.query || activeData.total_count);
+      if (!autoRefetchTrackerRef.current.has(querySig)) {
+        autoRefetchTrackerRef.current.add(querySig);
+        handleRefetchCoordinates();
+      }
+    }
+  }, [activeData, loadingPoints]);
 
   // Toggle Cluster vs Heatmap mode cleanly
   const toggleMapMode = (mode) => {
@@ -546,6 +591,18 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
         };
         setActiveData(updated);
         updateMapData(updated);
+        if (typeof window !== "undefined") {
+          window.__tfLatestGtdData = updated;
+          if (slug) {
+            try {
+              localStorage.setItem(`tf:latest-gtd-data:${slug}`, JSON.stringify({
+                ...updated,
+                geo_points: updated.geo_points.slice(0, 3000),
+                _storageOptimized: updated.geo_points.length > 3000,
+              }));
+            } catch (e) {}
+          }
+        }
       } else {
         throw new Error("No coordinates returned for this query");
       }

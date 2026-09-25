@@ -33,6 +33,23 @@ function ShowWorkspaceChat() {
     const nextVal = typeof value === "boolean" ? value : !showMap;
     setShowMap(nextVal);
     localStorage.setItem("tf_show_map", String(nextVal));
+    if (nextVal) {
+      const activeDataToDispatch = window.__tfLatestGtdData || (() => {
+        try {
+          const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
+          return cached ? JSON.parse(cached) : null;
+        } catch (e) {
+          return null;
+        }
+      })();
+      if (activeDataToDispatch) {
+        setTimeout(() => {
+          window.dispatchEvent(
+            new CustomEvent("aegis:active-gtd-data", { detail: activeDataToDispatch })
+          );
+        }, 60);
+      }
+    }
   };
 
   // Allow chat components and buttons to request canvas open/close dynamically
@@ -40,6 +57,21 @@ function ShowWorkspaceChat() {
     const handleOpenMap = () => {
       setShowMap(true);
       localStorage.setItem("tf_show_map", "true");
+      const activeDataToDispatch = window.__tfLatestGtdData || (() => {
+        try {
+          const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
+          return cached ? JSON.parse(cached) : null;
+        } catch (e) {
+          return null;
+        }
+      })();
+      if (activeDataToDispatch) {
+        setTimeout(() => {
+          window.dispatchEvent(
+            new CustomEvent("aegis:active-gtd-data", { detail: activeDataToDispatch })
+          );
+        }, 60);
+      }
     };
     const handleCloseMap = () => {
       setShowMap(false);

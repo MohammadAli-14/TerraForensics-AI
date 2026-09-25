@@ -2,6 +2,40 @@ import { THREAD_RENAME_EVENT } from "@/components/Sidebar/ActiveWorkspaces/Threa
 import { emitAssistantMessageCompleteEvent } from "@/components/contexts/TTSProvider";
 export const ABORT_STREAM_EVENT = "abort-chat-stream";
 
+/**
+ * Synchronize active GTD data to in-memory window cache, safe localStorage,
+ * and dispatch the 'aegis:active-gtd-data' event so map components immediately render records.
+ */
+export function syncActiveGTDData(gtdData) {
+  if (!gtdData) return;
+  if (typeof window === "undefined") return;
+
+  // 1. In-memory window cache (holds full data without quota restrictions)
+  window.__tfLatestGtdData = gtdData;
+
+  // 2. Safe localStorage cache (capped to prevent QuotaExceededError)
+  try {
+    const slug = window.location.pathname.split("/workspace/")[1]?.split("/")[0];
+    if (slug) {
+      const storageSafe = {
+        ...gtdData,
+        geo_points: Array.isArray(gtdData.geo_points) && gtdData.geo_points.length <= 3000
+          ? gtdData.geo_points
+          : (gtdData.geo_points_sample || gtdData.geo_points?.slice(0, 500) || []),
+        _storageOptimized: !Array.isArray(gtdData.geo_points) || gtdData.geo_points.length > 3000,
+      };
+      localStorage.setItem(`tf:latest-gtd-data:${slug}`, JSON.stringify(storageSafe));
+    }
+  } catch (e) {
+    console.warn("[syncActiveGTDData] LocalStorage cache write failed:", e);
+  }
+
+  // 3. Dispatch broadcast event for any listening map panels
+  window.dispatchEvent(
+    new CustomEvent("aegis:active-gtd-data", { detail: gtdData })
+  );
+}
+
 // For handling of chat responses in the frontend by their various types.
 export default function handleChat(
   chatResult,
@@ -91,6 +125,9 @@ export default function handleChat(
       llmOutput,
       server_payload,
     });
+    if (gtdData) {
+      syncActiveGTDData(gtdData);
+    }
     emitAssistantMessageCompleteEvent(chatId);
   } else if (
     type === "textResponseChunk" ||
@@ -115,6 +152,10 @@ export default function handleChat(
           llmOutput,
           server_payload,
         };
+
+        if (gtdData) {
+          syncActiveGTDData(gtdData);
+        }
 
         _chatHistory[chatIdx - 1] = { ..._chatHistory[chatIdx - 1], chatId }; // update prompt with chatID
 

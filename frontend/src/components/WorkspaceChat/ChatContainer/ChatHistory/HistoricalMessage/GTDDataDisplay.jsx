@@ -3,6 +3,7 @@ import { CaretDown, CaretUp, CaretLeft, CaretRight, MapPin, Database, Globe, Dow
 import { v4 as uuidv4 } from "uuid";
 import { API_BASE } from "@/utils/constants";
 import { baseHeaders } from "@/utils/request";
+import { syncActiveGTDData } from "@/utils/chat";
 
 const GEO_POINTS_PAGE_SIZE = 50;
 const LOAD_ALL_SERVER_PAGE_SIZE = 25000; // records per server round-trip when loading all
@@ -38,12 +39,10 @@ export default function GTDDataDisplay({ gtdData: gtdDataProp, llmOutput }) {
   // Use refetched data if available, otherwise use the original prop
   const gtdData = refetchedData || gtdDataProp;
 
-  // Broadcast active GTD query data to the synchronized Workstation Map Panel
+  // Broadcast and cache active GTD query data to the synchronized Workstation Map Panel
   useEffect(() => {
-    if (gtdData && (gtdData.geo_points?.length > 0 || gtdData.total_count > 0)) {
-      window.dispatchEvent(
-        new CustomEvent("aegis:active-gtd-data", { detail: gtdData })
-      );
+    if (gtdData && (gtdData.geo_points?.length > 0 || gtdData.total_count > 0 || gtdData.filter)) {
+      syncActiveGTDData(gtdData);
     }
   }, [gtdData]);
 
@@ -202,10 +201,21 @@ export default function GTDDataDisplay({ gtdData: gtdDataProp, llmOutput }) {
 
   // Open the synchronized right-pane TerraForensics Geospatial Canvas
   const handleOpenCanvas = useCallback(() => {
+    if (!gtdData) return;
+    syncActiveGTDData(gtdData);
     window.dispatchEvent(new CustomEvent("tf:open-map"));
-    window.dispatchEvent(
-      new CustomEvent("aegis:active-gtd-data", { detail: gtdData })
-    );
+
+    // Staggered retries to guarantee delivery during React component mount cycle
+    setTimeout(() => {
+      window.dispatchEvent(
+        new CustomEvent("aegis:active-gtd-data", { detail: gtdData })
+      );
+    }, 100);
+    setTimeout(() => {
+      window.dispatchEvent(
+        new CustomEvent("aegis:active-gtd-data", { detail: gtdData })
+      );
+    }, 300);
   }, [gtdData]);
 
   // Copy current view to clipboard
@@ -254,13 +264,15 @@ export default function GTDDataDisplay({ gtdData: gtdDataProp, llmOutput }) {
       const result = await res.json();
       if (result.success && result.geo_points?.length > 0) {
         // Create a new merged object so React detects state change and re-renders
-        setRefetchedData({
+        const updated = {
           ...sourceData,
           geo_points: result.geo_points,
           _storageOptimized: false,
           geo_points_count: result.geo_points.length,
           total_count: result.total_count || sourceData.total_count,
-        });
+        };
+        setRefetchedData(updated);
+        syncActiveGTDData(updated);
         setGeoPage(0);
         // If all points were fetched in this single request, mark as all loaded
         if (!result.has_more) setAllPointsLoaded(true);
@@ -354,13 +366,15 @@ export default function GTDDataDisplay({ gtdData: gtdDataProp, llmOutput }) {
       if (abortController.signal.aborted) return;
 
       // Update component data with all fetched points
-      setRefetchedData({
+      const allLoadedData = {
         ...sourceData,
         geo_points: allPoints,
         _storageOptimized: false,
         geo_points_count: allPoints.length,
         total_count: totalCount,
-      });
+      };
+      setRefetchedData(allLoadedData);
+      syncActiveGTDData(allLoadedData);
       setGeoPage(0);
       setAllPointsLoaded(true);
       setLoadAllProgress(100);

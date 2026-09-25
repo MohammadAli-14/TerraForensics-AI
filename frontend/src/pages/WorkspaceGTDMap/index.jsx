@@ -392,61 +392,85 @@ export default function WorkspaceGTDMap() {
     refetchAbortRef.current = abortController;
 
     const loadMapData = async () => {
-      // 1. If key is present in localStorage, use specific query results
+      // 1. If key is present in localStorage, or active workspace chat data exists
+      let stored = null;
+      let isChatQuery = false;
+
       if (key) {
-        const stored = localStorage.getItem(`gtd-map:${key}`);
-        if (stored) {
-          try {
-            const parsed = JSON.parse(stored);
-            setPayload(parsed);
-            setGeoPoints(parsed.geo_points || []);
-            setAllLoaded(false);
-            setPage(0);
-            setSelectedPoint(null);
-            setClusterPoints([]);
-            setClusterInfo(null);
-            setError(null);
+        stored = localStorage.getItem(`gtd-map:${key}`);
+        isChatQuery = true;
+      } else if (slug) {
+        if (typeof window !== "undefined" && window.__tfLatestGtdData) {
+          stored = JSON.stringify(window.__tfLatestGtdData);
+          isChatQuery = true;
+        } else {
+          const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
+          if (cached) {
+            stored = cached;
+            isChatQuery = true;
+          }
+        }
+      }
 
-            if (Array.isArray(parsed.geo_points) && parsed.geo_points.length > 0) {
-              setStatus(`Showing ${parsed.geo_points.length.toLocaleString()} points`);
-              return;
-            }
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setPayload(parsed);
+          setGeoPoints(parsed.geo_points || []);
+          setAllLoaded(false);
+          setPage(0);
+          setSelectedPoint(null);
+          setClusterPoints([]);
+          setClusterInfo(null);
+          setError(null);
 
-            const filter = parsed.filter || parsed.simpleFilter;
-            if (filter) {
-              setStatus("Re-fetching query points...");
-              const res = await fetch(`${API_BASE}/workspace/${slug}/gtd-refetch`, {
-                method: "POST",
-                headers: { ...baseHeaders(), "Content-Type": "application/json" },
-                body: JSON.stringify({
-                  mongo_filter: filter,
-                  limit: MAX_REFETCH_LIMIT,
-                  page_size: MAX_REFETCH_LIMIT,
-                }),
-                signal: abortController.signal,
-              });
+          if (Array.isArray(parsed.geo_points) && parsed.geo_points.length > 0) {
+            setStatus(
+              isChatQuery && parsed.query
+                ? `Showing ${parsed.geo_points.length.toLocaleString()} points for query: "${parsed.query}"`
+                : `Showing ${parsed.geo_points.length.toLocaleString()} points`
+            );
+            return;
+          }
 
-              if (cancelled) return;
-              if (res.ok) {
-                const result = await res.json();
-                if (result.success) {
-                  const refetchedPoints = result.geo_points || [];
-                  setGeoPoints(refetchedPoints);
-                  setPayload(prev => ({
-                    ...prev,
-                    total_count: result.total_count || prev.total_count,
-                    ...(result.total_killed != null && { total_killed: result.total_killed }),
-                    ...(result.total_wounded != null && { total_wounded: result.total_wounded }),
-                    geo_points: refetchedPoints,
-                  }));
-                  setStatus(`Showing ${refetchedPoints.length.toLocaleString()} of ${(result.total_count || refetchedPoints.length).toLocaleString()} points`);
-                  return;
-                }
+          const filter = parsed.filter || parsed.simpleFilter || parsed.originalFilter;
+          if (filter) {
+            setStatus("Plotting query points from database...");
+            const res = await fetch(`${API_BASE}/workspace/${slug}/gtd-refetch`, {
+              method: "POST",
+              headers: { ...baseHeaders(), "Content-Type": "application/json" },
+              body: JSON.stringify({
+                mongo_filter: filter,
+                limit: MAX_REFETCH_LIMIT,
+                page_size: MAX_REFETCH_LIMIT,
+              }),
+              signal: abortController.signal,
+            });
+
+            if (cancelled) return;
+            if (res.ok) {
+              const result = await res.json();
+              if (result.success) {
+                const refetchedPoints = result.geo_points || [];
+                setGeoPoints(refetchedPoints);
+                setPayload((prev) => ({
+                  ...prev,
+                  total_count: result.total_count || prev.total_count,
+                  ...(result.total_killed != null && { total_killed: result.total_killed }),
+                  ...(result.total_wounded != null && { total_wounded: result.total_wounded }),
+                  geo_points: refetchedPoints,
+                }));
+                setStatus(
+                  `Showing ${refetchedPoints.length.toLocaleString()} of ${(
+                    result.total_count || refetchedPoints.length
+                  ).toLocaleString()} points`
+                );
+                return;
               }
             }
-          } catch (e) {
-            console.warn("Failed to parse stored chat key, falling back to global dataset:", e);
           }
+        } catch (e) {
+          console.warn("Failed to parse stored chat key, falling back to global dataset:", e);
         }
       }
 
@@ -508,6 +532,114 @@ export default function WorkspaceGTDMap() {
       abortController.abort();
     };
   }, [key, slug]);
+
+  const loadGlobalCatalog = async () => {
+    try {
+      setStatus("Loading global GTD dataset (1970–2017)...");
+      setError(null);
+
+      const res = await fetch(`${API_BASE}/gtd/public/pipeline`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          limit: 5000,
+          skip: 0,
+          includeGeoJSON: true,
+          includeClusters: true,
+        }),
+      });
+
+      if (!res.ok) throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      const result = await res.json();
+      if (!result.success) throw new Error(result.error || "Failed to load GTD database");
+
+      const points = result.geo_points || [];
+      const total = result.total_count || 181691;
+      const totalKilled = points.reduce((sum, p) => sum + (Number(p.nkill) || 0), 0);
+      const totalWounded = points.reduce((sum, p) => sum + (Number(p.nwound) || 0), 0);
+
+      setPayload({
+        total_count: total,
+        total_killed: result.total_killed || totalKilled,
+        total_wounded: result.total_wounded || totalWounded,
+        query: "Global Terrorism Database (1970–2017)",
+        geo_points: points,
+      });
+      setGeoPoints(points);
+      setAllLoaded(false);
+      setPage(0);
+      setSelectedPoint(null);
+      setClusterPoints([]);
+      setClusterInfo(null);
+      setStatus(`Showing ${points.length.toLocaleString()} of ${total.toLocaleString()} global incident records`);
+    } catch (fetchError) {
+      console.error("Global GTD load failed:", fetchError);
+      setError("Failed to load GTD map data. Ensure MongoDB is connected.");
+      setStatus("Failed to load data");
+    }
+  };
+
+  const loadActiveChatQuery = async () => {
+    let stored = null;
+    if (typeof window !== "undefined" && window.__tfLatestGtdData) {
+      stored = JSON.stringify(window.__tfLatestGtdData);
+    } else if (slug) {
+      stored = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
+    }
+    if (!stored) return;
+    try {
+      const parsed = JSON.parse(stored);
+      setPayload(parsed);
+      setGeoPoints(parsed.geo_points || []);
+      setAllLoaded(false);
+      setPage(0);
+      setSelectedPoint(null);
+      setClusterPoints([]);
+      setClusterInfo(null);
+      setError(null);
+
+      if (Array.isArray(parsed.geo_points) && parsed.geo_points.length > 0) {
+        setStatus(`Showing ${parsed.geo_points.length.toLocaleString()} points for query: "${parsed.query || "Chat Query"}"`);
+        return;
+      }
+
+      const filter = parsed.filter || parsed.simpleFilter || parsed.originalFilter;
+      if (filter) {
+        setStatus("Plotting query points from database...");
+        const res = await fetch(`${API_BASE}/workspace/${slug}/gtd-refetch`, {
+          method: "POST",
+          headers: { ...baseHeaders(), "Content-Type": "application/json" },
+          body: JSON.stringify({
+            mongo_filter: filter,
+            limit: MAX_REFETCH_LIMIT,
+            page_size: MAX_REFETCH_LIMIT,
+          }),
+        });
+
+        if (res.ok) {
+          const result = await res.json();
+          if (result.success) {
+            const refetchedPoints = result.geo_points || [];
+            setGeoPoints(refetchedPoints);
+            setPayload((prev) => ({
+              ...prev,
+              total_count: result.total_count || prev.total_count,
+              ...(result.total_killed != null && { total_killed: result.total_killed }),
+              ...(result.total_wounded != null && { total_wounded: result.total_wounded }),
+              geo_points: refetchedPoints,
+            }));
+            setStatus(
+              `Showing ${refetchedPoints.length.toLocaleString()} of ${(
+                result.total_count || refetchedPoints.length
+              ).toLocaleString()} points`
+            );
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Failed to load active chat query:", e);
+    }
+  };
 
   const showPointPopup = (point, coordinatesOverride = null) => {
     const map = mapRef.current;
@@ -1176,9 +1308,34 @@ export default function WorkspaceGTDMap() {
         >
           Back to chat
         </Link>
-        <div className="text-xs px-3 py-2 rounded bg-theme-bg-secondary border border-theme-sidebar-border">
-          <div className="font-semibold">GTD Map</div>
-          <div className="text-theme-text-secondary">{status}</div>
+        <div className="text-xs px-3 py-2 rounded bg-theme-bg-secondary border border-theme-sidebar-border max-w-sm shadow-xl backdrop-blur-sm">
+          <div className="flex items-center justify-between gap-2 border-b border-theme-sidebar-border pb-1.5 mb-1.5">
+            <div className="font-semibold text-slate-100 flex items-center gap-1.5">
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+              <span>GTD Geospatial Intelligence</span>
+            </div>
+            {payload?.query && payload.query !== "Global Terrorism Database (1970–2017)" ? (
+              <button
+                onClick={loadGlobalCatalog}
+                className="text-[10px] px-2 py-0.5 rounded bg-slate-800 hover:bg-slate-700 text-cyan-300 border border-slate-700 transition-colors"
+                title="Switch to full global database catalog (181,691 incidents)"
+              >
+                Global Radar
+              </button>
+            ) : (
+              typeof window !== "undefined" &&
+              (window.__tfLatestGtdData || localStorage.getItem(`tf:latest-gtd-data:${slug}`)) && (
+                <button
+                  onClick={loadActiveChatQuery}
+                  className="text-[10px] px-2 py-0.5 rounded bg-cyan-950/60 hover:bg-cyan-900/80 text-cyan-300 border border-cyan-700/60 transition-colors"
+                  title="Switch to active chat query records"
+                >
+                  Chat Query
+                </button>
+              )
+            )}
+          </div>
+          <div className="text-theme-text-secondary leading-snug">{status}</div>
           {hasMoreData && !loadingMore && (
             <div className="text-yellow-500">
               <div>
