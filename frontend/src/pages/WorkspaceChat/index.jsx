@@ -123,13 +123,17 @@ function ShowWorkspaceChat() {
             showMap ? "w-full lg:w-1/2 border-r border-slate-800" : "w-full"
           }`}
         >
+          <div
+            id="workstation-user-button-portal"
+            className="absolute top-4 right-5 z-40 pointer-events-auto"
+          />
           <WorkspaceChatContainer loading={loading} workspace={workspace} />
 
           {/* Floating button to reopen canvas when closed */}
           {!showMap && !isMobile && (
             <button
               onClick={() => handleToggleMap(true)}
-              className="absolute top-4 right-6 z-30 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0F172A]/90 hover:bg-[#1E293B] text-cyan-400 hover:text-cyan-300 border border-cyan-500/40 hover:border-cyan-400 shadow-xl backdrop-blur text-xs font-mono transition-all group"
+              className="absolute top-4 right-[4.25rem] z-30 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0F172A]/90 hover:bg-[#1E293B] text-cyan-400 hover:text-cyan-300 border border-cyan-500/40 hover:border-cyan-400 shadow-xl backdrop-blur text-xs font-mono transition-all group"
               title="Open TerraForensics Geospatial Canvas"
             >
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />

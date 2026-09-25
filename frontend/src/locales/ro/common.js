@@ -8,7 +8,7 @@ const TRANSLATIONS = {
     llm: {
       title: "Preferința LLM",
       description:
-        "VertexAI poate funcționa cu mai mulți furnizori LLM. Acesta va fi serviciul care gestionează conversațiile.",
+        "TerraForensics AI poate funcționa cu mai mulți furnizori LLM. Acesta va fi serviciul care gestionează conversațiile.",
     },
     userSetup: {
       title: "Configurare Utilizator",
@@ -37,15 +37,15 @@ const TRANSLATIONS = {
         "Aceste setări pot fi reconfigurate oricând în setările aplicației.",
     },
     survey: {
-      title: "Bun venit la VertexAI",
+      title: "Bun venit la TerraForensics AI",
       description:
-        "Ajută-ne să facem VertexAI potrivit pentru nevoile tale. Opțional.",
+        "Ajută-ne să facem TerraForensics AI potrivit pentru nevoile tale. Opțional.",
       email: "Care este adresa ta de email?",
-      useCase: "Pentru ce vei folosi VertexAI?",
+      useCase: "Pentru ce vei folosi TerraForensics AI?",
       useCaseWork: "Pentru muncă",
       useCasePersonal: "Pentru uz personal",
       useCaseOther: "Altele",
-      comment: "De unde ai aflat despre VertexAI?",
+      comment: "De unde ai aflat despre TerraForensics AI?",
       commentPlaceholder:
         "Reddit, Twitter, GitHub, YouTube, etc. - Spune-ne cum ne-ai găsit!",
       skip: "Sari peste sondaj",
@@ -54,7 +54,7 @@ const TRANSLATIONS = {
     workspace: {
       title: "Creează primul tău spațiu de lucru",
       description:
-        "Creează primul tău spațiu de lucru și începe să folosești VertexAI.",
+        "Creează primul tău spațiu de lucru și începe să folosești TerraForensics AI.",
     },
   },
   common: {
@@ -133,7 +133,7 @@ const TRANSLATIONS = {
     checklist: {
       title: "Început rapid",
       tasksLeft: "sarcini rămase",
-      completed: "Ești pe drumul să devii expert VertexAI!",
+      completed: "Ești pe drumul să devii expert TerraForensics AI!",
       dismiss: "închide",
       tasks: {
         create_workspace: {
@@ -239,7 +239,7 @@ const TRANSLATIONS = {
       add: "Adaugă mesaj nou",
       save: "Salvează mesajele",
       heading: "Explică-mi",
-      body: "beneficiile VertexAI",
+      body: "beneficiile TerraForensics AI",
     },
     pfp: {
       title: "Imagine profil asistent",
@@ -334,7 +334,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Baza de date vectorială",
     description:
-      "Acestea sunt credențialele și setările pentru modul în care funcționează instanța ta VertexAI. Este important să fie corecte și actuale.",
+      "Acestea sunt credențialele și setările pentru modul în care funcționează instanța ta TerraForensics AI. Este important să fie corecte și actuale.",
     provider: {
       title: "Furnizor baza de date vectorială",
       description: "Nu este necesară configurarea pentru LanceDB.",
@@ -379,7 +379,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Confidențialitate & Gestionarea datelor",
     description:
-      "Aceasta este configurația ta pentru modul în care furnizorii terți conectați și VertexAI gestionează datele tale.",
+      "Aceasta este configurația ta pentru modul în care furnizorii terți conectați și TerraForensics AI gestionează datele tale.",
     llm: "Selecția LLM",
     embedding: "Preferința embedding",
     vector: "Baza de date vectorială",
@@ -562,22 +562,22 @@ const TRANSLATIONS = {
       fetching: "Se preia...",
       "fetch-website": "Preluare site web",
       "privacy-notice":
-        "Aceste fișiere vor fi încărcate în procesorul de documente care rulează pe această instanță VertexAI. Aceste fișiere nu sunt trimise sau partajate cu o terță parte.",
+        "Aceste fișiere vor fi încărcate în procesorul de documente care rulează pe această instanță TerraForensics AI. Aceste fișiere nu sunt trimise sau partajate cu o terță parte.",
     },
     pinning: {
       what_pinning: "Ce este fixarea documentelor?",
       pin_explained_block1:
-        "Când **fixezi** un document în VertexAI, vom injecta întregul conținut al documentului în fereastra de prompt pentru ca LLM-ul tău să-l înțeleagă pe deplin.",
+        "Când **fixezi** un document în TerraForensics AI, vom injecta întregul conținut al documentului în fereastra de prompt pentru ca LLM-ul tău să-l înțeleagă pe deplin.",
       pin_explained_block2:
         "Acest lucru funcționează cel mai bine cu **modele cu context mare** sau fișiere mici care sunt critice pentru baza sa de cunoștințe.",
       pin_explained_block3:
-        "Dacă nu obții răspunsurile dorite de la VertexAI în mod implicit, atunci fixarea este o modalitate excelentă de a obține răspunsuri de calitate superioară dintr-un clic.",
+        "Dacă nu obții răspunsurile dorite de la TerraForensics AI în mod implicit, atunci fixarea este o modalitate excelentă de a obține răspunsuri de calitate superioară dintr-un clic.",
       accept: "Ok, am înțeles",
     },
     watching: {
       what_watching: "Ce face vizualizarea unui document?",
       watch_explained_block1:
-        "Când **urmărești** un document în VertexAI, vom sincroniza *automat* conținutul documentului tău din sursa originală la intervale regulate. Acest lucru va actualiza automat conținutul în fiecare spațiu de lucru unde acest fișier este gestionat.",
+        "Când **urmărești** un document în TerraForensics AI, vom sincroniza *automat* conținutul documentului tău din sursa originală la intervale regulate. Acest lucru va actualiza automat conținutul în fiecare spațiu de lucru unde acest fișier este gestionat.",
       watch_explained_block2:
         "Această funcție suportă în prezent conținutul online și nu va fi disponibilă pentru documentele încărcate manual.",
       watch_explained_block3_start:
@@ -772,7 +772,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "Autentificare necesară",
           description:
-            "Trebuie să te autentifici cu VertexAI Community Hub înainte de a publica elemente.",
+            "Trebuie să te autentifici cu TerraForensics AI Community Hub înainte de a publica elemente.",
           button: "Conectează-te la Community Hub",
         },
       },
@@ -879,16 +879,16 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "Preferințe UI",
-      description: "Setează preferințele UI pentru VertexAI.",
+      description: "Setează preferințele UI pentru TerraForensics AI.",
     },
     branding: {
       title: "Branding & White-labeling",
       description:
-        "Personalizează-ți instanța VertexAI cu branding personalizat.",
+        "Personalizează-ți instanța TerraForensics AI cu branding personalizat.",
     },
     chat: {
       title: "Chat",
-      description: "Setează preferințele de chat pentru VertexAI.",
+      description: "Setează preferințele de chat pentru TerraForensics AI.",
       auto_submit: {
         title: "Trimite automat intrarea vocală",
         description:
@@ -932,7 +932,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "Limba de afișare",
         description:
-          "Selectează limba preferată pentru a reda interfața VertexAI - atunci când traducerile sunt disponibile.",
+          "Selectează limba preferată pentru a reda interfața TerraForensics AI - atunci când traducerile sunt disponibile.",
       },
       logo: {
         title: "Logo brand",
@@ -951,7 +951,7 @@ const TRANSLATIONS = {
         system: "sistem",
         user: "utilizator",
         message: "mesaj",
-        assistant: "Asistent Chat VertexAI",
+        assistant: "Asistent Chat TerraForensics AI",
         "double-click": "Dublu clic pentru a edita...",
         save: "Salvează mesajele",
       },
@@ -986,7 +986,7 @@ const TRANSLATIONS = {
   api: {
     title: "Chei API",
     description:
-      "Cheile API permit deținătorului să acceseze și să gestioneze programatic această instanță VertexAI.",
+      "Cheile API permit deținătorului să acceseze și să gestioneze programatic această instanță TerraForensics AI.",
     link: "Citește documentația API",
     generate: "Generează o nouă cheie API",
     table: {
@@ -998,7 +998,7 @@ const TRANSLATIONS = {
   llm: {
     title: "Preferința LLM",
     description:
-      "Acestea sunt credențialele și setările pentru furnizorul tău preferat de chat și embedding LLM. Este important ca aceste chei să fie actuale și corecte, altfel VertexAI nu va funcționa corect.",
+      "Acestea sunt credențialele și setările pentru furnizorul tău preferat de chat și embedding LLM. Este important ca aceste chei să fie actuale și corecte, altfel TerraForensics AI nu va funcționa corect.",
     provider: "Furnizor LLM",
     providers: {
       azure_openai: {
@@ -1018,7 +1018,7 @@ const TRANSLATIONS = {
       "Acestea sunt credențialele și setările pentru furnizorul tău preferat de model de transcriere. Este important ca aceste chei să fie actuale și corecte, altfel fișierele media și audio nu vor fi transcrise.",
     provider: "Furnizor transcriere",
     "warn-start":
-      "Utilizarea modelului local Whisper pe mașini cu RAM sau CPU limitat poate bloca VertexAI la procesarea fișierelor media.",
+      "Utilizarea modelului local Whisper pe mașini cu RAM sau CPU limitat poate bloca TerraForensics AI la procesarea fișierelor media.",
     "warn-recommend":
       "Recomandăm cel puțin 2GB de RAM și încărcarea fișierelor <10Mb.",
     "warn-end": "Modelul încorporat se va descărca automat la prima utilizare.",
@@ -1028,7 +1028,7 @@ const TRANSLATIONS = {
     "desc-start":
       "Atunci când utilizați un LLM care nu suportă nativ un motor de embedding - s-ar putea să fie necesar să specificați credențiale suplimentare pentru embedding text.",
     "desc-end":
-      "Embedding-ul este procesul de transformare a textului în vectori. Aceste credențiale sunt necesare pentru a transforma fișierele și prompturile dvs. într-un format pe care VertexAI îl poate utiliza pentru procesare.",
+      "Embedding-ul este procesul de transformare a textului în vectori. Aceste credențiale sunt necesare pentru a transforma fișierele și prompturile dvs. într-un format pe care TerraForensics AI îl poate utiliza pentru procesare.",
     provider: {
       title: "Furnizor embedding",
     },
@@ -1069,7 +1069,7 @@ const TRANSLATIONS = {
     password: {
       title: "Protecție prin parolă",
       description:
-        "Protejează instanța VertexAI cu o parolă. Dacă o uiți, nu există metode de recuperare, deci asigură-te că o salvezi.",
+        "Protejează instanța TerraForensics AI cu o parolă. Dacă o uiți, nu există metode de recuperare, deci asigură-te că o salvezi.",
       "password-label": "Parola instanței",
     },
   },

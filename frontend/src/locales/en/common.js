@@ -7,7 +7,7 @@ const TRANSLATIONS = {
     llm: {
       title: "LLM Preference",
       description:
-        "VertexAI can work with many LLM providers. This will be the service which handles chatting.",
+        "TerraForensics AI can work with many LLM providers. This will be the service which handles chatting.",
     },
     userSetup: {
       title: "User Setup",
@@ -37,15 +37,15 @@ const TRANSLATIONS = {
         "These settings can be reconfigured at any time in the settings.",
     },
     survey: {
-      title: "Welcome to VertexAI",
-      description: "Help us make VertexAI built for your needs. Optional.",
+      title: "Welcome to TerraForensics AI",
+      description: "Help us make TerraForensics AI built for your needs. Optional.",
 
       email: "What's your email?",
-      useCase: "What will you use VertexAI for?",
+      useCase: "What will you use TerraForensics AI for?",
       useCaseWork: "For work",
       useCasePersonal: "For personal use",
       useCaseOther: "Other",
-      comment: "How did you hear about VertexAI?",
+      comment: "How did you hear about TerraForensics AI?",
       commentPlaceholder:
         "Reddit, Twitter, GitHub, YouTube, etc. - Let us know how you found us!",
       skip: "Skip Survey",
@@ -54,7 +54,7 @@ const TRANSLATIONS = {
     workspace: {
       title: "Create your first workspace",
       description:
-        "Create your first workspace and get started with VertexAI.",
+        "Create your first workspace and get started with TerraForensics AI.",
     },
   },
   common: {
@@ -239,7 +239,7 @@ const TRANSLATIONS = {
       add: "Add new message",
       save: "Save Messages",
       heading: "Explain to me",
-      body: "the benefits of VertexAI",
+      body: "the benefits of TerraForensics AI",
     },
     pfp: {
       title: "Assistant Profile Image",
@@ -441,16 +441,16 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "UI Preferences",
-      description: "Set your UI preferences for VertexAI.",
+      description: "Set your UI preferences for TerraForensics AI.",
     },
     branding: {
       title: "Branding & Whitelabeling",
       description:
-        "White-label your VertexAI instance with custom branding.",
+        "White-label your TerraForensics AI instance with custom branding.",
     },
     chat: {
       title: "Chat",
-      description: "Set your chat preferences for VertexAI.",
+      description: "Set your chat preferences for TerraForensics AI.",
       auto_submit: {
         title: "Auto-Submit Speech Input",
         description:
@@ -492,7 +492,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "Display Language",
         description:
-          "Select the preferred language to render VertexAI's UI in - when translations are available.",
+          "Select the preferred language to render TerraForensics AI's UI in - when translations are available.",
       },
       logo: {
         title: "Brand Logo",
@@ -510,7 +510,7 @@ const TRANSLATIONS = {
         system: "system",
         user: "user",
         message: "message",
-        assistant: "VertexAI Chat Assistant",
+        assistant: "TerraForensics AI Chat Assistant",
         "double-click": "Double click to edit...",
         save: "Save Messages",
       },
@@ -547,7 +547,7 @@ const TRANSLATIONS = {
   api: {
     title: "API Keys",
     description:
-      "API keys allow the holder to programmatically access and manage this VertexAI instance.",
+      "API keys allow the holder to programmatically access and manage this TerraForensics AI instance.",
     link: "Read the API documentation",
     generate: "Generate New API Key",
     table: {
@@ -560,7 +560,7 @@ const TRANSLATIONS = {
   llm: {
     title: "LLM Preference",
     description:
-      "These are the credentials and settings for your preferred LLM chat & embedding provider. It is important that these keys are current and correct, or else VertexAI will not function properly.",
+      "These are the credentials and settings for your preferred LLM chat & embedding provider. It is important that these keys are current and correct, or else TerraForensics AI will not function properly.",
     provider: "LLM Provider",
     providers: {
       azure_openai: {
@@ -581,7 +581,7 @@ const TRANSLATIONS = {
       "These are the credentials and settings for your preferred transcription model provider. Its important these keys are current and correct or else media files and audio will not transcribe.",
     provider: "Transcription Provider",
     "warn-start":
-      "Using the local whisper model on machines with limited RAM or CPU can stall VertexAI when processing media files.",
+      "Using the local whisper model on machines with limited RAM or CPU can stall TerraForensics AI when processing media files.",
     "warn-recommend":
       "We recommend at least 2GB of RAM and upload files <10Mb.",
     "warn-end":
@@ -593,7 +593,7 @@ const TRANSLATIONS = {
     "desc-start":
       "When using an LLM that does not natively support an embedding engine - you may need to additionally specify credentials to for embedding text.",
     "desc-end":
-      "Embedding is the process of turning text into vectors. These credentials are required to turn your files and prompts into a format which VertexAI can use to process.",
+      "Embedding is the process of turning text into vectors. These credentials are required to turn your files and prompts into a format which TerraForensics AI can use to process.",
     provider: {
       title: "Embedding Provider",
     },
@@ -623,7 +623,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Vector Database",
     description:
-      "These are the credentials and settings for how your VertexAI instance will function. It's important these keys are current and correct.",
+      "These are the credentials and settings for how your TerraForensics AI instance will function. It's important these keys are current and correct.",
     provider: {
       title: "Vector Database Provider",
       description: "There is no configuration needed for LanceDB.",
@@ -676,7 +676,7 @@ const TRANSLATIONS = {
     password: {
       title: "Password Protection",
       description:
-        "Protect your VertexAI instance with a password. If you forget this there is no recovery method so ensure you save this password.",
+        "Protect your TerraForensics AI instance with a password. If you forget this there is no recovery method so ensure you save this password.",
       "password-label": "Instance Password",
     },
   },
@@ -698,7 +698,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Privacy & Data-Handling",
     description:
-      "This is your configuration for how connected third party providers and VertexAI handle your data.",
+      "This is your configuration for how connected third party providers and TerraForensics AI handle your data.",
     llm: "LLM Selection",
     embedding: "Embedding Preference",
     vector: "Vector Database",
@@ -880,22 +880,22 @@ const TRANSLATIONS = {
       fetching: "Fetching...",
       "fetch-website": "Fetch website",
       "privacy-notice":
-        "These files will be uploaded to the document processor running on this VertexAI instance. These files are not sent or shared with a third party.",
+        "These files will be uploaded to the document processor running on this TerraForensics AI instance. These files are not sent or shared with a third party.",
     },
     pinning: {
       what_pinning: "What is document pinning?",
       pin_explained_block1:
-        "When you <b>pin</b> a document in VertexAI we will inject the entire content of the document into your prompt window for your LLM to fully comprehend.",
+        "When you <b>pin</b> a document in TerraForensics AI we will inject the entire content of the document into your prompt window for your LLM to fully comprehend.",
       pin_explained_block2:
         "This works best with <b>large-context models</b> or small files that are critical to its knowledge-base.",
       pin_explained_block3:
-        "If you are not getting the answers you desire from VertexAI by default then pinning is a great way to get higher quality answers in a click.",
+        "If you are not getting the answers you desire from TerraForensics AI by default then pinning is a great way to get higher quality answers in a click.",
       accept: "Okay, got it",
     },
     watching: {
       what_watching: "What does watching a document do?",
       watch_explained_block1:
-        "When you <b>watch</b> a document in VertexAI we will <i>automatically</i> sync your document content from it's original source on regular intervals. This will automatically update the content in every workspace where this file is managed.",
+        "When you <b>watch</b> a document in TerraForensics AI we will <i>automatically</i> sync your document content from it's original source on regular intervals. This will automatically update the content in every workspace where this file is managed.",
       watch_explained_block2:
         "This feature currently supports online-based content and will not be available for manually uploaded documents.",
       watch_explained_block3_start:
@@ -1092,7 +1092,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "Authentication Required",
           description:
-            "You need to authenticate with the VertexAI Community Hub before publishing items.",
+            "You need to authenticate with the TerraForensics AI Community Hub before publishing items.",
           button: "Connect to Community Hub",
         },
       },

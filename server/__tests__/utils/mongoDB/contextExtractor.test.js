@@ -202,7 +202,7 @@ describe('MongoDBContextExtractor', () => {
 
   describe('parseQuery edge cases', () => {
     test('should match plural attack type "bombings" as Bombing/Explosion', async () => {
-      const result = await contextExtractor.parseQuery('Deadliest Bombings in Iraq?');
+      const result = await contextExtractor.parseNaturalLanguageQuery('Deadliest Bombings in Iraq?');
 
       expect(result.country_txt).toBe('Iraq');
       expect(result.attacktype1_txt).toBe('Bombing/Explosion');
@@ -210,7 +210,7 @@ describe('MongoDBContextExtractor', () => {
     });
 
     test('should not extract generic "group" as a terrorist group name', async () => {
-      const result = await contextExtractor.parseQuery('Deadliest Bombings in Iraq Show deadliest bombings in Iraq by group');
+      const result = await contextExtractor.parseNaturalLanguageQuery('Deadliest Bombings in Iraq Show deadliest bombings in Iraq by group');
 
       expect(result.country_txt).toBe('Iraq');
       expect(result.attacktype1_txt).toBe('Bombing/Explosion');
@@ -227,6 +227,18 @@ describe('MongoDBContextExtractor', () => {
       const normalizer = require('../../../utils/mongoDB/GTDNormalizationService');
       const normalized = normalizer.normalizeFilter({ attacktype1_txt: 'bombings' });
       expect(normalized.attacktype1_txt).toBe('Bombing/Explosion');
+    });
+
+    test('should extract region South Asia and NOT extract South as province', async () => {
+      // Add 'South' to known provinces mock to simulate the edge case
+      contextExtractor.knownProvinces = ['Punjab', 'Sindh', 'South'];
+      const result = await contextExtractor.parseNaturalLanguageQuery(
+        'South Asia Incident Analysis Analyze trends in terrorist incidents across South Asia'
+      );
+
+      expect(result.region_txt).toBe('South Asia');
+      expect(result.provstate).toBeUndefined();
+      expect(result._isStatistical).toBe(true);
     });
   });
 });

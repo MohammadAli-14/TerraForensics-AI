@@ -143,7 +143,7 @@ const TRANSLATIONS = {
       add: "Add new message",
       save: "Save Messages",
       heading: "Explain to me",
-      body: "the benefits of VertexAI",
+      body: "the benefits of TerraForensics AI",
     },
     pfp: {
       title: "Hình đại diện trợ lý",
@@ -333,7 +333,7 @@ const TRANSLATIONS = {
   api: {
     title: "Khóa API",
     description:
-      "API keys allow the holder to programmatically access and manage this VertexAI instance.",
+      "API keys allow the holder to programmatically access and manage this TerraForensics AI instance.",
     link: "Read the API documentation",
     generate: "Generate New API Key",
     table: {
@@ -345,7 +345,7 @@ const TRANSLATIONS = {
   llm: {
     title: "LLM Preference",
     description:
-      "These are the credentials and settings for your preferred LLM chat & embedding provider. Its important these keys are current and correct or else VertexAI will not function properly.",
+      "These are the credentials and settings for your preferred LLM chat & embedding provider. Its important these keys are current and correct or else TerraForensics AI will not function properly.",
     provider: "LLM Provider",
     providers: {
       azure_openai: {
@@ -365,7 +365,7 @@ const TRANSLATIONS = {
       "These are the credentials and settings for your preferred transcription model provider. Its important these keys are current and correct or else media files and audio will not transcribe.",
     provider: "Chuyển đổi giọng nói Provider",
     "warn-start":
-      "Using the local whisper model on machines with limited RAM or CPU can stall VertexAI when processing media files.",
+      "Using the local whisper model on machines with limited RAM or CPU can stall TerraForensics AI when processing media files.",
     "warn-recommend":
       "We recommend at least 2GB of RAM and upload files <10Mb.",
     "warn-end":
@@ -376,7 +376,7 @@ const TRANSLATIONS = {
     "desc-start":
       "When using an LLM that does not natively support an embedding engine - you may need to additionally specify credentials to for embedding text.",
     "desc-end":
-      "Embedding is the process of turning text into vectors. These credentials are required to turn your files and prompts into a format which VertexAI can use to process.",
+      "Embedding is the process of turning text into vectors. These credentials are required to turn your files and prompts into a format which TerraForensics AI can use to process.",
     provider: {
       title: "Embedding Provider",
     },
@@ -402,7 +402,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Cơ sở dữ liệu Vector",
     description:
-      "These are the credentials and settings for how your VertexAI instance will function. It's important these keys are current and correct.",
+      "These are the credentials and settings for how your TerraForensics AI instance will function. It's important these keys are current and correct.",
     provider: {
       title: "Cơ sở dữ liệu Vector Provider",
       description: "There is no configuration needed for LanceDB.",
@@ -447,7 +447,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Quyền riêng tư & Dữ liệu-Handling",
     description:
-      "This is your configuration for how connected third party providers and VertexAI handle your data.",
+      "This is your configuration for how connected third party providers and TerraForensics AI handle your data.",
     llm: "LLM Selection",
     embedding: "Tùy chọn nhúng",
     vector: "Cơ sở dữ liệu Vector",
@@ -979,7 +979,7 @@ const TRANSLATIONS = {
     password: {
       title: "Mật khẩu Protection",
       description:
-        "Protect your VertexAI instance with a password. If you forget this there is no recovery method so ensure you save this password.",
+        "Protect your TerraForensics AI instance with a password. If you forget this there is no recovery method so ensure you save this password.",
       "password-label": "Mật khẩu của instance",
     },
   },

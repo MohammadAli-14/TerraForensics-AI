@@ -6,6 +6,7 @@ import paths from "@/utils/paths";
 import { userFromStorage } from "@/utils/request";
 import { Person } from "@phosphor-icons/react";
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import AccountModal from "../AccountModal";
 import {
   AUTH_TIMESTAMP,
@@ -59,31 +60,28 @@ export default function UserButton() {
     fetchSupportEmail();
   }, []);
 
-  const [mapOpen, setMapOpen] = useState(() => {
-    if (typeof window !== "undefined") {
-      return localStorage.getItem("tf_show_map") === "true";
-    }
-    return false;
-  });
+  const [portalEl, setPortalEl] = useState(null);
 
   useEffect(() => {
-    const handleOpenMap = () => setMapOpen(true);
-    const handleCloseMap = () => setMapOpen(false);
-    window.addEventListener("tf:open-map", handleOpenMap);
-    window.addEventListener("tf:close-map", handleCloseMap);
-    return () => {
-      window.removeEventListener("tf:open-map", handleOpenMap);
-      window.removeEventListener("tf:close-map", handleCloseMap);
+    const findPortal = () => {
+      const el = document.getElementById("workstation-user-button-portal");
+      setPortalEl(el);
     };
+    findPortal();
+    const interval = setInterval(findPortal, 500);
+    return () => clearInterval(interval);
   }, []);
 
   if (mode === null) return null;
-  const positionClass = mapOpen
-    ? "absolute top-3 right-4 md:top-9 lg:right-[calc(50%+2.5rem)] w-fit h-fit z-40 transition-all duration-300"
-    : "absolute top-3 right-4 md:top-9 md:right-10 w-fit h-fit z-40 transition-all duration-300";
 
-  return (
-    <div className={positionClass}>
+  const content = (
+    <div
+      className={
+        portalEl
+          ? "relative w-fit h-fit z-40"
+          : "absolute top-3 right-4 md:top-9 md:right-10 w-fit h-fit z-40 transition-all duration-300"
+      }
+    >
       <button
         ref={buttonRef}
         onClick={() => setShowMenu(!showMenu)}
@@ -137,6 +135,12 @@ export default function UserButton() {
       )}
     </div>
   );
+
+  if (portalEl) {
+    return createPortal(content, portalEl);
+  }
+
+  return content;
 }
 
 function UserDisplay() {

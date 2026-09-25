@@ -8,7 +8,7 @@ const TRANSLATIONS = {
     llm: {
       title: "העדפות מודל שפה (LLM)",
       description:
-        "VertexAI יכול לעבוד עם ספקי מודלי שפה (LLM) רבים. זה יהיה השירות שיטפל בצ'אט.",
+        "TerraForensics AI יכול לעבוד עם ספקי מודלי שפה (LLM) רבים. זה יהיה השירות שיטפל בצ'אט.",
     },
     userSetup: {
       title: "הגדרת משתמש",
@@ -34,15 +34,15 @@ const TRANSLATIONS = {
       settingsHint: "ניתן להגדיר מחדש הגדרות אלה בכל עת בהגדרות.",
     },
     survey: {
-      title: "ברוכים הבאים ל-VertexAI",
+      title: "ברוכים הבאים ל-TerraForensics AI",
       description:
-        "עזרו לנו לבנות את VertexAI כך שיתאים לצרכים שלכם. אופציונלי.",
+        "עזרו לנו לבנות את TerraForensics AI כך שיתאים לצרכים שלכם. אופציונלי.",
       email: "מה האימייל שלך?",
-      useCase: "לאיזו מטרה תשתמש ב-VertexAI?",
+      useCase: "לאיזו מטרה תשתמש ב-TerraForensics AI?",
       useCaseWork: "לעבודה",
       useCasePersonal: "לשימוש אישי",
       useCaseOther: "אחר",
-      comment: "איך שמעת על VertexAI?",
+      comment: "איך שמעת על TerraForensics AI?",
       commentPlaceholder:
         "Reddit, Twitter, GitHub, YouTube, וכו' - ספר לנו איך מצאת אותנו!",
       skip: "דלג על הסקר",
@@ -51,7 +51,7 @@ const TRANSLATIONS = {
     workspace: {
       title: "צור את סביבת העבודה הראשונה שלך",
       description:
-        "צור את סביבת העבודה הראשונה שלך והתחל לעבוד עם VertexAI.",
+        "צור את סביבת העבודה הראשונה שלך והתחל לעבוד עם TerraForensics AI.",
     },
   },
   common: {
@@ -128,7 +128,7 @@ const TRANSLATIONS = {
     checklist: {
       title: "תחילת עבודה",
       tasksLeft: "משימות נותרו",
-      completed: "אתה בדרך להפוך למומחה VertexAI!",
+      completed: "אתה בדרך להפוך למומחה TerraForensics AI!",
       dismiss: "סגור",
       tasks: {
         create_workspace: {
@@ -231,7 +231,7 @@ const TRANSLATIONS = {
       add: "הוסף הודעה חדשה",
       save: "שמור הודעות",
       heading: "הסבר לי",
-      body: "את היתרונות של VertexAI",
+      body: "את היתרונות של TerraForensics AI",
     },
     pfp: {
       title: "תמונת פרופיל של העוזר",
@@ -419,15 +419,15 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "העדפות ממשק משתמש",
-      description: "הגדר את העדפות ממשק המשתמש שלך עבור VertexAI.",
+      description: "הגדר את העדפות ממשק המשתמש שלך עבור TerraForensics AI.",
     },
     branding: {
       title: "מיתוג והתאמה אישית (Whitelabeling)",
-      description: "התאם אישית את מופע ה-VertexAI שלך עם מיתוג מותאם אישית.",
+      description: "התאם אישית את מופע ה-TerraForensics AI שלך עם מיתוג מותאם אישית.",
     },
     chat: {
       title: "צ'אט",
-      description: "הגדר את העדפות הצ'אט שלך עבור VertexAI.",
+      description: "הגדר את העדפות הצ'אט שלך עבור TerraForensics AI.",
       auto_submit: {
         title: "שליחה אוטומטית של קלט קולי",
         description: "שלח אוטומטית קלט קולי לאחר פרק זמן של שקט",
@@ -466,7 +466,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "שפת תצוגה",
         description:
-          "בחר את השפה המועדפת להצגת ממשק המשתמש של VertexAI - כאשר תרגומים זמינים.",
+          "בחר את השפה המועדפת להצגת ממשק המשתמש של TerraForensics AI - כאשר תרגומים זמינים.",
       },
       logo: {
         title: "לוגו מותג",
@@ -484,7 +484,7 @@ const TRANSLATIONS = {
         system: "מערכת",
         user: "משתמש",
         message: "הודעה",
-        assistant: "עוזר הצ'אט של VertexAI",
+        assistant: "עוזר הצ'אט של TerraForensics AI",
         "double-click": "לחץ פעמיים לעריכה...",
         save: "שמור הודעות",
       },
@@ -518,7 +518,7 @@ const TRANSLATIONS = {
   api: {
     title: "מפתחות API",
     description:
-      "מפתחות API מאפשרים למחזיק בהם לגשת ולנהל באופן תכנותי את מופע VertexAI זה.",
+      "מפתחות API מאפשרים למחזיק בהם לגשת ולנהל באופן תכנותי את מופע TerraForensics AI זה.",
     link: "קרא את תיעוד ה-API",
     generate: "צור מפתח API חדש",
     table: {
@@ -530,7 +530,7 @@ const TRANSLATIONS = {
   llm: {
     title: "העדפות מודל שפה (LLM)",
     description:
-      "אלה האישורים וההגדרות עבור ספק הצ'אט וההטמעה המועדף עליך. חשוב שמפתחות אלה יהיו עדכניים ונכונים, אחרת VertexAI לא יפעל כראוי.",
+      "אלה האישורים וההגדרות עבור ספק הצ'אט וההטמעה המועדף עליך. חשוב שמפתחות אלה יהיו עדכניים ונכונים, אחרת TerraForensics AI לא יפעל כראוי.",
     provider: "ספק LLM",
     providers: {
       azure_openai: {
@@ -550,7 +550,7 @@ const TRANSLATIONS = {
       "אלה האישורים וההגדרות עבור ספק מודל התמלול המועדף עליך. חשוב שמפתחות אלה יהיו עדכניים ונכונים, אחרת קובצי מדיה ושמע לא יתומללו.",
     provider: "ספק תמלול",
     "warn-start":
-      "שימוש במודל ה-whisper המקומי על מכונות עם זיכרון RAM או מעבד מוגבלים עלול לגרום להאטה של VertexAI בעת עיבוד קובצי מדיה.",
+      "שימוש במודל ה-whisper המקומי על מכונות עם זיכרון RAM או מעבד מוגבלים עלול לגרום להאטה של TerraForensics AI בעת עיבוד קובצי מדיה.",
     "warn-recommend":
       "אנו ממליצים על לפחות 2GB של זיכרון RAM והעלאת קבצים קטנים מ-10Mb.",
     "warn-end": "המודל המובנה יורד אוטומטית בשימוש הראשון.",
@@ -560,7 +560,7 @@ const TRANSLATIONS = {
     "desc-start":
       "בעת שימוש במודל שפה שאינו תומך באופן מובנה במנוע הטמעה - ייתכן שתצטרך לציין בנוסף אישורים להטמעת טקסט.",
     "desc-end":
-      "הטמעה היא תהליך של הפיכת טקסט לווקטורים. אישורים אלה נדרשים כדי להפוך את הקבצים וההנחיות שלך לפורמט ש-VertexAI יכול להשתמש בו לעיבוד.",
+      "הטמעה היא תהליך של הפיכת טקסט לווקטורים. אישורים אלה נדרשים כדי להפוך את הקבצים וההנחיות שלך לפורמט ש-TerraForensics AI יכול להשתמש בו לעיבוד.",
     provider: {
       title: "ספק הטמעה",
     },
@@ -585,7 +585,7 @@ const TRANSLATIONS = {
   vector: {
     title: "מסד נתונים וקטורי",
     description:
-      "אלה האישורים וההגדרות לאופן פעולת מופע ה-VertexAI שלך. חשוב שמפתחות אלה יהיו עדכניים ונכונים.",
+      "אלה האישורים וההגדרות לאופן פעולת מופע ה-TerraForensics AI שלך. חשוב שמפתחות אלה יהיו עדכניים ונכונים.",
     provider: {
       title: "ספק מסד נתונים וקטורי",
       description: "אין צורך בתצורה עבור LanceDB.",
@@ -628,7 +628,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "פרטיות וטיפול בנתונים",
     description:
-      "זוהי התצורה שלך לאופן שבו ספקים צד שלישי מחוברים ו-VertexAI מטפלים בנתונים שלך.",
+      "זוהי התצורה שלך לאופן שבו ספקים צד שלישי מחוברים ו-TerraForensics AI מטפלים בנתונים שלך.",
     llm: "בחירת מודל שפה (LLM)",
     embedding: "העדפות הטמעה",
     vector: "מסד נתונים וקטורי",
@@ -799,22 +799,22 @@ const TRANSLATIONS = {
       fetching: "מאחזר...",
       "fetch-website": "אחזר אתר אינטרנט",
       "privacy-notice":
-        "קבצים אלה יועלו למעבד המסמכים הפועל במופע זה של VertexAI. קבצים אלה אינם נשלחים או משותפים עם צד שלישי.",
+        "קבצים אלה יועלו למעבד המסמכים הפועל במופע זה של TerraForensics AI. קבצים אלה אינם נשלחים או משותפים עם צד שלישי.",
     },
     pinning: {
       what_pinning: "מהי הצמדת מסמכים?",
       pin_explained_block1:
-        "כאשר אתה <b>מצמיד</b> מסמך ב-VertexAI, אנו נזריק את כל תוכן המסמך לחלון ההנחיה שלך כדי שמודל השפה שלך יבין אותו במלואו.",
+        "כאשר אתה <b>מצמיד</b> מסמך ב-TerraForensics AI, אנו נזריק את כל תוכן המסמך לחלון ההנחיה שלך כדי שמודל השפה שלך יבין אותו במלואו.",
       pin_explained_block2:
         "זה עובד בצורה הטובה ביותר עם <b>מודלים בעלי הקשר רחב</b> או קבצים קטנים שהם קריטיים לבסיס הידע שלו.",
       pin_explained_block3:
-        "אם אינך מקבל את התשובות הרצויות מ-VertexAI כברירת מחדל, הצמדה היא דרך מצוינת לקבל תשובות איכותיות יותר בלחיצה אחת.",
+        "אם אינך מקבל את התשובות הרצויות מ-TerraForensics AI כברירת מחדל, הצמדה היא דרך מצוינת לקבל תשובות איכותיות יותר בלחיצה אחת.",
       accept: "אוקיי, הבנתי",
     },
     watching: {
       what_watching: "מה עושה מעקב אחר מסמך?",
       watch_explained_block1:
-        "כאשר אתה <b>עוקב</b> אחר מסמך ב-VertexAI, אנו נסנכרן <i>אוטומטית</i> את תוכן המסמך שלך ממקורו המקורי במרווחי זמן קבועים. זה יעדכן אוטומטית את התוכן בכל סביבת עבודה שבה קובץ זה מנוהל.",
+        "כאשר אתה <b>עוקב</b> אחר מסמך ב-TerraForensics AI, אנו נסנכרן <i>אוטומטית</i> את תוכן המסמך שלך ממקורו המקורי במרווחי זמן קבועים. זה יעדכן אוטומטית את התוכן בכל סביבת עבודה שבה קובץ זה מנוהל.",
       watch_explained_block2:
         "תכונה זו תומכת כיום בתוכן מבוסס-אינטרנט ולא תהיה זמינה עבור מסמכים שהועלו ידנית.",
       watch_explained_block3_start:
@@ -1002,7 +1002,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "נדרש אימות",
           description:
-            "עליך להתאמת עם מרכז הקהילה של VertexAI לפני פרסום פריטים.",
+            "עליך להתאמת עם מרכז הקהילה של TerraForensics AI לפני פרסום פריטים.",
           button: "התחבר למרכז הקהילה",
         },
       },
@@ -1026,7 +1026,7 @@ const TRANSLATIONS = {
     password: {
       title: "הגנת סיסמה",
       description:
-        "הגן על מופע ה-VertexAI שלך באמצעות סיסמה. אם תשכח אותה, אין שיטת שחזור, אז ודא שאתה שומר סיסמה זו.",
+        "הגן על מופע ה-TerraForensics AI שלך באמצעות סיסמה. אם תשכח אותה, אין שיטת שחזור, אז ודא שאתה שומר סיסמה זו.",
       "password-label": "סיסמת מופע",
     },
   },

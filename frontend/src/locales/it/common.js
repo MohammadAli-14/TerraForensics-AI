@@ -145,7 +145,7 @@ const TRANSLATIONS = {
       add: "Aggiungi un nuovo messaggio",
       save: "Salva messaggi",
       heading: "Spiegami",
-      body: "i vantaggi di VertexAI",
+      body: "i vantaggi di TerraForensics AI",
     },
     pfp: {
       title: "Immagine del profilo dell'assistente",
@@ -337,7 +337,7 @@ const TRANSLATIONS = {
   api: {
     title: "Chiavi API",
     description:
-      "Le chiavi API consentono al titolare di accedere e gestire in modo programmatico questa istanza VertexAI.",
+      "Le chiavi API consentono al titolare di accedere e gestire in modo programmatico questa istanza TerraForensics AI.",
     link: "Leggi la documentazione API",
     generate: "Genera nuova chiave API",
     table: {
@@ -349,7 +349,7 @@ const TRANSLATIONS = {
   llm: {
     title: "Preferenza LLM",
     description:
-      "Queste sono le credenziali e le impostazioni per il tuo provider di chat e embedding LLM preferito. È importante che queste chiavi siano aggiornate e corrette, altrimenti VertexAI non funzionerà correttamente.",
+      "Queste sono le credenziali e le impostazioni per il tuo provider di chat e embedding LLM preferito. È importante che queste chiavi siano aggiornate e corrette, altrimenti TerraForensics AI non funzionerà correttamente.",
     provider: "Provider LLM",
     providers: {
       azure_openai: {
@@ -369,7 +369,7 @@ const TRANSLATIONS = {
       "Queste sono le credenziali e le impostazioni per il tuo fornitore di modelli di trascrizione preferito. È importante che queste chiavi siano aggiornate e corrette, altrimenti i file multimediali e l'audio non verranno trascritti.",
     provider: "Provider di trascrizione",
     "warn-start":
-      "L'utilizzo del modello whisper locale su macchine con RAM o CPU limitate può bloccare VertexAI durante l'elaborazione di file multimediali.",
+      "L'utilizzo del modello whisper locale su macchine con RAM o CPU limitate può bloccare TerraForensics AI durante l'elaborazione di file multimediali.",
     "warn-recommend":
       "Si consigliano almeno 2 GB di RAM e caricare file <10 Mb.",
     "warn-end":
@@ -380,7 +380,7 @@ const TRANSLATIONS = {
     "desc-start":
       "Quando si utilizza un LLM che non supporta nativamente un motore di embedding, potrebbe essere necessario specificare credenziali aggiuntive per l'embedding del testo.",
     "desc-end":
-      "L'embedding è il processo di trasformazione del testo in vettori. Queste credenziali sono necessarie per trasformare i file e i prompt in un formato che VertexAI può utilizzare per l'elaborazione.",
+      "L'embedding è il processo di trasformazione del testo in vettori. Queste credenziali sono necessarie per trasformare i file e i prompt in un formato che TerraForensics AI può utilizzare per l'elaborazione.",
     provider: {
       title: "Provider di embedding",
     },
@@ -406,7 +406,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Database vettoriale",
     description:
-      "Queste sono le credenziali e le impostazioni per il funzionamento della tua istanza VertexAI. È importante che queste chiavi siano aggiornate e corrette.",
+      "Queste sono le credenziali e le impostazioni per il funzionamento della tua istanza TerraForensics AI. È importante che queste chiavi siano aggiornate e corrette.",
     provider: {
       title: "Provider del database vettoriale",
       description: "Non è richiesta alcuna configurazione per LanceDB.",
@@ -451,7 +451,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Privacy e gestione dei dati",
     description:
-      "Questa è la tua configurazione per il modo in cui i provider terzi connessi e VertexAI gestiscono i tuoi dati.",
+      "Questa è la tua configurazione per il modo in cui i provider terzi connessi e TerraForensics AI gestiscono i tuoi dati.",
     llm: "Selezione LLM",
     embedding: "Preferenza di embedding",
     vector: "Database vettoriale",
@@ -983,7 +983,7 @@ const TRANSLATIONS = {
     password: {
       title: "Protezione password",
       description:
-        "Proteggi la tua istanza VertexAI con una password. Se la dimentichi, non esiste un metodo di recupero, quindi assicurati di salvare questa password.",
+        "Proteggi la tua istanza TerraForensics AI con una password. Se la dimentichi, non esiste un metodo di recupero, quindi assicurati di salvare questa password.",
       "password-label": "Password istanza",
     },
   },

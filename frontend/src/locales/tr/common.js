@@ -144,7 +144,7 @@ const TRANSLATIONS = {
       add: "Yeni mesaj ekle",
       save: "Mesajları Kaydet",
       heading: "Bana açıkla",
-      body: "VertexAI'nin faydalarını",
+      body: "TerraForensics AI'nin faydalarını",
     },
     pfp: {
       title: "Asistan Profil Görseli",
@@ -334,7 +334,7 @@ const TRANSLATIONS = {
   api: {
     title: "API Anahtarları",
     description:
-      "API anahtarları, bu VertexAI örneğine programatik olarak erişmeye ve yönetmeye olanak tanır.",
+      "API anahtarları, bu TerraForensics AI örneğine programatik olarak erişmeye ve yönetmeye olanak tanır.",
     link: "API dokümantasyonunu okuyun",
     generate: "Yeni API Anahtarı Oluştur",
     table: {
@@ -346,7 +346,7 @@ const TRANSLATIONS = {
   llm: {
     title: "LLM Tercihi",
     description:
-      "Bu, tercih ettiğiniz LLM sohbet ve gömme sağlayıcısının kimlik bilgileri ile ayarlarıdır. Bu anahtarların güncel ve doğru olması önemlidir; aksi takdirde VertexAI doğru çalışmayacaktır.",
+      "Bu, tercih ettiğiniz LLM sohbet ve gömme sağlayıcısının kimlik bilgileri ile ayarlarıdır. Bu anahtarların güncel ve doğru olması önemlidir; aksi takdirde TerraForensics AI doğru çalışmayacaktır.",
     provider: "LLM Sağlayıcısı",
     providers: {
       azure_openai: {
@@ -366,7 +366,7 @@ const TRANSLATIONS = {
       "Bu, tercih ettiğiniz transkripsiyon modeli sağlayıcısının kimlik bilgileri ve ayarlarıdır. Anahtarların güncel ve doğru olması önemlidir; aksi takdirde medya dosyaları ve sesler transkribe edilemez.",
     provider: "Transkripsiyon Sağlayıcısı",
     "warn-start":
-      "Sınırlı RAM veya CPU'ya sahip makinelerde yerel Whisper modelini kullanmak, medya dosyalarını işlerken VertexAI'nin duraksamasına neden olabilir.",
+      "Sınırlı RAM veya CPU'ya sahip makinelerde yerel Whisper modelini kullanmak, medya dosyalarını işlerken TerraForensics AI'nin duraksamasına neden olabilir.",
     "warn-recommend":
       "En az 2GB RAM öneriyoruz ve 10MB üzerinde dosya yüklememeye dikkat edin.",
     "warn-end":
@@ -377,7 +377,7 @@ const TRANSLATIONS = {
     "desc-start":
       "Yerel olarak gömme mekanizmasını desteklemeyen bir LLM kullanıyorsanız, metinleri gömmek için ek kimlik bilgileri girmeniz gerekebilir.",
     "desc-end":
-      "Gömme, metni vektörlere dönüştürme sürecidir. Dosyalarınızın ve komutlarınızın işlenebilmesi için VertexAI, bu kimlik bilgilerine ihtiyaç duyar.",
+      "Gömme, metni vektörlere dönüştürme sürecidir. Dosyalarınızın ve komutlarınızın işlenebilmesi için TerraForensics AI, bu kimlik bilgilerine ihtiyaç duyar.",
     provider: {
       title: "Embedding Sağlayıcısı",
     },
@@ -403,7 +403,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Vektör Veritabanı",
     description:
-      "VertexAI örneğinizin nasıl çalışacağını belirleyen kimlik bilgileri ve ayarları burada bulunur. Bu anahtarların güncel ve doğru olması önemlidir.",
+      "TerraForensics AI örneğinizin nasıl çalışacağını belirleyen kimlik bilgileri ve ayarları burada bulunur. Bu anahtarların güncel ve doğru olması önemlidir.",
     provider: {
       title: "Vektör Veritabanı Sağlayıcısı",
       description: "LanceDB için ek bir yapılandırma gerekmez.",
@@ -448,7 +448,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Gizlilik & Veri İşleme",
     description:
-      "Bağlantılı üçüncü taraf sağlayıcılarla ve VertexAI ile verilerinizin nasıl ele alındığını burada yapılandırabilirsiniz.",
+      "Bağlantılı üçüncü taraf sağlayıcılarla ve TerraForensics AI ile verilerinizin nasıl ele alındığını burada yapılandırabilirsiniz.",
     llm: "LLM Seçimi",
     embedding: "Gömme Tercihi",
     vector: "Vektör Veritabanı",
@@ -980,7 +980,7 @@ const TRANSLATIONS = {
     password: {
       title: "Şifre Koruması",
       description:
-        "VertexAI örneğinizi bir şifre ile koruyun. Bu şifreyi unutmanız hâlinde kurtarma yöntemi yoktur, bu yüzden mutlaka güvende saklayın.",
+        "TerraForensics AI örneğinizi bir şifre ile koruyun. Bu şifreyi unutmanız hâlinde kurtarma yöntemi yoktur, bu yüzden mutlaka güvende saklayın.",
       "password-label": "Örnek şifresi",
     },
   },

@@ -8,7 +8,7 @@ const TRANSLATIONS = {
     llm: {
       title: "LLM preferences",
       description:
-        "VertexAI var strādāt ar daudziem LLM pakalpojumu sniedzējiem. Šis būs pakalpojums, kas apstrādās sarunas.",
+        "TerraForensics AI var strādāt ar daudziem LLM pakalpojumu sniedzējiem. Šis būs pakalpojums, kas apstrādās sarunas.",
     },
     userSetup: {
       title: "Lietotāja iestatīšana",
@@ -36,15 +36,15 @@ const TRANSLATIONS = {
         "Šos iestatījumus var pārkonfigurēt jebkurā laikā iestatījumos.",
     },
     survey: {
-      title: "Laipni lūgti VertexAI",
+      title: "Laipni lūgti TerraForensics AI",
       description:
-        "Palīdziet mums veidot VertexAI atbilstoši jūsu vajadzībām. Neobligāti.",
+        "Palīdziet mums veidot TerraForensics AI atbilstoši jūsu vajadzībām. Neobligāti.",
       email: "Kāds ir jūsu e-pasts?",
-      useCase: "Kam izmantosiet VertexAI?",
+      useCase: "Kam izmantosiet TerraForensics AI?",
       useCaseWork: "Darbam",
       useCasePersonal: "Personīgai lietošanai",
       useCaseOther: "Citam nolūkam",
-      comment: "Kā jūs uzzinājāt par VertexAI?",
+      comment: "Kā jūs uzzinājāt par TerraForensics AI?",
       commentPlaceholder:
         "Reddit, Twitter, GitHub, YouTube utt. - Ļaujiet mums zināt, kā jūs mūs atradāt!",
       skip: "Izlaist aptauju",
@@ -53,7 +53,7 @@ const TRANSLATIONS = {
     workspace: {
       title: "Izveidojiet savu pirmo darba telpu",
       description:
-        "Izveidojiet savu pirmo darba telpu un sāciet darbu ar VertexAI.",
+        "Izveidojiet savu pirmo darba telpu un sāciet darbu ar TerraForensics AI.",
     },
   },
   common: {
@@ -131,7 +131,7 @@ const TRANSLATIONS = {
     checklist: {
       title: "Darba sākšana",
       tasksLeft: "atlikušie uzdevumi",
-      completed: "Jūs esat ceļā, lai kļūtu par VertexAI ekspertu!",
+      completed: "Jūs esat ceļā, lai kļūtu par TerraForensics AI ekspertu!",
       dismiss: "aizvērt",
       tasks: {
         create_workspace: {
@@ -236,7 +236,7 @@ const TRANSLATIONS = {
       add: "Pievienot jaunu ziņu",
       save: "Saglabāt ziņas",
       heading: "Izskaidro man",
-      body: "VertexAI priekšrocības",
+      body: "TerraForensics AI priekšrocības",
     },
     pfp: {
       title: "Asistenta profila attēls",
@@ -425,16 +425,16 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "UI preferences",
-      description: "Iestatiet savas UI preferences VertexAI.",
+      description: "Iestatiet savas UI preferences TerraForensics AI.",
     },
     branding: {
       title: "Zīmolrade un identitāte",
       description:
-        "Pielāgojiet savu VertexAI instanci ar pielāgotu zīmolradi.",
+        "Pielāgojiet savu TerraForensics AI instanci ar pielāgotu zīmolradi.",
     },
     chat: {
       title: "Saruna",
-      description: "Iestatiet savas sarunas preferences VertexAI.",
+      description: "Iestatiet savas sarunas preferences TerraForensics AI.",
       auto_submit: {
         title: "Automātiski iesniegt runas ievadi",
         description: "Automātiski iesniegt runas ievadi pēc klusuma perioda",
@@ -476,7 +476,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "Displeja valoda",
         description:
-          "Izvēlieties vēlamo valodu VertexAI lietotāja saskarnei - kad pieejami tulkojumi.",
+          "Izvēlieties vēlamo valodu TerraForensics AI lietotāja saskarnei - kad pieejami tulkojumi.",
       },
       logo: {
         title: "Zīmola logotips",
@@ -495,7 +495,7 @@ const TRANSLATIONS = {
         system: "sistēma",
         user: "lietotājs",
         message: "ziņojums",
-        assistant: "VertexAI čata asistents",
+        assistant: "TerraForensics AI čata asistents",
         "double-click": "Dubultklikšķis, lai rediģētu...",
         save: "Saglabāt ziņojumus",
       },
@@ -529,7 +529,7 @@ const TRANSLATIONS = {
   api: {
     title: "API atslēgas",
     description:
-      "API atslēgas ļauj to īpašniekam programmatiski piekļūt un pārvaldīt šo VertexAI instanci.",
+      "API atslēgas ļauj to īpašniekam programmatiski piekļūt un pārvaldīt šo TerraForensics AI instanci.",
     link: "Lasīt API dokumentāciju",
     generate: "Ģenerēt jaunu API atslēgu",
     table: {
@@ -541,7 +541,7 @@ const TRANSLATIONS = {
   llm: {
     title: "LLM preferences",
     description:
-      "Šie ir akreditācijas dati un iestatījumi jūsu vēlamajam LLM čata un iegulšanas pakalpojuma sniedzējam. Ir svarīgi, lai šīs atslēgas būtu aktuālas un pareizas, pretējā gadījumā VertexAI nedarbosies pareizi.",
+      "Šie ir akreditācijas dati un iestatījumi jūsu vēlamajam LLM čata un iegulšanas pakalpojuma sniedzējam. Ir svarīgi, lai šīs atslēgas būtu aktuālas un pareizas, pretējā gadījumā TerraForensics AI nedarbosies pareizi.",
     provider: "LLM pakalpojuma sniedzējs",
     providers: {
       azure_openai: {
@@ -561,7 +561,7 @@ const TRANSLATIONS = {
       "Šie ir akreditācijas dati un iestatījumi jūsu vēlamajam transkripcijas modeļa pakalpojuma sniedzējam. Ir svarīgi, lai šīs atslēgas būtu aktuālas un pareizas, pretējā gadījumā multivides faili un audio netiks transkribēti.",
     provider: "Transkripcijas pakalpojuma sniedzējs",
     "warn-start":
-      "Izmantojot lokālo whisper modeli iekārtās ar ierobežotu RAM vai CPU var apstādināt VertexAI, apstrādājot multivides failus.",
+      "Izmantojot lokālo whisper modeli iekārtās ar ierobežotu RAM vai CPU var apstādināt TerraForensics AI, apstrādājot multivides failus.",
     "warn-recommend":
       "Mēs iesakām vismaz 2GB RAM un augšupielādēt failus <10Mb.",
     "warn-end":
@@ -572,7 +572,7 @@ const TRANSLATIONS = {
     "desc-start":
       "Izmantojot LLM, kas neatbalsta iebūvētu iegulšanas dzinēju - jums var būt nepieciešams papildus norādīt akreditācijas datus teksta iegulšanai.",
     "desc-end":
-      "Iegulšana ir process, ar kuru teksts tiek pārveidots vektoros. Šie akreditācijas dati ir nepieciešami, lai pārveidotu jūsu failus un vaicājumus formātā, kuru VertexAI var izmantot apstrādei.",
+      "Iegulšana ir process, ar kuru teksts tiek pārveidots vektoros. Šie akreditācijas dati ir nepieciešami, lai pārveidotu jūsu failus un vaicājumus formātā, kuru TerraForensics AI var izmantot apstrādei.",
     provider: {
       title: "Iegulšanas pakalpojuma sniedzējs",
     },
@@ -598,7 +598,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Vektoru datubāze",
     description:
-      "Šie ir akreditācijas dati un iestatījumi tam, kā darbosies jūsu VertexAI instance. Ir svarīgi, lai šīs atslēgas būtu aktuālas un pareizas.",
+      "Šie ir akreditācijas dati un iestatījumi tam, kā darbosies jūsu TerraForensics AI instance. Ir svarīgi, lai šīs atslēgas būtu aktuālas un pareizas.",
     provider: {
       title: "Vektoru datubāzes pakalpojuma sniedzējs",
       description: "LanceDB nav nepieciešama konfigurācija.",
@@ -643,7 +643,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Privātums un datu apstrāde",
     description:
-      "Šī ir jūsu konfigurācija tam, kā savienotie trešo pušu pakalpojumu sniedzēji un VertexAI apstrādā jūsu datus.",
+      "Šī ir jūsu konfigurācija tam, kā savienotie trešo pušu pakalpojumu sniedzēji un TerraForensics AI apstrādā jūsu datus.",
     llm: "LLM izvēle",
     embedding: "Iegulšanas preferences",
     vector: "Vektoru datubāze",
@@ -823,22 +823,22 @@ const TRANSLATIONS = {
       fetching: "Iegūst...",
       "fetch-website": "Iegūt vietni",
       "privacy-notice":
-        "Šie faili tiks augšupielādēti dokumentu apstrādātājā, kas darbojas šajā VertexAI instancē. Šie faili netiek nosūtīti vai kopīgoti ar trešo pusi.",
+        "Šie faili tiks augšupielādēti dokumentu apstrādātājā, kas darbojas šajā TerraForensics AI instancē. Šie faili netiek nosūtīti vai kopīgoti ar trešo pusi.",
     },
     pinning: {
       what_pinning: "Kas ir dokumentu piespraušana?",
       pin_explained_block1:
-        "Kad jūs <b>piespraudiet</b> dokumentu VertexAI, mēs ievietosim visu dokumenta saturu jūsu uzvednes logā, lai jūsu LLM to pilnībā saprastu.",
+        "Kad jūs <b>piespraudiet</b> dokumentu TerraForensics AI, mēs ievietosim visu dokumenta saturu jūsu uzvednes logā, lai jūsu LLM to pilnībā saprastu.",
       pin_explained_block2:
         "Tas vislabāk darbojas ar <b>liela konteksta modeļiem</b> vai maziem failiem, kas ir kritiski tā zināšanu bāzei.",
       pin_explained_block3:
-        "Ja jūs nesaņemat vēlamās atbildes no VertexAI pēc noklusējuma, tad piespraušana ir lielisks veids, kā iegūt kvalitatīvākas atbildes ar vienu klikšķi.",
+        "Ja jūs nesaņemat vēlamās atbildes no TerraForensics AI pēc noklusējuma, tad piespraušana ir lielisks veids, kā iegūt kvalitatīvākas atbildes ar vienu klikšķi.",
       accept: "Labi, sapratu",
     },
     watching: {
       what_watching: "Ko dara dokumenta novērošana?",
       watch_explained_block1:
-        "Kad jūs <b>novērojat</b> dokumentu VertexAI, mēs <i>automātiski</i> sinhronizēsim jūsu dokumenta saturu no tā sākotnējā avota regulāros intervālos. Tas automātiski atjauninās saturu katrā darba vietā, kur šis fails tiek pārvaldīts.",
+        "Kad jūs <b>novērojat</b> dokumentu TerraForensics AI, mēs <i>automātiski</i> sinhronizēsim jūsu dokumenta saturu no tā sākotnējā avota regulāros intervālos. Tas automātiski atjauninās saturu katrā darba vietā, kur šis fails tiek pārvaldīts.",
       watch_explained_block2:
         "Šī funkcija pašlaik atbalsta tiešsaistes saturu un nebūs pieejama manuāli augšupielādētiem dokumentiem.",
       watch_explained_block3_start:
@@ -1041,7 +1041,7 @@ const TRANSLATIONS = {
     password: {
       title: "Aizsardzība ar paroli",
       description:
-        "Aizsargājiet savu VertexAI instanci ar paroli. Ja aizmirsīsiet šo paroli, nav atgūšanas metodes, tāpēc pārliecinieties, ka saglabājat šo paroli.",
+        "Aizsargājiet savu TerraForensics AI instanci ar paroli. Ja aizmirsīsiet šo paroli, nav atgūšanas metodes, tāpēc pārliecinieties, ka saglabājat šo paroli.",
       "password-label": "Instances paroles",
     },
   },

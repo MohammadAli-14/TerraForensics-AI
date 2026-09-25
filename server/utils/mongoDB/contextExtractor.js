@@ -2744,6 +2744,51 @@ class MongoDBContextExtractor {
       REGIONS: knownRegions,
     } = require("./GTDConstants");
 
+    // HELPER: Check if query matches a GTD constant (Exact, or Substring parts)
+    const findInQuery = (query, constantList, typeName) => {
+      // Sort by length desc to match "Religious Figures" before "Religious"
+      const sorted = [...constantList].sort((a, b) => b.length - a.length);
+
+      for (const item of sorted) {
+        const lowerItem = item.toLowerCase();
+        // 1. Exact phrase match in query (e.g. "Bombing/Explosion")
+        if (query.includes(lowerItem)) return item;
+
+        // 2. Split match (e.g. "Bombing" from "Bombing/Explosion")
+        // Split by / or ( to get primary terms
+        const parts = lowerItem
+          .split(/[\/\(\)]/)
+          .map((p) => p.trim())
+          .filter((p) => p.length > 3);
+
+        // GENERIC TERM BLACKLIST - Do not match on these generic words even if they appear in constants
+        const ignoredParts = [
+          "attack",
+          "attacks",
+          "group",
+          "groups",
+          "unknown",
+          "other",
+          "general",
+          "related",
+          "facility",
+          "infrastructure", // Too broad if matched alone? Maybe.
+          "taking",
+          "incident",
+          "barricade",
+        ];
+
+        for (const part of parts) {
+          if (ignoredParts.includes(part)) continue;
+
+          // Use Regex to ensure whole word match (with optional plural 's' or 'es') to avoid false positives
+          const pattern = new RegExp(`\\b${part}(?:e?s)?\\b`, "i");
+          if (pattern.test(query)) return item;
+        }
+      }
+      return null;
+    };
+
     // Check for sample/random request FIRST
     if (
       lowerQuery.includes("any one") ||
@@ -2768,18 +2813,30 @@ class MongoDBContextExtractor {
       "count",
       "statistics",
       "how much",
-      "how much",
       "occurred",
       "occur",
       "happened",
       "happens",
       "took place",
+      // Analysis & Trend keywords
+      "trend",
+      "trends",
+      "analysis",
+      "analyze",
+      "analytics",
+      "overview",
+      "pattern",
+      "patterns",
+      "breakdown",
+      "distribution",
+      "rate",
+      "rates",
     ];
     const hasStatisticalKeyword = statisticalPatterns.some((pattern) =>
       lowerQuery.includes(pattern)
     );
     const hasStatisticalWord =
-      /\b(count|total|statistics?|how\s+many|number\s+of)\b/i.test(lowerQuery);
+      /\b(count|total|statistics?|how\s+many|number\s+of|trends?|analysis|analyze|analytics|overview|patterns?|breakdown|distribution)\b/i.test(lowerQuery);
 
     // Also check if query asks for a quantity/number - use ATTACK_SYNONYMS_REGEX for full coverage
     const asksForQuantityPattern = new RegExp(
@@ -2802,13 +2859,13 @@ class MongoDBContextExtractor {
       const wantsListing =
         /\b(list|show|give|display|sample|examples?)\b/i.test(lowerQuery);
       // FIXED: Use ATTACK_SYNONYMS_REGEX instead of hardcoded list
-      // ENHANCED: Also handle "Incidents happen in iraq" pattern where verb is between synonym and location
+      // ENHANCED: Also handle "across", "throughout", and "Incidents happen in iraq" patterns
       const locationCountPattern = new RegExp(
-        `\\b(${ATTACK_SYNONYMS_REGEX})\\s+(in|within|at)\\s+[a-z]`,
+        `\\b(${ATTACK_SYNONYMS_REGEX})\\s+(in|within|at|across|throughout)\\s+[a-z]`,
         "i"
       );
       const locationWithVerbPattern = new RegExp(
-        `\\b(${ATTACK_SYNONYMS_REGEX})\\s+(happen|happened|occurring|occurred|took\\s+place|take\\s+place)\\s+(in|within|at)\\s+[a-z]`,
+        `\\b(${ATTACK_SYNONYMS_REGEX})\\s+(happen|happened|occurring|occurred|took\\s+place|take\\s+place)\\s+(in|within|at|across|throughout)\\s+[a-z]`,
         "i"
       );
 
@@ -2942,6 +2999,23 @@ class MongoDBContextExtractor {
       }
     }
 
+    // ═══════════════════════════════════════════════════════════════════════════════
+    // REGION EXTRACTION - Detect macro regions FIRST (e.g., "South Asia", "Southeast Asia")
+    // Extracted BEFORE Country and Province so regional words (e.g. "South") are not
+    // falsely parsed as provinces or countries.
+    // ═══════════════════════════════════════════════════════════════════════════════
+    const foundRegionEarly = findInQuery(lowerQuery, knownRegions, "Region");
+    if (foundRegionEarly) {
+      conditions.region_txt = foundRegionEarly;
+      console.log(
+        `[Query Parser] Found region (Normalized): ${conditions.region_txt}`
+      );
+      // Regional queries without an eventid are macro statistical/overview queries
+      if (!conditions.eventid) {
+        conditions._isStatistical = true;
+      }
+    }
+
     // NATURAL LANGUAGE COUNTRY EXTRACTION - check for known countries
     // Skip if already resolved via alias or multi-country above
     if (!aliasResolved && !multiCountryResolved) {
@@ -2989,6 +3063,37 @@ class MongoDBContextExtractor {
 
     // First check for known provinces in the query directly
     for (const province of knownProvinces) {
+      const lowercaseProvince = province.toLowerCase();
+
+      // CARDINAL DIRECTION GUARD: Standalone directions (e.g. "South", "North", "East", "West")
+      // MUST NOT be matched as provinces unless the query explicitly contains province keywords
+      const cardinalDirections = [
+        "north", "south", "east", "west", "central",
+        "northeast", "northwest", "southeast", "southwest",
+        "upper", "lower", "inner", "outer",
+        "western", "eastern", "northern", "southern"
+      ];
+      const hasProvinceKeyword = /\b(province|state|governorate|dist|district)\b/i.test(lowerQuery);
+      if (cardinalDirections.includes(lowercaseProvince) && !hasProvinceKeyword) {
+        continue;
+      }
+
+      // SUB-TOKEN SHIELD: Do not extract province if it's a constituent word of the matched Region
+      if (conditions.region_txt) {
+        const regionTokens = conditions.region_txt.toLowerCase().split(/[\s&,-]+/);
+        if (regionTokens.includes(lowercaseProvince)) {
+          continue;
+        }
+      }
+
+      // SUB-TOKEN SHIELD: Do not extract province if it's a constituent word of the matched Country
+      if (conditions.country_txt) {
+        const countryList = Array.isArray(conditions.country_txt) ? conditions.country_txt : [conditions.country_txt];
+        if (countryList.some((c) => c.toLowerCase().split(/[\s&,-]+/).includes(lowercaseProvince))) {
+          continue;
+        }
+      }
+
       // Escape special regex chars in province name (like hyphens)
       const escapedProvince = province.replace(
         /[-\/\\^$*+?.()|[\]{}]/g,
@@ -2997,9 +3102,6 @@ class MongoDBContextExtractor {
       const provincePattern = new RegExp(`\\b${escapedProvince}\\b`, "i");
       if (provincePattern.test(lowerQuery)) {
         // Check if query context suggests it's a province (not a city with same name)
-        const hasProvinceKeyword = /\b(province|state|region)\b/i.test(
-          lowerQuery
-        );
         const isKnownCity = knownCities.some(
           (city) => city.toLowerCase() === province.toLowerCase()
         );
@@ -3013,7 +3115,6 @@ class MongoDBContextExtractor {
         }
 
         // Check if this province needs correction (spelling variation)
-        const lowercaseProvince = province.toLowerCase();
         if (provinceCorrections[lowercaseProvince]) {
           conditions.provstate = provinceCorrections[lowercaseProvince];
           console.log(
@@ -3357,51 +3458,6 @@ class MongoDBContextExtractor {
 
     const GTDNormalizer = require("./GTDNormalizationService");
 
-    // HELPER: Check if query matches a GTD constant (Exact, or Substring parts)
-    const findInQuery = (query, constantList, typeName) => {
-      // Sort by length desc to match "Religious Figures" before "Religious"
-      const sorted = [...constantList].sort((a, b) => b.length - a.length);
-
-      for (const item of sorted) {
-        const lowerItem = item.toLowerCase();
-        // 1. Exact phrase match in query (e.g. "Bombing/Explosion")
-        if (query.includes(lowerItem)) return item;
-
-        // 2. Split match (e.g. "Bombing" from "Bombing/Explosion")
-        // Split by / or ( to get primary terms
-        const parts = lowerItem
-          .split(/[\/\(\)]/)
-          .map((p) => p.trim())
-          .filter((p) => p.length > 3);
-
-        // GENERIC TERM BLACKLIST - Do not match on these generic words even if they appear in constants
-        const ignoredParts = [
-          "attack",
-          "attacks",
-          "group",
-          "groups",
-          "unknown",
-          "other",
-          "general",
-          "related",
-          "facility",
-          "infrastructure", // Too broad if matched alone? Maybe.
-          "taking",
-          "incident",
-          "barricade",
-        ];
-
-        for (const part of parts) {
-          if (ignoredParts.includes(part)) continue;
-
-          // Use Regex to ensure whole word match (with optional plural 's' or 'es') to avoid false positives
-          const pattern = new RegExp(`\\b${part}(?:e?s)?\\b`, "i");
-          if (pattern.test(query)) return item;
-        }
-      }
-      return null;
-    };
-
     // ATTACK TYPE EXTRACTION
     const foundAttack = findInQuery(lowerQuery, attackTypes, "Attack Type");
     if (foundAttack) {
@@ -3429,13 +3485,18 @@ class MongoDBContextExtractor {
       );
     }
 
-    // REGION EXTRACTION
-    const foundRegion = findInQuery(lowerQuery, knownRegions, "Region");
-    if (foundRegion) {
-      conditions.region_txt = foundRegion;
-      console.log(
-        `[Query Parser] Found region (Normalized): ${conditions.region_txt}`
-      );
+    // REGION EXTRACTION (fallback if not detected early)
+    if (!conditions.region_txt) {
+      const foundRegion = findInQuery(lowerQuery, knownRegions, "Region");
+      if (foundRegion) {
+        conditions.region_txt = foundRegion;
+        console.log(
+          `[Query Parser] Found region (Normalized): ${conditions.region_txt}`
+        );
+        if (!conditions.eventid) {
+          conditions._isStatistical = true;
+        }
+      }
     }
 
     // SUCCESS/FAILURE EXTRACTION
@@ -3757,6 +3818,88 @@ class MongoDBContextExtractor {
           `[Query Parser] âš ï¸ Removing Redundant Province: "${pState}" matches Country "${conditions.country_txt}"`
         );
         delete conditions.provstate;
+      }
+    }
+
+    // CROSS-HIERARCHY VALIDATION: If region_txt is present, verify provstate belongs to that region
+    if (conditions.provstate && conditions.region_txt) {
+      const pState = Array.isArray(conditions.provstate)
+        ? conditions.provstate[0]
+        : conditions.provstate;
+      // 1. If provstate is a constituent word of region_txt, remove it
+      if (
+        conditions.region_txt
+          .toLowerCase()
+          .split(/[\s&,-]+/)
+          .includes(pState.toLowerCase())
+      ) {
+        console.log(
+          `[Query Parser] ⚠️ Removing Province "${pState}" which is a constituent word of Region "${conditions.region_txt}"`
+        );
+        delete conditions.provstate;
+      } else {
+        // 2. Database validation: check if attacks exist for this (region, provstate) pair
+        try {
+          const mongoose = require("mongoose");
+          const db = mongoose.connection.db;
+          if (db && mongoose.connection.readyState === 1) {
+            const attacksCol = db.collection("attacks");
+            const regCount = await attacksCol.countDocuments({
+              region_txt: {
+                $regex: `^\\s*${this.escapeRegex(conditions.region_txt)}\\s*$`,
+                $options: "i",
+              },
+              provstate: {
+                $regex: `^\\s*${this.escapeRegex(pState)}\\s*$`,
+                $options: "i",
+              },
+            });
+            if (regCount === 0) {
+              console.log(
+                `[Query Parser] ⚠️ Discarding false province "${pState}": 0 attacks found in region "${conditions.region_txt}"`
+              );
+              delete conditions.provstate;
+            }
+          }
+        } catch (e) {
+          // ignore db check errors
+        }
+      }
+    }
+
+    // CROSS-HIERARCHY VALIDATION: If country_txt is present, verify provstate belongs to that country
+    if (
+      conditions.provstate &&
+      conditions.country_txt &&
+      typeof conditions.country_txt === "string"
+    ) {
+      const pState = Array.isArray(conditions.provstate)
+        ? conditions.provstate[0]
+        : conditions.provstate;
+      try {
+        const mongoose = require("mongoose");
+        const db = mongoose.connection.db;
+        if (db && mongoose.connection.readyState === 1) {
+          const attacksCol = db.collection("attacks");
+          const countryProvCount = await attacksCol.countDocuments({
+            country_txt: {
+              $regex: `^\\s*${this.escapeRegex(conditions.country_txt)}\\s*$`,
+              $options: "i",
+            },
+            provstate: {
+              $regex: `^\\s*${this.escapeRegex(pState)}\\s*$`,
+              $options: "i",
+            },
+          });
+          if (countryProvCount === 0) {
+            console.log(
+              `[Query Parser] ⚠️ Discarding false province "${pState}": 0 attacks found in country "${conditions.country_txt}"`
+            );
+            delete conditions.provstate;
+          }
+        }
+      } catch (e) {
+        // ignore db check errors
       }
     }
 
@@ -4461,6 +4604,8 @@ VERIFICATION CODE: GTD-SAMPLE-${attack.eventid}
           const filterParts = [];
           if (conditions.country_txt)
             filterParts.push(`in ${conditions.country_txt}`);
+          if (conditions.region_txt && !conditions.country_txt)
+            filterParts.push(`in region ${conditions.region_txt}`);
           if (conditions.city) filterParts.push(`in ${conditions.city}`);
           if (conditions.provstate) {
             const displayProv = Array.isArray(conditions.provstate)
@@ -4515,6 +4660,8 @@ VERIFICATION CODE: GTD-SAMPLE-${attack.eventid}
           const simpleFilter = {};
           if (conditions.country_txt)
             simpleFilter.country_txt = conditions.country_txt;
+          if (conditions.region_txt)
+            simpleFilter.region_txt = conditions.region_txt;
           if (conditions.provstate)
             simpleFilter.provstate = conditions.provstate;
           if (conditions.city) simpleFilter.city = conditions.city;

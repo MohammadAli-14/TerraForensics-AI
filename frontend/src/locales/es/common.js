@@ -8,7 +8,7 @@ const TRANSLATIONS = {
     llm: {
       title: "Preferencia de LLM",
       description:
-        "VertexAI puede funcionar con muchos proveedores de LLM. Este será el servicio que gestionará el chat.",
+        "TerraForensics AI puede funcionar con muchos proveedores de LLM. Este será el servicio que gestionará el chat.",
     },
     userSetup: {
       title: "Configuración de usuario",
@@ -37,15 +37,15 @@ const TRANSLATIONS = {
         "Estos ajustes se pueden reconfigurar en cualquier momento en la configuración.",
     },
     survey: {
-      title: "Bienvenido a VertexAI",
+      title: "Bienvenido a TerraForensics AI",
       description:
-        "Ayúdanos a hacer que VertexAI se adapte a tus necesidades. Opcional.",
+        "Ayúdanos a hacer que TerraForensics AI se adapte a tus necesidades. Opcional.",
       email: "¿Cuál es tu correo electrónico?",
-      useCase: "¿Para qué usarás VertexAI?",
+      useCase: "¿Para qué usarás TerraForensics AI?",
       useCaseWork: "Para el trabajo",
       useCasePersonal: "Para uso personal",
       useCaseOther: "Otro",
-      comment: "¿Cómo te enteraste de VertexAI?",
+      comment: "¿Cómo te enteraste de TerraForensics AI?",
       commentPlaceholder:
         "Reddit, Twitter, GitHub, YouTube, etc. - ¡Haznos saber cómo nos encontraste!",
       skip: "Omitir encuesta",
@@ -54,7 +54,7 @@ const TRANSLATIONS = {
     workspace: {
       title: "Crea tu primer espacio de trabajo",
       description:
-        "Crea tu primer espacio de trabajo y comienza a usar VertexAI.",
+        "Crea tu primer espacio de trabajo y comienza a usar TerraForensics AI.",
     },
   },
   common: {
@@ -134,7 +134,7 @@ const TRANSLATIONS = {
       title: "Primeros pasos",
       tasksLeft: "tareas restantes",
       completed:
-        "¡Estás en camino de convertirte en un experto en VertexAI!",
+        "¡Estás en camino de convertirte en un experto en TerraForensics AI!",
       dismiss: "cerrar",
       tasks: {
         create_workspace: {
@@ -240,7 +240,7 @@ const TRANSLATIONS = {
       add: "Agregar nuevo mensaje",
       save: "Guardar mensajes",
       heading: "Explícame",
-      body: "los beneficios de VertexAI",
+      body: "los beneficios de TerraForensics AI",
     },
     pfp: {
       title: "Imagen de perfil del asistente",
@@ -437,16 +437,16 @@ const TRANSLATIONS = {
     interface: {
       title: "Preferencias de la interfaz de usuario",
       description:
-        "Establece tus preferencias de la interfaz de usuario para VertexAI.",
+        "Establece tus preferencias de la interfaz de usuario para TerraForensics AI.",
     },
     branding: {
       title: "Marca y marca blanca",
       description:
-        "Personaliza tu instancia de VertexAI con tu propia marca.",
+        "Personaliza tu instancia de TerraForensics AI con tu propia marca.",
     },
     chat: {
       title: "Chat",
-      description: "Establece tus preferencias de chat para VertexAI.",
+      description: "Establece tus preferencias de chat para TerraForensics AI.",
       auto_submit: {
         title: "Envío automático de entrada de voz",
         description:
@@ -491,7 +491,7 @@ const TRANSLATIONS = {
       "display-language": {
         title: "Idioma de visualización",
         description:
-          "Selecciona el idioma preferido para renderizar la interfaz de usuario de VertexAI, cuando las traducciones estén disponibles.",
+          "Selecciona el idioma preferido para renderizar la interfaz de usuario de TerraForensics AI, cuando las traducciones estén disponibles.",
       },
       logo: {
         title: "Logotipo de la marca",
@@ -510,7 +510,7 @@ const TRANSLATIONS = {
         system: "sistema",
         user: "usuario",
         message: "mensaje",
-        assistant: "Asistente de chat de VertexAI",
+        assistant: "Asistente de chat de TerraForensics AI",
         "double-click": "Doble clic para editar...",
         save: "Guardar mensajes",
       },
@@ -545,7 +545,7 @@ const TRANSLATIONS = {
   api: {
     title: "Claves de API",
     description:
-      "Las claves de API permiten al titular acceder y administrar programáticamente esta instancia de VertexAI.",
+      "Las claves de API permiten al titular acceder y administrar programáticamente esta instancia de TerraForensics AI.",
     link: "Leer la documentación de la API",
     generate: "Generar nueva clave de API",
     table: {
@@ -557,7 +557,7 @@ const TRANSLATIONS = {
   llm: {
     title: "Preferencia de LLM",
     description:
-      "Estas son las credenciales y la configuración de tu proveedor preferido de chat e incrustación de LLM. Es importante que estas claves estén actualizadas y sean correctas, de lo contrario, VertexAI no funcionará correctamente.",
+      "Estas son las credenciales y la configuración de tu proveedor preferido de chat e incrustación de LLM. Es importante que estas claves estén actualizadas y sean correctas, de lo contrario, TerraForensics AI no funcionará correctamente.",
     provider: "Proveedor de LLM",
     providers: {
       azure_openai: {
@@ -577,7 +577,7 @@ const TRANSLATIONS = {
       "Estas son las credenciales y la configuración de tu proveedor de modelo de transcripción preferido. Es importante que estas claves estén actualizadas y sean correctas, de lo contrario, los archivos multimedia y el audio no se transcribirán.",
     provider: "Proveedor de transcripción",
     "warn-start":
-      "El uso del modelo local de Whisper en máquinas con RAM o CPU limitadas puede detener VertexAI al procesar archivos multimedia.",
+      "El uso del modelo local de Whisper en máquinas con RAM o CPU limitadas puede detener TerraForensics AI al procesar archivos multimedia.",
     "warn-recommend":
       "Recomendamos al menos 2 GB de RAM y subir archivos de menos de 10 MB.",
     "warn-end":
@@ -588,7 +588,7 @@ const TRANSLATIONS = {
     "desc-start":
       "Cuando se utiliza un LLM que no admite de forma nativa un motor de incrustación, es posible que debas especificar credenciales adicionales para la incrustación de texto.",
     "desc-end":
-      "La incrustación es el proceso de convertir texto en vectores. Estas credenciales son necesarias para convertir tus archivos y prompts en un formato que VertexAI pueda usar para procesar.",
+      "La incrustación es el proceso de convertir texto en vectores. Estas credenciales son necesarias para convertir tus archivos y prompts en un formato que TerraForensics AI pueda usar para procesar.",
     provider: {
       title: "Proveedor de incrustación",
     },
@@ -614,7 +614,7 @@ const TRANSLATIONS = {
   vector: {
     title: "Base de datos vectorial",
     description:
-      "Estas son las credenciales y la configuración de cómo funcionará tu instancia de VertexAI. Es importante que estas claves estén actualizadas y sean correctas.",
+      "Estas son las credenciales y la configuración de cómo funcionará tu instancia de TerraForensics AI. Es importante que estas claves estén actualizadas y sean correctas.",
     provider: {
       title: "Proveedor de base de datos vectorial",
       description: "No se necesita configuración para LanceDB.",
@@ -659,7 +659,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "Privacidad y manejo de datos",
     description:
-      "Esta es tu configuración sobre cómo los proveedores de terceros conectados y VertexAI manejan tus datos.",
+      "Esta es tu configuración sobre cómo los proveedores de terceros conectados y TerraForensics AI manejan tus datos.",
     llm: "Selección de LLM",
     embedding: "Preferencia de incrustación",
     vector: "Base de datos vectorial",
@@ -843,22 +843,22 @@ const TRANSLATIONS = {
       fetching: "Obteniendo...",
       "fetch-website": "Obtener sitio web",
       "privacy-notice":
-        "Estos archivos se subirán al procesador de documentos que se ejecuta en esta instancia de VertexAI. Estos archivos no se envían ni se comparten con terceros.",
+        "Estos archivos se subirán al procesador de documentos que se ejecuta en esta instancia de TerraForensics AI. Estos archivos no se envían ni se comparten con terceros.",
     },
     pinning: {
       what_pinning: "¿Qué es fijar documentos?",
       pin_explained_block1:
-        "Cuando <b>fijas</b> un documento en VertexAI, inyectaremos todo el contenido del documento en tu ventana de prompt para que tu LLM lo comprenda por completo.",
+        "Cuando <b>fijas</b> un documento en TerraForensics AI, inyectaremos todo el contenido del documento en tu ventana de prompt para que tu LLM lo comprenda por completo.",
       pin_explained_block2:
         "Esto funciona mejor con <b>modelos de gran contexto</b> o archivos pequeños que son críticos para su base de conocimientos.",
       pin_explained_block3:
-        "Si no obtienes las respuestas que deseas de VertexAI por defecto, fijar es una excelente manera de obtener respuestas de mayor calidad con un clic.",
+        "Si no obtienes las respuestas que deseas de TerraForensics AI por defecto, fijar es una excelente manera de obtener respuestas de mayor calidad con un clic.",
       accept: "Ok, entendido",
     },
     watching: {
       what_watching: "¿Qué hace observar un documento?",
       watch_explained_block1:
-        "Cuando <b>observas</b> un documento en VertexAI, sincronizaremos <i>automáticamente</i> el contenido de tu documento desde su fuente original a intervalos regulares. Esto actualizará automáticamente el contenido en cada espacio de trabajo donde se gestione este archivo.",
+        "Cuando <b>observas</b> un documento en TerraForensics AI, sincronizaremos <i>automáticamente</i> el contenido de tu documento desde su fuente original a intervalos regulares. Esto actualizará automáticamente el contenido en cada espacio de trabajo donde se gestione este archivo.",
       watch_explained_block2:
         "Esta función actualmente admite contenido en línea y no estará disponible para documentos subidos manualmente.",
       watch_explained_block3_start:
@@ -1068,7 +1068,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "Se requiere autenticación",
           description:
-            "Necesitas autenticarte con el Centro de la Comunidad de VertexAI antes de publicar elementos.",
+            "Necesitas autenticarte con el Centro de la Comunidad de TerraForensics AI antes de publicar elementos.",
           button: "Conectar al Centro de la Comunidad",
         },
       },
@@ -1092,7 +1092,7 @@ const TRANSLATIONS = {
     password: {
       title: "Protección con contraseña",
       description:
-        "Protege tu instancia de VertexAI con una contraseña. Si la olvidas, no hay método de recuperación, así que asegúrate de guardar esta contraseña.",
+        "Protege tu instancia de TerraForensics AI con una contraseña. Si la olvidas, no hay método de recuperación, así que asegúrate de guardar esta contraseña.",
       "password-label": "Contraseña de la instancia",
     },
   },

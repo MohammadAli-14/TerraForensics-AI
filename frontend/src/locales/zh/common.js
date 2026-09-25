@@ -8,7 +8,7 @@ const TRANSLATIONS = {
     llm: {
       title: "LLM 偏好",
       description:
-        "VertexAI 可以与多家 LLM 提供商合作。这将是处理聊天的服务。",
+        "TerraForensics AI 可以与多家 LLM 提供商合作。这将是处理聊天的服务。",
     },
     userSetup: {
       title: "用户设置",
@@ -34,14 +34,14 @@ const TRANSLATIONS = {
       settingsHint: "这些设置可以随时在设置中重新配置。",
     },
     survey: {
-      title: "欢迎使用 VertexAI",
-      description: "帮助我们为你的需求打造 VertexAI。可选。",
+      title: "欢迎使用 TerraForensics AI",
+      description: "帮助我们为你的需求打造 TerraForensics AI。可选。",
       email: "你的电子邮件是什么？",
-      useCase: "你将如何使用 VertexAI？",
+      useCase: "你将如何使用 TerraForensics AI？",
       useCaseWork: "用于工作",
       useCasePersonal: "用于个人使用",
       useCaseOther: "其他",
-      comment: "你是如何听说 VertexAI 的？",
+      comment: "你是如何听说 TerraForensics AI 的？",
       commentPlaceholder:
         "Reddit，Twitter，GitHub，YouTube 等 - 让我们知道你是如何找到我们的！",
       skip: "跳过调查",
@@ -49,7 +49,7 @@ const TRANSLATIONS = {
     },
     workspace: {
       title: "创建你的第一个工作区",
-      description: "创建你的第一个工作区并开始使用 VertexAI。",
+      description: "创建你的第一个工作区并开始使用 TerraForensics AI。",
     },
   },
   common: {
@@ -126,7 +126,7 @@ const TRANSLATIONS = {
     checklist: {
       title: "入门指南",
       tasksLeft: "剩余任务",
-      completed: "你正在成为VertexAI专家的路上！",
+      completed: "你正在成为TerraForensics AI专家的路上！",
       dismiss: "关闭",
       tasks: {
         create_workspace: {
@@ -227,7 +227,7 @@ const TRANSLATIONS = {
       add: "添加新消息",
       save: "保存消息",
       heading: "向我解释",
-      body: "VertexAI 的好处",
+      body: "TerraForensics AI 的好处",
     },
     pfp: {
       title: "助理头像",
@@ -405,15 +405,15 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "界面偏好设置",
-      description: "设置您的 VertexAI 界面偏好。",
+      description: "设置您的 TerraForensics AI 界面偏好。",
     },
     branding: {
       title: "品牌与白标设置",
-      description: "使用自定义品牌对白标您的 VertexAI 实例。",
+      description: "使用自定义品牌对白标您的 TerraForensics AI 实例。",
     },
     chat: {
       title: "聊天",
-      description: "设置您的 VertexAI 聊天偏好。",
+      description: "设置您的 TerraForensics AI 聊天偏好。",
       auto_submit: {
         title: "自动提交语音输入",
         description: "在静音一段时间后自动提交语音输入",
@@ -450,7 +450,7 @@ const TRANSLATIONS = {
       },
       "display-language": {
         title: "显示语言",
-        description: "选择显示 VertexAI 界面所用的语言（若有翻译可用）。",
+        description: "选择显示 TerraForensics AI 界面所用的语言（若有翻译可用）。",
       },
       logo: {
         title: "品牌标志",
@@ -467,7 +467,7 @@ const TRANSLATIONS = {
         system: "系统",
         user: "用户",
         message: "信息",
-        assistant: "VertexAI 聊天助手",
+        assistant: "TerraForensics AI 聊天助手",
         "double-click": "双击进行编辑...",
         save: "保存信息",
       },
@@ -497,7 +497,7 @@ const TRANSLATIONS = {
   },
   api: {
     title: "API 密钥",
-    description: "API 密钥允许持有者以编程方式访问和管理此 VertexAI 实例。",
+    description: "API 密钥允许持有者以编程方式访问和管理此 TerraForensics AI 实例。",
     link: "阅读 API 文档",
     generate: "生成新的 API 密钥",
     table: {
@@ -509,7 +509,7 @@ const TRANSLATIONS = {
   llm: {
     title: "LLM 首选项",
     description:
-      "这些是你首选的 LLM 聊天和嵌入提供商的凭据和设置。重要的是，确保这些密钥是最新的和正确的，否则 VertexAI 将无法正常运行。",
+      "这些是你首选的 LLM 聊天和嵌入提供商的凭据和设置。重要的是，确保这些密钥是最新的和正确的，否则 TerraForensics AI 将无法正常运行。",
     provider: "LLM 提供商",
     providers: {
       azure_openai: {
@@ -529,7 +529,7 @@ const TRANSLATIONS = {
       "这些是你的首选转录模型提供商的凭据和设置。重要的是这些密钥是最新且正确的，否则媒体文件和音频将无法转录。",
     provider: "转录提供商",
     "warn-start":
-      "在 RAM 或 CPU 有限的计算机上使用本地耳语模型可能会在处理媒体文件时停止 VertexAI。",
+      "在 RAM 或 CPU 有限的计算机上使用本地耳语模型可能会在处理媒体文件时停止 TerraForensics AI。",
     "warn-recommend": "我们建议至少 2GB RAM 并上传 <10Mb 的文件。",
     "warn-end": "内置模型将在首次使用时自动下载。",
   },
@@ -538,7 +538,7 @@ const TRANSLATIONS = {
     "desc-start":
       "当使用本身不支持嵌入引擎的 LLM 时，你可能需要额外指定用于嵌入文本的凭据。",
     "desc-end":
-      "嵌入是将文本转换为矢量的过程。需要这些凭据才能将你的文件和提示转换为 VertexAI 可以用来处理的格式。",
+      "嵌入是将文本转换为矢量的过程。需要这些凭据才能将你的文件和提示转换为 TerraForensics AI 可以用来处理的格式。",
     provider: {
       title: "嵌入引擎提供商",
     },
@@ -561,7 +561,7 @@ const TRANSLATIONS = {
   vector: {
     title: "向量数据库",
     description:
-      "这些是 VertexAI 实例如何运行的凭据和设置。重要的是，这些密钥是最新的和正确的。",
+      "这些是 TerraForensics AI 实例如何运行的凭据和设置。重要的是，这些密钥是最新的和正确的。",
     provider: {
       title: "向量数据库提供商",
       description: "LanceDB 不需要任何配置。",
@@ -604,7 +604,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "隐私和数据处理",
     description:
-      "这是你对如何处理连接的第三方提供商和VertexAI的数据的配置。",
+      "这是你对如何处理连接的第三方提供商和TerraForensics AI的数据的配置。",
     llm: "LLM 选择",
     embedding: "嵌入首选项",
     vector: "向量数据库",
@@ -756,22 +756,22 @@ const TRANSLATIONS = {
       fetching: "正在获取...",
       "fetch-website": "获取网站",
       "privacy-notice":
-        "这些文件将被上传到此 VertexAI 实例上的文档处理器。这些文件不会发送或共享给第三方。",
+        "这些文件将被上传到此 TerraForensics AI 实例上的文档处理器。这些文件不会发送或共享给第三方。",
     },
     pinning: {
       what_pinning: "什么是文档固定？",
       pin_explained_block1:
-        "当您在 VertexAI 中<b>固定</b>一个文档时，我们会将整个文档内容注入到您的提示窗口中，让 LLM 能够完全理解它。",
+        "当您在 TerraForensics AI 中<b>固定</b>一个文档时，我们会将整个文档内容注入到您的提示窗口中，让 LLM 能够完全理解它。",
       pin_explained_block2:
         "这在 <b>大上下文模型</b> 或关键的小文件中效果最佳。",
       pin_explained_block3:
-        "如果默认情况下无法从 VertexAI 获取满意的答案，固定文档是提高答案质量的好方法。",
+        "如果默认情况下无法从 TerraForensics AI 获取满意的答案，固定文档是提高答案质量的好方法。",
       accept: "好的，知道了",
     },
     watching: {
       what_watching: "什么是监控文档？",
       watch_explained_block1:
-        "当您在 VertexAI 中<b>监控</b>一个文档时，我们会<i>自动</i>按定期间隔从其原始来源同步文档内容。系统会自动更新在所有使用该文档的工作区中的内容。",
+        "当您在 TerraForensics AI 中<b>监控</b>一个文档时，我们会<i>自动</i>按定期间隔从其原始来源同步文档内容。系统会自动更新在所有使用该文档的工作区中的内容。",
       watch_explained_block2:
         "此功能当前仅支持在线内容，不适用于手动上传的文档。",
       watch_explained_block3_start: "您可以在 ",
@@ -941,7 +941,7 @@ const TRANSLATIONS = {
         unauthenticated: {
           title: "需要验证",
           description:
-            "在发布项目之前，您需要通过 VertexAI 社区中心进行验证。",
+            "在发布项目之前，您需要通过 TerraForensics AI 社区中心进行验证。",
           button: "连接到社区中心",
         },
       },
@@ -992,7 +992,7 @@ const TRANSLATIONS = {
     password: {
       title: "密码保护",
       description:
-        "用密码保护你的VertexAI实例。如果你忘记了密码，那么没有恢复方法，所以请确保保存这个密码。",
+        "用密码保护你的TerraForensics AI实例。如果你忘记了密码，那么没有恢复方法，所以请确保保存这个密码。",
       "password-label": "实例密码",
     },
   },

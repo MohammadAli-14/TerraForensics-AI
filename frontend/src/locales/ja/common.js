@@ -8,7 +8,7 @@ const TRANSLATIONS = {
     llm: {
       title: "LLMの設定",
       description:
-        "VertexAIは多くのLLMプロバイダーと連携できます。これがチャットを処理するサービスになります。",
+        "TerraForensics AIは多くのLLMプロバイダーと連携できます。これがチャットを処理するサービスになります。",
     },
     userSetup: {
       title: "ユーザー設定",
@@ -36,15 +36,15 @@ const TRANSLATIONS = {
       settingsHint: "これらの設定は、設定画面でいつでも再構成できます。",
     },
     survey: {
-      title: "VertexAIへようこそ",
+      title: "TerraForensics AIへようこそ",
       description:
-        "VertexAIをあなたのニーズに合わせて構築するためにご協力ください。任意です。",
+        "TerraForensics AIをあなたのニーズに合わせて構築するためにご協力ください。任意です。",
       email: "メールアドレスは何ですか？",
-      useCase: "VertexAIを何に使用しますか？",
+      useCase: "TerraForensics AIを何に使用しますか？",
       useCaseWork: "仕事用",
       useCasePersonal: "個人用",
       useCaseOther: "その他",
-      comment: "VertexAIをどのように知りましたか？",
+      comment: "TerraForensics AIをどのように知りましたか？",
       commentPlaceholder:
         "Reddit、Twitter、GitHub、YouTubeなど - どのように見つけたか教えてください！",
       skip: "アンケートをスキップ",
@@ -53,7 +53,7 @@ const TRANSLATIONS = {
     workspace: {
       title: "最初のワークスペースを作成する",
       description:
-        "最初のワークスペースを作成して、VertexAIを始めましょう。",
+        "最初のワークスペースを作成して、TerraForensics AIを始めましょう。",
     },
   },
   common: {
@@ -152,7 +152,7 @@ const TRANSLATIONS = {
       add: "新しいメッセージを追加",
       save: "メッセージを保存",
       heading: "説明してください",
-      body: "VertexAIの利点",
+      body: "TerraForensics AIの利点",
     },
     pfp: {
       title: "アシスタントのプロフィール画像",
@@ -340,7 +340,7 @@ const TRANSLATIONS = {
   api: {
     title: "APIキー",
     description:
-      "APIキーにより、プログラム経由でこのVertexAIインスタンスにアクセスおよび管理できます。",
+      "APIキーにより、プログラム経由でこのTerraForensics AIインスタンスにアクセスおよび管理できます。",
     link: "APIドキュメントを読む",
     generate: "新しいAPIキーを生成",
     table: {
@@ -352,7 +352,7 @@ const TRANSLATIONS = {
   llm: {
     title: "LLMの設定",
     description:
-      "これは、お好みのLLMチャットおよび埋め込みプロバイダー用の認証情報と設定です。これらのキーが最新かつ正確でない場合、VertexAIは正しく動作しません。",
+      "これは、お好みのLLMチャットおよび埋め込みプロバイダー用の認証情報と設定です。これらのキーが最新かつ正確でない場合、TerraForensics AIは正しく動作しません。",
     provider: "LLMプロバイダー",
     providers: {
       azure_openai: {
@@ -372,7 +372,7 @@ const TRANSLATIONS = {
       "これは、お好みの文字起こしモデルプロバイダー用の認証情報と設定です。これらのキーが最新かつ正確でない場合、メディアファイルや音声が正しく文字起こしされません。",
     provider: "文字起こしプロバイダー",
     "warn-start":
-      "RAMやCPUが限られたマシンでローカルのWhisperモデルを使用すると、メディアファイルの処理中にVertexAIが停止する可能性があります。",
+      "RAMやCPUが限られたマシンでローカルのWhisperモデルを使用すると、メディアファイルの処理中にTerraForensics AIが停止する可能性があります。",
     "warn-recommend":
       "少なくとも2GBのRAMが推奨され、ファイルサイズは10Mb未満であることをお勧めします。",
     "warn-end": "組み込みモデルは初回使用時に自動的にダウンロードされます。",
@@ -382,7 +382,7 @@ const TRANSLATIONS = {
     "desc-start":
       "LLMがネイティブに埋め込みエンジンをサポートしていない場合、テキストの埋め込み用に追加の認証情報を指定する必要がある場合があります。",
     "desc-end":
-      "埋め込みとは、テキストをベクトルに変換するプロセスです。これらの認証情報は、ファイルやプロンプトをVertexAIが処理できるフォーマットに変換するために必要です。",
+      "埋め込みとは、テキストをベクトルに変換するプロセスです。これらの認証情報は、ファイルやプロンプトをTerraForensics AIが処理できるフォーマットに変換するために必要です。",
     provider: {
       title: "埋め込みプロバイダー",
     },
@@ -406,7 +406,7 @@ const TRANSLATIONS = {
   vector: {
     title: "ベクターデータベース設定",
     description:
-      "これは、VertexAIインスタンスの動作方法用の認証情報と設定です。これらのキーが最新で正確であることが重要です。",
+      "これは、TerraForensics AIインスタンスの動作方法用の認証情報と設定です。これらのキーが最新で正確であることが重要です。",
     provider: {
       title: "ベクターデータベースプロバイダー",
       description: "LanceDBの場合、特に設定は必要ありません。",
@@ -451,7 +451,7 @@ const TRANSLATIONS = {
   privacy: {
     title: "プライバシーとデータ処理",
     description:
-      "これは、接続されているサードパーティプロバイダーとVertexAIがデータをどのように処理するかの設定です。",
+      "これは、接続されているサードパーティプロバイダーとTerraForensics AIがデータをどのように処理するかの設定です。",
     llm: "LLM選択",
     embedding: "埋め込み設定",
     vector: "ベクターデータベース",
@@ -614,12 +614,12 @@ const TRANSLATIONS = {
       fetching: "取得中...",
       "fetch-website": "ウェブサイトを取得",
       "privacy-notice":
-        "これらのファイルは、このVertexAIインスタンス上のドキュメント処理機能にアップロードされます。第三者に送信・共有されることはありません。",
+        "これらのファイルは、このTerraForensics AIインスタンス上のドキュメント処理機能にアップロードされます。第三者に送信・共有されることはありません。",
     },
     pinning: {
       what_pinning: "ドキュメントのピン留めとは？",
       pin_explained_block1:
-        "VertexAIでドキュメントを<b>ピン留め</b>すると、その内容全体がプロンプトウィンドウに挿入され、LLMがしっかり理解できるようになります。",
+        "TerraForensics AIでドキュメントを<b>ピン留め</b>すると、その内容全体がプロンプトウィンドウに挿入され、LLMがしっかり理解できるようになります。",
       pin_explained_block2:
         "<b>大きなコンテキストを持つモデル</b>や、重要な小さなファイルで特に効果的です。",
       pin_explained_block3:
@@ -629,7 +629,7 @@ const TRANSLATIONS = {
     watching: {
       what_watching: "ドキュメントのウォッチとは？",
       watch_explained_block1:
-        "VertexAIでドキュメントを<b>ウォッチ</b>すると、元のソースから定期的に内容が<i>自動的に</i>同期されます。管理しているすべてのワークスペースで内容が自動更新されます。",
+        "TerraForensics AIでドキュメントを<b>ウォッチ</b>すると、元のソースから定期的に内容が<i>自動的に</i>同期されます。管理しているすべてのワークスペースで内容が自動更新されます。",
       watch_explained_block2:
         "この機能は現在オンラインベースのコンテンツのみ対応しており、手動アップロードしたドキュメントには利用できません。",
       watch_explained_block3_start: "ウォッチしているドキュメントの管理は",
@@ -826,7 +826,7 @@ const TRANSLATIONS = {
     checklist: {
       title: "はじめに",
       tasksLeft: "残りのタスク",
-      completed: "VertexAIの達人への道を進んでいます！",
+      completed: "TerraForensics AIの達人への道を進んでいます！",
       dismiss: "閉じる",
       tasks: {
         create_workspace: {
@@ -1019,7 +1019,7 @@ const TRANSLATIONS = {
     password: {
       title: "パスワード保護",
       description:
-        "VertexAIインスタンスをパスワードで保護します。これを忘れた場合、回復方法はないため、このパスワードを必ず保存してください。",
+        "TerraForensics AIインスタンスをパスワードで保護します。これを忘れた場合、回復方法はないため、このパスワードを必ず保存してください。",
       "password-label": "インスタンスパスワード",
     },
   },

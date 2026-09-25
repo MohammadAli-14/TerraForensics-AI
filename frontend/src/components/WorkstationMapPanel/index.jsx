@@ -772,12 +772,12 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
             <button
               type="button"
               onClick={onClose}
-              className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold text-rose-300 hover:text-white bg-rose-500/20 hover:bg-rose-600 border border-rose-500/50 hover:border-rose-400 shadow-sm transition-all shrink-0 cursor-pointer ml-0.5 group"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold text-rose-200 hover:text-white bg-rose-600/30 hover:bg-rose-600 border border-rose-500/60 hover:border-rose-400 shadow-sm transition-all shrink-0 cursor-pointer ml-1 group"
               title="Close Geospatial Canvas (Reclaim full screen for chat)"
               aria-label="Close Geospatial Canvas"
             >
-              <X size={15} weight="bold" className="text-rose-400 group-hover:text-white transition-transform group-hover:scale-110" />
-              <span className="font-mono hidden sm:inline">Close</span>
+              <X size={15} weight="bold" className="text-rose-400 group-hover:text-white transition-transform group-hover:scale-110 shrink-0" />
+              <span className="font-mono text-[11px] uppercase tracking-wider hidden sm:inline">Close</span>
             </button>
           )}
         </div>
@@ -853,20 +853,6 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
       {/* MapLibre Canvas Container */}
       <div className="flex-1 relative w-full h-full">
         <div ref={mapContainerRef} className="w-full h-full" />
-
-        {/* Canvas Floating Quick-Close Button (Fail-safe for instant one-click closing) */}
-        {onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0B0F19]/90 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 hover:border-rose-500 shadow-2xl backdrop-blur-md text-xs font-mono font-semibold transition-all group cursor-pointer"
-            title="Close Canvas (Return to Chat)"
-            aria-label="Close Canvas"
-          >
-            <X size={15} weight="bold" className="text-rose-400 group-hover:text-white group-hover:rotate-90 transition-transform duration-200" />
-            <span>Close Canvas</span>
-          </button>
-        )}
 
         {/* Empty State Overlay when no active query */}
         {!activeData && !loadingPoints && (
