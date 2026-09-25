@@ -1243,14 +1243,16 @@ export default function WorkspaceGTDMap() {
   }, [isDarkMode]);
 
   return (
-    <div className={`w-full h-screen text-theme-text-primary ${isDarkMode ? "bg-gray-900" : "bg-slate-100"}`}>
-      <div className="absolute top-4 left-4 z-10 flex flex-col gap-2 pointer-events-auto">
+    <div className="relative w-full h-screen">
+      {/* ── Top-left Intelligence Panel ── */}
+      <div className="absolute top-4 left-4 z-20 flex flex-col gap-2 pointer-events-auto">
+        {/* Back button */}
         <Link
           to={`/workspace/${slug}`}
-          className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border shadow-sm transition-all w-fit font-medium ${
+          className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-sm transition-all w-fit font-medium border ${
             isDarkMode
-              ? "bg-slate-900/90 text-slate-200 border-slate-700/80 hover:bg-slate-800 hover:text-white"
-              : "bg-white/95 text-slate-800 border-slate-200 hover:bg-slate-50 hover:text-slate-950"
+              ? "bg-slate-950/90 text-slate-300 border-slate-600/70 hover:bg-slate-800/95 hover:text-white hover:border-slate-500"
+              : "bg-white/95 text-slate-700 border-slate-300 hover:bg-white hover:text-slate-950 hover:border-slate-400"
           }`}
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1258,33 +1260,46 @@ export default function WorkspaceGTDMap() {
           </svg>
           <span>Back to chat</span>
         </Link>
+
+        {/* GTD Intelligence Card */}
         <div
-          className={`text-xs px-3.5 py-2.5 rounded-lg border max-w-sm shadow-xl backdrop-blur-md transition-colors w-fit ${
+          className={`text-xs rounded-xl border min-w-[230px] max-w-[290px] shadow-2xl backdrop-blur-md transition-all ${
             isDarkMode
-              ? "bg-slate-900/90 border-slate-700/80 text-slate-200"
-              : "bg-white/95 border-slate-200 text-slate-800"
+              ? "bg-slate-950/92 border-cyan-800/40 text-slate-200 ring-1 ring-white/5 shadow-black/70"
+              : "bg-white/96 border-slate-200 text-slate-800 ring-1 ring-black/5 shadow-slate-400/30"
           }`}
         >
+          {/* Card header */}
           <div
-            className={`flex items-center gap-2 border-b pb-1.5 mb-2 ${
-              isDarkMode ? "border-slate-800" : "border-slate-200"
+            className={`flex items-center gap-2 px-3.5 pt-3 pb-2.5 border-b ${
+              isDarkMode ? "border-slate-700/60" : "border-slate-200"
             }`}
           >
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <span className={`font-semibold tracking-wide ${isDarkMode ? "text-slate-100" : "text-slate-900"}`}>
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse flex-shrink-0" />
+            <span className={`font-semibold text-[12px] tracking-wide leading-tight ${
+              isDarkMode ? "text-white" : "text-slate-900"
+            }`}>
               GTD Geospatial Intelligence
             </span>
           </div>
-          <div className={`leading-snug text-[11px] ${isDarkMode ? "text-slate-300" : "text-slate-600"}`}>
+
+          {/* Status line */}
+          <div className={`px-3.5 py-2.5 leading-snug text-[11px] ${
+            isDarkMode ? "text-slate-400" : "text-slate-600"
+          }`}>
             {status}
           </div>
+
+          {/* Load-more controls */}
           {hasMoreData && !loadingMore && (
-            <div className="text-amber-500 mt-1.5">
-              <div className="text-[11px] font-medium">
-                Showing {geoPoints.length.toLocaleString()} of {totalExpected.toLocaleString()} points
+            <div className={`px-3.5 pb-3 border-t pt-2 ${
+              isDarkMode ? "border-slate-700/60" : "border-slate-200"
+            }`}>
+              <div className="text-amber-400 text-[11px] font-medium mb-1.5">
+                Showing {geoPoints.length.toLocaleString()} of {totalExpected.toLocaleString()}
               </div>
               {hasFilter && (
-                <div className="flex flex-col gap-1 mt-1.5">
+                <div className="flex flex-col gap-1">
                   <button
                     onClick={handleLoadMore}
                     className="px-2.5 py-1 text-[11px] rounded font-medium bg-amber-600 hover:bg-amber-700 text-white transition-colors"
@@ -1303,25 +1318,37 @@ export default function WorkspaceGTDMap() {
               )}
             </div>
           )}
+
+          {/* Progress bar */}
           {loadingMore && (
-            <div className="text-cyan-400 mt-1.5">
-              <div className="mb-1 text-[11px]">{status}</div>
-              <div className={`w-full h-1.5 rounded overflow-hidden ${isDarkMode ? "bg-slate-800" : "bg-slate-200"}`}>
+            <div className={`px-3.5 pb-3 border-t pt-2 ${
+              isDarkMode ? "border-slate-700/60" : "border-slate-200"
+            }`}>
+              <div className="mb-1 text-[11px] text-cyan-400">{status}</div>
+              <div className={`w-full h-1.5 rounded-full overflow-hidden ${
+                isDarkMode ? "bg-slate-800" : "bg-slate-200"
+              }`}>
                 <div
-                  className="h-full bg-cyan-500 transition-all duration-300"
+                  className="h-full bg-cyan-500 transition-all duration-300 rounded-full"
                   style={{ width: `${loadMoreProgress}%` }}
                 />
               </div>
-              <div className={`mt-1 text-[10px] ${isDarkMode ? "text-slate-400" : "text-slate-500"}`}>
+              <div className={`mt-1 text-[10px] ${
+                isDarkMode ? "text-slate-500" : "text-slate-400"
+              }`}>
                 {loadMoreProgress}% complete
               </div>
             </div>
           )}
-          {error && <div className="text-rose-500 mt-1 text-[11px] font-medium">{error}</div>}
+
+          {/* Error */}
+          {error && (
+            <div className="px-3.5 pb-3 text-rose-400 text-[11px] font-medium">{error}</div>
+          )}
         </div>
       </div>
 
-      <div className="absolute top-4 right-4 z-10 w-[340px] max-h-[92vh] overflow-hidden rounded border border-theme-sidebar-border bg-theme-bg-secondary text-theme-text-primary">
+      <div className="absolute top-4 right-4 z-20 w-[340px] max-h-[92vh] overflow-hidden rounded border border-theme-sidebar-border bg-theme-bg-secondary text-theme-text-primary">
         <div className="px-3 py-2 border-b border-theme-sidebar-border">
           <div className="text-xs font-semibold">Summary</div>
           <div className="mt-1 text-[11px] text-theme-text-secondary">
