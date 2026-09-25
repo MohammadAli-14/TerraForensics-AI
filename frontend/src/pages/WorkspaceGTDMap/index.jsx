@@ -1249,10 +1249,10 @@ export default function WorkspaceGTDMap() {
         {/* Back button */}
         <Link
           to={`/workspace/${slug}`}
-          className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-sm transition-all w-fit font-medium border ${
+          className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg shadow-md transition-all w-fit font-medium border ${
             isDarkMode
-              ? "bg-slate-950/90 text-slate-300 border-slate-600/70 hover:bg-slate-800/95 hover:text-white hover:border-slate-500"
-              : "bg-white/95 text-slate-700 border-slate-300 hover:bg-white hover:text-slate-950 hover:border-slate-400"
+              ? "bg-slate-900 text-slate-300 border-slate-700 hover:bg-slate-800 hover:text-white hover:border-slate-500"
+              : "bg-white text-slate-700 border-slate-300 hover:bg-slate-50 hover:text-slate-950 hover:border-slate-400"
           }`}
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1263,16 +1263,16 @@ export default function WorkspaceGTDMap() {
 
         {/* GTD Intelligence Card */}
         <div
-          className={`text-xs rounded-xl border min-w-[230px] max-w-[290px] shadow-2xl backdrop-blur-md transition-all ${
+          className={`text-xs rounded-xl border min-w-[240px] max-w-[300px] shadow-xl transition-colors duration-300 ${
             isDarkMode
-              ? "bg-slate-950/92 border-cyan-800/40 text-slate-200 ring-1 ring-white/5 shadow-black/70"
-              : "bg-white/96 border-slate-200 text-slate-800 ring-1 ring-black/5 shadow-slate-400/30"
+              ? "bg-slate-900 border-slate-700 text-slate-200 ring-1 ring-slate-600/50"
+              : "bg-white border-slate-200 text-slate-800 ring-1 ring-slate-200 shadow-slate-300/50"
           }`}
         >
           {/* Card header */}
           <div
             className={`flex items-center gap-2 px-3.5 pt-3 pb-2.5 border-b ${
-              isDarkMode ? "border-slate-700/60" : "border-slate-200"
+              isDarkMode ? "border-slate-700" : "border-slate-200"
             }`}
           >
             <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse flex-shrink-0" />
@@ -1293,9 +1293,11 @@ export default function WorkspaceGTDMap() {
           {/* Load-more controls */}
           {hasMoreData && !loadingMore && (
             <div className={`px-3.5 pb-3 border-t pt-2 ${
-              isDarkMode ? "border-slate-700/60" : "border-slate-200"
+              isDarkMode ? "border-slate-700" : "border-slate-200"
             }`}>
-              <div className="text-amber-400 text-[11px] font-medium mb-1.5">
+              <div className={`text-[11px] font-medium mb-1.5 ${
+                isDarkMode ? "text-amber-400" : "text-amber-700"
+              }`}>
                 Showing {geoPoints.length.toLocaleString()} of {totalExpected.toLocaleString()}
               </div>
               {hasFilter && (
@@ -1322,7 +1324,7 @@ export default function WorkspaceGTDMap() {
           {/* Progress bar */}
           {loadingMore && (
             <div className={`px-3.5 pb-3 border-t pt-2 ${
-              isDarkMode ? "border-slate-700/60" : "border-slate-200"
+              isDarkMode ? "border-slate-700" : "border-slate-200"
             }`}>
               <div className="mb-1 text-[11px] text-cyan-400">{status}</div>
               <div className={`w-full h-1.5 rounded-full overflow-hidden ${
