@@ -2,8 +2,8 @@
   "openapi": "3.0.0",
   "info": {
     "version": "1.0.0",
-    "title": "TerraForensics AI Sovereign Threat Intelligence API",
-    "description": "API endpoints that enable programmatic querying, analytical management, and administration of your sovereign TerraForensics AI instance. UI supplied by Swagger.io."
+    "title": "VertexAI Developer API",
+    "description": "API endpoints that enable programmatic reading, writing, and updating of your VertexAI instance. UI supplied by Swagger.io."
   },
   "servers": [
     {

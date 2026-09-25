@@ -34,6 +34,7 @@ function ShowWorkspaceChat() {
     setShowMap(nextVal);
     localStorage.setItem("tf_show_map", String(nextVal));
     if (nextVal) {
+      window.dispatchEvent(new CustomEvent("tf:open-map"));
       const activeDataToDispatch = window.__tfLatestGtdData || (() => {
         try {
           const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
@@ -49,6 +50,8 @@ function ShowWorkspaceChat() {
           );
         }, 60);
       }
+    } else {
+      window.dispatchEvent(new CustomEvent("tf:close-map"));
     }
   };
 

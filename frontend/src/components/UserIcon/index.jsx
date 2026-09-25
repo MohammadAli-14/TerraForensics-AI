@@ -1,6 +1,7 @@
 import React, { memo } from "react";
 import usePfp from "../../hooks/usePfp";
 import UserDefaultPfp from "./user.svg";
+import TerraForensicsIcon from "@/media/logo/anything-llm-icon.png";
 import WorkspaceDefaultPfp from "./workspace.svg";
 
 const UserIcon = memo(({ role }) => {
@@ -10,11 +11,13 @@ const UserIcon = memo(({ role }) => {
     <div className="relative w-[35px] h-[35px] rounded-full flex-shrink-0 overflow-hidden">
       {role === "user" && <RenderUserPfp pfp={pfp} />}
       {role !== "user" && (
-        <img
-          src={WorkspaceDefaultPfp}
-          alt="system profile picture"
-          className="flex items-center justify-center rounded-full border-solid border border-white/40 light:border-theme-sidebar-border light:bg-theme-bg-chat-input"
-        />
+        <div className="w-full h-full rounded-full border border-slate-700/80 light:border-theme-sidebar-border bg-[#0B0F19] flex items-center justify-center p-[3px] shadow-sm">
+          <img
+            src={TerraForensicsIcon || WorkspaceDefaultPfp}
+            alt="TerraForensics AI"
+            className="w-full h-full object-contain"
+          />
+        </div>
       )}
     </div>
   );

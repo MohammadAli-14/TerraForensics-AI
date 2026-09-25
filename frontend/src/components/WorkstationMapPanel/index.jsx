@@ -22,22 +22,18 @@ import {
 import { API_BASE } from "@/utils/constants";
 import { baseHeaders } from "@/utils/request";
 
-// Multi-provider sovereign dark map style configuration
-// Carto Dark Matter: XYZ format ({z}/{x}/{y}) with crisp labels & borders
-// Esri Dark Gray: ArcGIS REST format ({z}/{y}/{x}) Base + Reference labels
+const CARTO_API_KEY =
+  typeof import.meta !== "undefined"
+    ? import.meta.env?.VITE_CARTO_API_KEY
+    : null;
+
+// Multi-provider sovereign map style configuration
+// 1. Esri Dark Gray Canvas: Tactical Dark Base + Reference Labels (Zero API Key, 100% Free, No Watermark)
+// 2. Esri Satellite Imagery: High-Res Orbital Threat Recon + Boundaries (Zero API Key, 100% Free, No Watermark)
+// 3. Carto Dark Matter: Activated only when VITE_CARTO_API_KEY is supplied (No Watermark)
 const SOVEREIGN_MAP_STYLE = {
   version: 8,
   sources: {
-    "carto-dark-base": {
-      type: "raster",
-      tiles: [
-        "https://a.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png",
-        "https://b.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png",
-        "https://c.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png",
-      ],
-      tileSize: 256,
-      attribution: "© OpenStreetMap contributors © CARTO",
-    },
     "esri-dark-base": {
       type: "raster",
       tiles: [
@@ -54,16 +50,38 @@ const SOVEREIGN_MAP_STYLE = {
       tileSize: 256,
       attribution: "© Esri, HERE, Garmin, © OpenStreetMap",
     },
+    "esri-satellite-base": {
+      type: "raster",
+      tiles: [
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+      ],
+      tileSize: 256,
+      attribution: "© Esri, Maxar, Earthstar Geographics",
+    },
+    "esri-satellite-ref": {
+      type: "raster",
+      tiles: [
+        "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+      ],
+      tileSize: 256,
+      attribution: "© Esri, HERE, Garmin",
+    },
+    ...(CARTO_API_KEY
+      ? {
+          "carto-dark-base": {
+            type: "raster",
+            tiles: [
+              `https://a.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?api_key=${CARTO_API_KEY}`,
+              `https://b.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?api_key=${CARTO_API_KEY}`,
+              `https://c.basemaps.cartocdn.com/rastertiles/dark_all/{z}/{x}/{y}.png?api_key=${CARTO_API_KEY}`,
+            ],
+            tileSize: 256,
+            attribution: "© OpenStreetMap contributors © CARTO",
+          },
+        }
+      : {}),
   },
   layers: [
-    {
-      id: "carto-dark-layer",
-      type: "raster",
-      source: "carto-dark-base",
-      minzoom: 0,
-      maxzoom: 20,
-      layout: { visibility: "none" },
-    },
     {
       id: "esri-dark-base-layer",
       type: "raster",
@@ -80,6 +98,34 @@ const SOVEREIGN_MAP_STYLE = {
       maxzoom: 20,
       layout: { visibility: "visible" },
     },
+    {
+      id: "esri-satellite-base-layer",
+      type: "raster",
+      source: "esri-satellite-base",
+      minzoom: 0,
+      maxzoom: 20,
+      layout: { visibility: "none" },
+    },
+    {
+      id: "esri-satellite-ref-layer",
+      type: "raster",
+      source: "esri-satellite-ref",
+      minzoom: 0,
+      maxzoom: 20,
+      layout: { visibility: "none" },
+    },
+    ...(CARTO_API_KEY
+      ? [
+          {
+            id: "carto-dark-layer",
+            type: "raster",
+            source: "carto-dark-base",
+            minzoom: 0,
+            maxzoom: 20,
+            layout: { visibility: "none" },
+          },
+        ]
+      : []),
   ],
 };
 
@@ -101,7 +147,7 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
   });
   const autoRefetchTrackerRef = useRef(new Set());
   const [mapMode, setMapMode] = useState("clusters"); // "clusters" | "heatmap"
-  const [basemap, setBasemap] = useState("esri"); // "esri" | "carto"
+  const [basemap, setBasemap] = useState("dark"); // "dark" | "satellite" | "carto"
   const [selectedIncident, setSelectedIncident] = useState(null);
   const [mapReady, setMapReady] = useState(false);
   const [loadingPoints, setLoadingPoints] = useState(false);
@@ -476,23 +522,41 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
     setVisibility("gtd-heatmap", showHeatmap);
   };
 
-  // Toggle Basemap (Carto Dark vs Esri Canvas)
+  // Toggle Basemap (Dark Canvas vs Satellite Recon vs optional Carto)
   const toggleBasemap = (nextBasemap) => {
     setBasemap(nextBasemap);
     if (!mapRef.current || !mapReady) return;
     const map = mapRef.current;
 
+    const isDark = nextBasemap === "dark" || nextBasemap === "esri";
+    const isSatellite = nextBasemap === "satellite";
     const isCarto = nextBasemap === "carto";
 
+    const setVisibility = (layerId, isVisible) => {
+      if (map.getLayer(layerId)) {
+        map.setLayoutProperty(layerId, "visibility", isVisible ? "visible" : "none");
+      }
+    };
+
+    setVisibility("esri-dark-base-layer", isDark);
+    setVisibility("esri-dark-ref-layer", isDark);
+    setVisibility("esri-satellite-base-layer", isSatellite);
+    setVisibility("esri-satellite-ref-layer", isSatellite);
     if (map.getLayer("carto-dark-layer")) {
-      map.setLayoutProperty("carto-dark-layer", "visibility", isCarto ? "visible" : "none");
+      setVisibility("carto-dark-layer", isCarto);
     }
-    if (map.getLayer("esri-dark-base-layer")) {
-      map.setLayoutProperty("esri-dark-base-layer", "visibility", isCarto ? "none" : "visible");
+  };
+
+  const handleCycleBasemap = () => {
+    let next;
+    if (CARTO_API_KEY) {
+      if (basemap === "dark" || basemap === "esri") next = "satellite";
+      else if (basemap === "satellite") next = "carto";
+      else next = "dark";
+    } else {
+      next = basemap === "dark" || basemap === "esri" ? "satellite" : "dark";
     }
-    if (map.getLayer("esri-dark-ref-layer")) {
-      map.setLayoutProperty("esri-dark-ref-layer", "visibility", isCarto ? "none" : "visible");
-    }
+    toggleBasemap(next);
   };
 
   // Standby Action: Load Global Threat Radar (5,000 Incidents)
@@ -631,75 +695,89 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
   return (
     <div className="relative w-full h-full flex flex-col bg-[#0F172A] border-l border-slate-800 text-slate-200 overflow-hidden select-none">
       {/* Top Workstation Header */}
-      <div className="h-14 px-4 bg-[#0B0F19]/95 backdrop-blur border-b border-slate-800 flex items-center justify-between z-10">
-        <div className="flex items-center gap-2.5">
-          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.6)]" />
-          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-200">
-            TerraForensics Geospatial Canvas
+      <div className="h-14 px-3 sm:px-4 bg-[#0B0F19]/95 backdrop-blur border-b border-slate-800 flex items-center justify-between gap-2 z-10 min-w-0">
+        <div className="flex items-center gap-2 min-w-0 shrink">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.6)] shrink-0" />
+          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-200 truncate">
+            <span className="hidden xl:inline">TerraForensics </span>Geospatial Canvas
           </span>
-          <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-800/90 text-cyan-400 border border-slate-700">
+          <span className="hidden 2xl:inline-flex px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-800/90 text-cyan-400 border border-slate-700 shrink-0">
             GTD 1970–2017
           </span>
         </div>
 
-        {/* Tactical Controls (Clusters / Heatmap / Basemap / Reset / Close) */}
-        <div className="flex items-center gap-1.5 bg-slate-900/90 p-1 rounded-md border border-slate-800">
-          {/* Mode Switcher */}
-          <div className="flex items-center gap-1 bg-slate-950/60 p-0.5 rounded border border-slate-800/60">
+        {/* Tactical Controls & Close Action */}
+        <div className="flex items-center gap-1.5 shrink-0">
+          <div className="flex items-center gap-1 bg-slate-900/90 p-1 rounded-md border border-slate-800">
+            {/* Mode Switcher */}
+            <div className="flex items-center gap-0.5 bg-slate-950/60 p-0.5 rounded border border-slate-800/60">
+              <button
+                type="button"
+                onClick={() => toggleMapMode("clusters")}
+                className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all ${
+                  mapMode === "clusters"
+                    ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+                title="Cluster Density View"
+              >
+                <CirclesThreePlus size={14} weight="bold" />
+                <span className="hidden sm:inline">Clusters</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => toggleMapMode("heatmap")}
+                className={`flex items-center gap-1 px-2 py-1 rounded text-xs font-medium transition-all ${
+                  mapMode === "heatmap"
+                    ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                }`}
+                title="Casualty Heatmap View"
+              >
+                <Fire size={14} weight="bold" />
+                <span className="hidden sm:inline">Heatmap</span>
+              </button>
+            </div>
+
+            {/* Basemap Switcher */}
             <button
-              onClick={() => toggleMapMode("clusters")}
-              className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-all ${
-                mapMode === "clusters"
-                  ? "bg-amber-500/20 text-amber-300 border border-amber-500/40 shadow-sm"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-              title="Cluster Density View"
+              type="button"
+              onClick={handleCycleBasemap}
+              className="flex items-center gap-1 px-2 py-1 rounded text-xs text-slate-300 hover:text-white hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-700 cursor-pointer"
+              title={`Basemap: ${basemap === "satellite" ? "Satellite Recon (Esri)" : basemap === "carto" ? "CARTO Dark" : "Tactical Dark (Esri)"} (Click to switch)`}
             >
-              <CirclesThreePlus size={14} weight="bold" />
-              <span>Clusters</span>
+              {basemap === "satellite" ? (
+                <Globe size={14} className="text-cyan-400" />
+              ) : (
+                <Stack size={14} className="text-amber-400" />
+              )}
+              <span className="font-mono text-[11px] uppercase">
+                {basemap === "satellite" ? "SAT" : basemap === "carto" ? "CARTO" : "DARK"}
+              </span>
             </button>
+
+            {/* Reset View */}
             <button
-              onClick={() => toggleMapMode("heatmap")}
-              className={`flex items-center gap-1.5 px-2 py-1 rounded text-xs font-medium transition-all ${
-                mapMode === "heatmap"
-                  ? "bg-rose-500/20 text-rose-300 border border-rose-500/40 shadow-sm"
-                  : "text-slate-400 hover:text-slate-200"
-              }`}
-              title="Casualty Heatmap View"
+              type="button"
+              onClick={resetView}
+              className="p-1.5 rounded text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors cursor-pointer"
+              title="Reset Global View"
             >
-              <Fire size={14} weight="bold" />
-              <span>Heatmap</span>
+              <ArrowsIn size={14} />
             </button>
           </div>
 
-          {/* Basemap Switcher */}
-          <button
-            onClick={() => toggleBasemap(basemap === "carto" ? "esri" : "carto")}
-            className="flex items-center gap-1 px-2 py-1 rounded text-xs text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors border border-transparent hover:border-slate-700"
-            title={`Toggle Basemap (Current: ${basemap === "carto" ? "Tactical Dark" : "Esri Canvas"})`}
-          >
-            <Stack size={14} />
-            <span className="font-mono text-[11px] uppercase">{basemap}</span>
-          </button>
-
-          {/* Reset View */}
-          <button
-            onClick={resetView}
-            className="p-1.5 rounded text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
-            title="Reset Global View"
-          >
-            <ArrowsIn size={14} />
-          </button>
-
-          {/* Close Action */}
+          {/* Dedicated High-Visibility Close Button */}
           {onClose && (
             <button
+              type="button"
               onClick={onClose}
-              className="flex items-center gap-1 px-2.5 py-1 rounded text-xs font-semibold text-rose-400 hover:text-white bg-rose-500/10 hover:bg-rose-600/80 border border-rose-500/30 hover:border-rose-500 transition-all ml-1"
+              className="flex items-center gap-1 px-2.5 py-1.5 rounded-md text-xs font-semibold text-rose-300 hover:text-white bg-rose-500/20 hover:bg-rose-600 border border-rose-500/50 hover:border-rose-400 shadow-sm transition-all shrink-0 cursor-pointer ml-0.5 group"
               title="Close Geospatial Canvas (Reclaim full screen for chat)"
+              aria-label="Close Geospatial Canvas"
             >
-              <X size={14} weight="bold" />
-              <span>Close</span>
+              <X size={15} weight="bold" className="text-rose-400 group-hover:text-white transition-transform group-hover:scale-110" />
+              <span className="font-mono hidden sm:inline">Close</span>
             </button>
           )}
         </div>
@@ -775,6 +853,20 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
       {/* MapLibre Canvas Container */}
       <div className="flex-1 relative w-full h-full">
         <div ref={mapContainerRef} className="w-full h-full" />
+
+        {/* Canvas Floating Quick-Close Button (Fail-safe for instant one-click closing) */}
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute top-3 right-3 z-20 flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#0B0F19]/90 hover:bg-rose-600 text-rose-300 hover:text-white border border-rose-500/40 hover:border-rose-500 shadow-2xl backdrop-blur-md text-xs font-mono font-semibold transition-all group cursor-pointer"
+            title="Close Canvas (Return to Chat)"
+            aria-label="Close Canvas"
+          >
+            <X size={15} weight="bold" className="text-rose-400 group-hover:text-white group-hover:rotate-90 transition-transform duration-200" />
+            <span>Close Canvas</span>
+          </button>
+        )}
 
         {/* Empty State Overlay when no active query */}
         {!activeData && !loadingPoints && (
