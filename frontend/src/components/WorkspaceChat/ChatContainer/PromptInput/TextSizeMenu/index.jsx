@@ -55,12 +55,14 @@ export default function TextSizeButton() {
 function TextSizeMenu({ tooltipRef }) {
   const { t } = useTranslation();
   const [selectedSize, setSelectedSize] = useState(
-    window.localStorage.getItem("VertexAI_text_size") || "normal"
+    window.localStorage.getItem("tf_text_size") ??
+      window.localStorage.getItem("VertexAI_text_size") ??
+      "normal"
   );
 
   const handleTextSizeChange = (size) => {
     setSelectedSize(size);
-    window.localStorage.setItem("VertexAI_text_size", size);
+    window.localStorage.setItem("tf_text_size", size);
     window.dispatchEvent(new CustomEvent("textSizeChange", { detail: size }));
     tooltipRef.current?.close();
   };

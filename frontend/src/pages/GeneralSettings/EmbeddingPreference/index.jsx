@@ -40,12 +40,12 @@ import MistralAiOptions from "@/components/EmbeddingSelection/MistralAiOptions";
 
 const EMBEDDERS = [
   {
-    name: "VertexAI Embedder",
+    name: "TerraForensics AI Embedder",
     value: "native",
     logo: VertexAIIcon,
     options: (settings) => <NativeEmbeddingOptions settings={settings} />,
     description:
-      "Use the built-in embedding provider for VertexAI. Zero setup!",
+      "Use the built-in embedding provider for TerraForensics AI. Zero setup!",
   },
   {
     name: "OpenAI",

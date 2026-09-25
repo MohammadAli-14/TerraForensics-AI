@@ -22,7 +22,7 @@ const PROVIDERS = [
     description: "Leverage the OpenAI Whisper-large model using your API key.",
   },
   {
-    name: "VertexAI Built-In",
+    name: "TerraForensics AI Built-In",
     value: "local",
     logo: VertexAIIcon,
     options: (settings) => <NativeTranscriptionOptions settings={settings} />,

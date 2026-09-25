@@ -60,7 +60,7 @@ export default function CustomSiteSettings() {
             name="meta_page_title"
             type="text"
             className="border-none bg-theme-settings-input-bg mt-2 text-white placeholder:text-theme-settings-input-placeholder text-sm rounded-lg focus:outline-primary-button active:outline-primary-button outline-none block w-fit py-2 px-4"
-            placeholder="VertexAI | Your personal LLM trained on anything"
+            placeholder="TerraForensics AI | Sovereign Geospatial Intelligence Platform"
             autoComplete="off"
             onChange={(e) => {
               setSettings((prev) => {
@@ -69,7 +69,7 @@ export default function CustomSiteSettings() {
             }}
             value={
               settings.title ??
-              "VertexAI | Your personal LLM trained on anything"
+              "TerraForensics AI | Sovereign Geospatial Intelligence Platform"
             }
           />
         </div>

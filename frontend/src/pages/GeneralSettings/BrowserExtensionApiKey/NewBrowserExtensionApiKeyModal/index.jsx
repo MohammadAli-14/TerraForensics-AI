@@ -84,11 +84,11 @@ export default function NewBrowserExtensionApiKeyModal({
                 </p>
               )}
               <p className="text-white text-opacity-60 text-xs md:text-sm">
-                After clicking "Create API Key", VertexAI will attempt to
+                After clicking "Create API Key", TerraForensics AI will attempt to
                 connect to your browser extension automatically.
               </p>
               <p className="text-white text-opacity-60 text-xs md:text-sm">
-                If you see "Connected to VertexAI" in the extension, the
+                If you see "Connected to TerraForensics AI" in the extension, the
                 connection was successful. If not, please copy the connection
                 string and paste it into the extension manually.
               </p>

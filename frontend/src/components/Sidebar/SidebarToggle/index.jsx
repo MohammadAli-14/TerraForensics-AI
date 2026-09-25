@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { SidebarSimple } from "@phosphor-icons/react";
 import paths from "@/utils/paths";
 import { Tooltip } from "react-tooltip";
-const SIDEBAR_TOGGLE_STORAGE_KEY = "VertexAI_sidebar_toggle";
+const SIDEBAR_TOGGLE_STORAGE_KEY = "tf_sidebar_toggle";
 
 /**
  * Returns the previous state of the sidebar from localStorage.
@@ -12,7 +12,9 @@ const SIDEBAR_TOGGLE_STORAGE_KEY = "VertexAI_sidebar_toggle";
  * @returns {boolean}
  */
 function previousSidebarState() {
-  const previousState = window.localStorage.getItem(SIDEBAR_TOGGLE_STORAGE_KEY);
+  const previousState =
+    window.localStorage.getItem(SIDEBAR_TOGGLE_STORAGE_KEY) ??
+    window.localStorage.getItem("VertexAI_sidebar_toggle");
   if (previousState === "closed") return false;
   return true;
 }

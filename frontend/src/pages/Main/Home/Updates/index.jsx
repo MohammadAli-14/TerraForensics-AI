@@ -19,7 +19,7 @@ import { useTranslation } from "react-i18next";
 const NEWS_CACHE_CONFIG = {
   articles: "https://cdn.VertexAI.com/support/announcements/list.txt",
   announcementsDir: "https://cdn.VertexAI.com/support/announcements",
-  cacheKey: "VertexAI_announcements",
+  cacheKey: "tf_announcements",
   ttl: 7 * 24 * 60 * 60 * 1000, // 1 week
 };
 
@@ -66,7 +66,7 @@ function AnnouncementCard({
   thumbnail_url = null,
   title = "",
   subtitle = "",
-  author = "VertexAI",
+  author = "TerraForensics AI",
   date = null,
   goto = "#",
 }) {

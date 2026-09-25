@@ -22,7 +22,7 @@ const VECTOR_DBS = [
     logo: LanceDbLogo,
     options: (_) => <LanceDBOptions />,
     description:
-      "100% local vector DB that runs on the same instance as VertexAI (zero cost, fast native vector search).",
+      "100% local vector DB that runs on the same instance as TerraForensics AI (zero cost, fast native vector search).",
   },
 ];
 

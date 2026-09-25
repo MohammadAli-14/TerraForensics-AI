@@ -93,7 +93,7 @@ export default function NewApiKeyModal({ closeModal, onSuccess }) {
               )}
               <p className="text-white text-opacity-60 text-xs md:text-sm">
                 Once created the API key can be used to programmatically access
-                and configure this VertexAI instance.
+                and configure this TerraForensics AI instance.
               </p>
               <a
                 href={paths.apiDocs()}

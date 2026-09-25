@@ -1,8 +1,8 @@
 import { numberWithCommas } from "@/utils/numbers";
 import React, { useEffect, useState, useContext } from "react";
 const MetricsContext = React.createContext();
-const SHOW_METRICS_KEY = "VertexAI_show_chat_metrics";
-const SHOW_METRICS_EVENT = "VertexAI_show_metrics_change";
+const SHOW_METRICS_KEY = "tf_show_chat_metrics";
+const SHOW_METRICS_EVENT = "tf_show_metrics_change";
 
 /**
  * @param {number} duration - duration in milliseconds
@@ -34,11 +34,14 @@ function formatTps(outputTps) {
 }
 
 /**
- * Get the show metrics setting from localStorage `VertexAI_show_chat_metrics` key
+ * Get the show metrics setting from localStorage
  * @returns {boolean}
  */
 function getAutoShowMetrics() {
-  return window?.localStorage?.getItem(SHOW_METRICS_KEY) === "true";
+  return (
+    (window?.localStorage?.getItem(SHOW_METRICS_KEY) ??
+      window?.localStorage?.getItem("VertexAI_show_chat_metrics")) === "true"
+  );
 }
 
 /**

@@ -50,13 +50,13 @@ export default {
     },
   },
   github: () => {
-    return "https://github.com/Mintplex-Labs/anything-llm";
+    return "https://github.com/MohammadAli-14/TerraForensics-AI";
   },
   discord: () => {
     return "https://discord.com/invite/6UyHPeGZAC";
   },
   docs: () => {
-    return "https://docs.VertexAI.com";
+    return "https://github.com/MohammadAli-14/TerraForensics-AI#readme";
   },
   chatModes: () => {
     return "https://docs.VertexAI.com/features/chat-modes";

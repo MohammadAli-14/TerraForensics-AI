@@ -352,7 +352,7 @@ export const VECTOR_DB_PRIVACY = {
   lancedb: {
     name: "LanceDB",
     description: [
-      "Your vectors and document text are stored privately on this instance of VertexAI",
+      "Your vectors and document text are stored privately on this instance of TerraForensics AI",
     ],
     logo: LanceDbLogo,
   },
@@ -360,9 +360,9 @@ export const VECTOR_DB_PRIVACY = {
 
 export const EMBEDDING_ENGINE_PRIVACY = {
   native: {
-    name: "VertexAI Embedder",
+    name: "TerraForensics AI Embedder",
     description: [
-      "Your document text is embedded privately on this instance of VertexAI",
+      "Your document text is embedded privately on this instance of TerraForensics AI",
     ],
     logo: VertexAIIcon,
   },
@@ -452,21 +452,21 @@ export const FALLBACKS = {
   LLM: (provider) => ({
     name: "Unknown",
     description: [
-      `"${provider}" has no known data handling policy defined in VertexAI`,
+      `"${provider}" has no known data handling policy defined in TerraForensics AI`,
     ],
     logo: VertexAIIcon,
   }),
   EMBEDDING: (provider) => ({
     name: "Unknown",
     description: [
-      `"${provider}" has no known data handling policy defined in VertexAI`,
+      `"${provider}" has no known data handling policy defined in TerraForensics AI`,
     ],
     logo: VertexAIIcon,
   }),
   VECTOR: (provider) => ({
     name: "Unknown",
     description: [
-      `"${provider}" has no known data handling policy defined in VertexAI`,
+      `"${provider}" has no known data handling policy defined in TerraForensics AI`,
     ],
     logo: VertexAIIcon,
   }),
