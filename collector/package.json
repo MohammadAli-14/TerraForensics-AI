@@ -1,7 +1,7 @@
 {
-  "name": "anything-llm-document-collector",
+  "name": "terraforensics-ai-document-collector",
   "version": "1.9.0",
-  "description": "Document collector server endpoints",
+  "description": "TerraForensics AI Document Collector Server Endpoints",
   "main": "index.js",
   "author": "Timothy Carambat (Mintplex Labs)",
   "license": "MIT",

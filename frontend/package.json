@@ -1,11 +1,11 @@
 {
-  "name": "anything-llm-frontend",
+  "name": "terraforensics-ai-frontend",
   "private": false,
   "license": "MIT",
   "type": "module",
   "scripts": {
     "start": "vite --open",
-    "dev": "cross-env NODE_ENV=development vite --debug --host=0.0.0.0",
+    "dev": "cross-env NODE_ENV=development NODE_OPTIONS=--max-old-space-size=4096 vite --host=0.0.0.0",
     "build": "vite build && node scripts/postbuild.js",
     "lint": "yarn prettier --ignore-path ../.prettierignore --write ./src",
     "preview": "vite preview"

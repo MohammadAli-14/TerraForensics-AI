@@ -37,8 +37,16 @@ if (countIdx !== -1 && args[countIdx + 1]) {
   totalCountArg = parseInt(args[countIdx + 1], 10) || 30;
 }
 
-const OLLAMA_HOST = "localhost";
-const OLLAMA_PORT = 11434;
+// Load environment variables if available
+try {
+  require(path.resolve(__dirname, "../server/node_modules/dotenv")).config({
+    path: path.resolve(__dirname, "../server/.env"),
+  });
+} catch (_) {}
+
+const OLLAMA_HOST = process.env.OLLAMA_HOST || "localhost";
+const OLLAMA_PORT = process.env.OLLAMA_PORT || 11434;
+const MODEL_NAME = process.env.OLLAMA_MODEL || "llama3.2:3b";
 const MONGODB_URI = process.env.MONGODB_URI || "mongodb://127.0.0.1:27017/GTD_Database";
 
 // Load 180 labeled benchmark dataset
@@ -177,7 +185,7 @@ async function runScaledBenchmark() {
   console.log("[Setup] Connecting to MongoDB GTD database...");
   let attacksCollection = null;
   try {
-    await mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 5000 });
+    await mongoose.connect(MONGODB_URI, { serverSelectionTimeoutMS: 10000 });
     attacksCollection = mongoose.connection.db.collection("attacks");
     console.log("  MongoDB connected successfully.\n");
   } catch (err) {

@@ -23,4 +23,5 @@ vite.config.js.timestamp*
 *.pem
 server/inspect_coords*.js
 server/inspect_coords*.cjs
-
+docs/
+extras/scripts/

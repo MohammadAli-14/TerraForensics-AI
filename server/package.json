@@ -1,7 +1,7 @@
 {
-  "name": "anything-llm-server",
+  "name": "terraforensics-ai-server",
   "version": "1.9.0",
-  "description": "Server endpoints to process or create content for chatting",
+  "description": "TerraForensics AI Sovereign Threat Intelligence Platform Server",
   "main": "index.js",
   "author": "Timothy Carambat (Mintplex Labs)",
   "license": "MIT",

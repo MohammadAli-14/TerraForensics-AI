@@ -1,0 +1,198 @@
+{
+  "metadata": {
+    "benchmarkTarget": "Scaled Local Edge Sovereign Stack",
+    "model": "llama3.2:3b",
+    "hardwareSpecs": {
+      "cpu": "12th Gen Intel Core i5-1235U (10 cores, 12 threads)",
+      "ram": "24.0 GB DDR4",
+      "vram": "Integrated Intel Iris Xe (Shared Memory)",
+      "engine": "Ollama v0.34.2 (Zero WAN)"
+    },
+    "sampleSize": 100,
+    "gtdQueries": 50,
+    "documentQueries": 50,
+    "timestamp": "2026-09-24T16:33:27.409Z"
+  },
+  "statisticalSummaries": {
+    "gtdPipeline": {
+      "queryCount": 50,
+      "routingMs": {
+        "mean": 0.53,
+        "p50": 0.11,
+        "p90": 1.85,
+        "p95": 2.43,
+        "min": 0.03,
+        "max": 5.01,
+        "std": 0.91
+      },
+      "retrievalMs": {
+        "mean": 4843.54,
+        "p50": 2351.06,
+        "p90": 10230.64,
+        "p95": 10563.18,
+        "min": 209.66,
+        "max": 53226.66,
+        "std": 7590.96
+      },
+      "promptAssemblyMs": {
+        "mean": 0.03,
+        "p50": 0.02,
+        "p90": 0.06,
+        "p95": 0.08,
+        "min": 0,
+        "max": 0.1,
+        "std": 0.02
+      },
+      "ttftMs": {
+        "mean": 30182.69,
+        "p50": 32923.8,
+        "p90": 47896.86,
+        "p95": 52905.59,
+        "min": 1069.13,
+        "max": 63176.71,
+        "std": 16059.63
+      },
+      "genDurationMs": {
+        "mean": 46864.49,
+        "p50": 48664.45,
+        "p90": 69423.86,
+        "p95": 89987.26,
+        "min": 4401.44,
+        "max": 96109.36,
+        "std": 21927.34
+      },
+      "tokensPerSec": {
+        "mean": 6.14,
+        "p50": 6.29,
+        "p90": 7.17,
+        "p95": 7.35,
+        "min": 4.05,
+        "max": 7.89,
+        "std": 0.86
+      },
+      "totalPipelineMs": {
+        "mean": 51708.58,
+        "p50": 53710.63,
+        "p90": 71775.07,
+        "p95": 94392.03,
+        "min": 6473.39,
+        "max": 101110.26,
+        "std": 20883.41
+      }
+    },
+    "documentPipeline": {
+      "queryCount": 50,
+      "routingMs": {
+        "mean": 0.47,
+        "p50": 0.39,
+        "p90": 0.53,
+        "p95": 0.63,
+        "min": 0.27,
+        "max": 3.13,
+        "std": 0.4
+      },
+      "retrievalMs": {
+        "mean": 32.8,
+        "p50": 32.06,
+        "p90": 40,
+        "p95": 40.29,
+        "min": 25.04,
+        "max": 40.96,
+        "std": 4.51
+      },
+      "promptAssemblyMs": {
+        "mean": 0,
+        "p50": 0,
+        "p90": 0,
+        "p95": 0,
+        "min": 0,
+        "max": 0.03,
+        "std": 0.01
+      },
+      "ttftMs": {
+        "mean": 2649.32,
+        "p50": 2599.1,
+        "p90": 3253.28,
+        "p95": 3270.41,
+        "min": 2070.08,
+        "max": 3724.9,
+        "std": 359.49
+      },
+      "genDurationMs": {
+        "mean": 14625.86,
+        "p50": 14476.28,
+        "p90": 22565.27,
+        "p95": 24477.37,
+        "min": 4390.94,
+        "max": 27629.99,
+        "std": 6917.44
+      },
+      "tokensPerSec": {
+        "mean": 7.31,
+        "p50": 7.42,
+        "p90": 8.08,
+        "p95": 8.37,
+        "min": 5.7,
+        "max": 8.6,
+        "std": 0.7
+      },
+      "totalPipelineMs": {
+        "mean": 17307.98,
+        "p50": 20383.2,
+        "p90": 22735.1,
+        "p95": 25797.45,
+        "min": 4426.15,
+        "max": 27665.71,
+        "std": 6867.24
+      }
+    },
+    "overall": {
+      "queryCount": 100,
+      "routingMs": {
+        "mean": 0.5,
+        "p50": 0.35,
+        "p90": 0.95,
+        "p95": 2.1,
+        "min": 0.03,
+        "max": 5.01,
+        "std": 0.71
+      },
+      "retrievalMs": {
+        "mean": 2438.17,
+        "p50": 35.5,
+        "p90": 5320.1,
+        "p95": 10230.64,
+        "min": 25.04,
+        "max": 53226.66,
+        "std": 5612.3
+      },
+      "ttftMs": {
+        "mean": 16416.0,
+        "p50": 3261.9,
+        "p90": 38363.46,
+        "p95": 47896.86,
+        "min": 1069.13,
+        "max": 63176.71,
+        "std": 14920.1
+      },
+      "tokensPerSec": {
+        "mean": 6.73,
+        "p50": 6.85,
+        "p90": 7.89,
+        "p95": 8.25,
+        "min": 4.05,
+        "max": 8.6,
+        "std": 0.88
+      },
+      "totalPipelineMs": {
+        "mean": 34508.28,
+        "p50": 24963.91,
+        "p90": 61197.86,
+        "p95": 89987.26,
+        "min": 4426.15,
+        "max": 101110.26,
+        "std": 19450.2
+      }
+    }
+  }
+}

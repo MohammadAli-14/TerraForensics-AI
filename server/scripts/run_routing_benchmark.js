@@ -3,7 +3,7 @@
 /**
  * Empirical Routing Accuracy & Pipeline Latency Benchmark Runner
  *
- * Implements Task 2 from the AnythingLLM + GTD evaluation specification:
+ * Implements Task 2 from the TerraForensics AI / P-HyRAG + GTD evaluation specification:
  * 1. Evaluates the actual classifier function (mongoDBContextExtractor.isGTDQuery)
  *    directly against a labeled dataset of 180 queries (90 GTD, 90 Document,
  *    including 25 deliberately ambiguous document queries with generic keywords).
@@ -61,7 +61,7 @@ async function initializeMongoDB() {
 
 async function main() {
   console.log("===============================================================================");
-  console.log("  P-HyRAG / ANYTHING-LLM + GTD EMPIRICAL BENCHMARK HARNESS");
+  console.log("  P-HyRAG / TERRAFORENSICS AI + GTD EMPIRICAL BENCHMARK HARNESS");
   console.log("===============================================================================\n");
 
   const mongoConnected = await initializeMongoDB();

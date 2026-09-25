@@ -27,8 +27,8 @@ class MetaGenerator {
   #customConfig = null;
 
   #defaultManifest = {
-    name: "VertexAI",
-    short_name: "VertexAI",
+    name: "TerraForensics AI",
+    short_name: "TerraForensics",
     display: "standalone",
     orientation: "portrait",
     start_url: "/",
@@ -59,21 +59,21 @@ class MetaGenerator {
       {
         tag: "title",
         props: null,
-        content: "VertexAI | Your personal LLM trained on anything",
+        content: "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
       },
 
       {
         tag: "meta",
         props: {
           name: "title",
-          content: "VertexAI | Your personal LLM trained on anything",
+          content: "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
         },
       },
       {
         tag: "meta",
         props: {
-          description: "title",
-          content: "VertexAI | Your personal LLM trained on anything",
+          name: "description",
+          content: "TerraForensics AI: Sovereign, defense-grade Geospatial Incident & Threat Intelligence Platform powered by local inference and GTD forensic analytics.",
         },
       },
 
@@ -81,28 +81,27 @@ class MetaGenerator {
       { tag: "meta", props: { property: "og:type", content: "website" } },
       {
         tag: "meta",
-        props: { property: "og:url", content: "https://VertexAI.com" },
+        props: { property: "og:url", content: "https://terraforensics.ai" },
       },
       {
         tag: "meta",
         props: {
           property: "og:title",
-          content: "VertexAI | Your personal LLM trained on anything",
+          content: "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
         },
       },
       {
         tag: "meta",
         props: {
           property: "og:description",
-          content: "VertexAI | Your personal LLM trained on anything",
+          content: "TerraForensics AI: Sovereign, defense-grade Geospatial Incident & Threat Intelligence Platform powered by local inference and GTD forensic analytics.",
         },
       },
       {
         tag: "meta",
         props: {
           property: "og:image",
-          content:
-            "https://raw.githubusercontent.com/Mintplex-Labs/anything-llm/master/images/promo.png",
+          content: "/favicon.png",
         },
       },
 
@@ -113,28 +112,27 @@ class MetaGenerator {
       },
       {
         tag: "meta",
-        props: { property: "twitter:url", content: "https://VertexAI.com" },
+        props: { property: "twitter:url", content: "https://terraforensics.ai" },
       },
       {
         tag: "meta",
         props: {
           property: "twitter:title",
-          content: "VertexAI | Your personal LLM trained on anything",
+          content: "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
         },
       },
       {
         tag: "meta",
         props: {
           property: "twitter:description",
-          content: "VertexAI | Your personal LLM trained on anything",
+          content: "TerraForensics AI: Sovereign, defense-grade Geospatial Incident & Threat Intelligence Platform powered by local inference and GTD forensic analytics.",
         },
       },
       {
         tag: "meta",
         props: {
           property: "twitter:image",
-          content:
-            "https://raw.githubusercontent.com/Mintplex-Labs/anything-llm/master/images/promo.png",
+          content: "/favicon.png",
         },
       },
 
@@ -228,7 +226,7 @@ class MetaGenerator {
             tag: "title",
             props: null,
             content:
-              customTitle ?? "VertexAI | Your personal LLM trained on anything",
+              customTitle ?? "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
           };
         }
         // Override meta title
@@ -239,7 +237,7 @@ class MetaGenerator {
               name: "title",
               content:
                 customTitle ??
-                "VertexAI | Your personal LLM trained on anything",
+                "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
             },
           };
         }
@@ -251,7 +249,7 @@ class MetaGenerator {
               property: "og:title",
               content:
                 customTitle ??
-                "VertexAI | Your personal LLM trained on anything",
+                "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
             },
           };
         }
@@ -263,7 +261,7 @@ class MetaGenerator {
               property: "twitter:title",
               content:
                 customTitle ??
-                "VertexAI | Your personal LLM trained on anything",
+                "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
             },
           };
         }

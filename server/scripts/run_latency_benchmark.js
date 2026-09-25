@@ -182,7 +182,7 @@ async function executeEndToEndDocumentPipeline(queryItem, llmConnector) {
 
   // Layer 2: Vector Search / Document Context
   // Simulating standard workspace document context fetch
-  const mockDocContext = "AnythingLLM Architecture Overview: The application server is built on Node.js/Express, utilizing SQLite via Prisma for workspace metadata and LanceDB/Chroma for vector embeddings.";
+  const mockDocContext = "TerraForensics AI Architecture Overview: The sovereign application server is built on Node.js/Express, utilizing SQLite via Prisma for workspace metadata and LanceDB for local vector embeddings.";
 
   // Layer 3: Prompt Assembly
   const messages = [
