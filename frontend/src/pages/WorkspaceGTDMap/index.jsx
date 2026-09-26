@@ -25,6 +25,8 @@ function buildGeoJson(points = [], maxPoints = MAX_RENDER_POINTS) {
         const lat = Number(point.lat ?? point.latitude);
         const lon = Number(point.lon ?? point.longitude);
         if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
+        if (lat < -85.05112878 || lat > 85.05112878) return null;
+        if (lon < -180 || lon > 180) return null;
         return {
           type: "Feature",
           geometry: {
@@ -33,17 +35,8 @@ function buildGeoJson(points = [], maxPoints = MAX_RENDER_POINTS) {
           },
           properties: {
             eventid: point.eventid,
-            iyear: point.iyear,
-            country_txt: point.country_txt,
-            city: point.city,
-            region_txt: point.region_txt,
-            attacktype1_txt: point.attacktype1_txt,
-            weaptype1_txt: point.weaptype1_txt,
-            targtype1_txt: point.targtype1_txt,
-            gname: point.gname,
-            nkill: point.nkill,
-            nwound: point.nwound,
-            summary: point.summary
+            nkill: Number(point.nkill) || 0,
+            nwound: Number(point.nwound) || 0
           }
         };
       })
@@ -76,12 +69,14 @@ function calculateBounds(points = []) {
 
 // ─── Build basemap style object for MapLibre ───
 // Supports: Esri Satellite Recon raster, Esri Dark Gray Canvas raster, CARTO dark raster, OSM light raster, and PMTiles vector
+const MAP_GLYPHS_URL = "https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf";
+
 function buildMapStyle(basemapMode, pmtilesOk) {
   if (pmtilesOk && basemapMode !== "satellite") {
     const flavor = basemapMode === "light" ? "light" : "dark";
     return {
       version: 8,
-      glyphs: "https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf",
+      glyphs: MAP_GLYPHS_URL,
       sprite: `https://protomaps.github.io/basemaps-assets/sprites/v4/${flavor}`,
       sources: {
         basemap: {
@@ -98,6 +93,7 @@ function buildMapStyle(basemapMode, pmtilesOk) {
   if (basemapMode === "satellite") {
     return {
       version: 8,
+      glyphs: MAP_GLYPHS_URL,
       sources: {
         "esri-satellite-base": {
           type: "raster",
@@ -117,6 +113,7 @@ function buildMapStyle(basemapMode, pmtilesOk) {
         }
       },
       layers: [
+        { id: "basemap-bg", type: "background", paint: { "background-color": "#061320" } },
         { id: "esri-sat-base-tiles", type: "raster", source: "esri-satellite-base", minzoom: 0, maxzoom: 19 },
         { id: "esri-sat-ref-tiles", type: "raster", source: "esri-satellite-ref", minzoom: 0, maxzoom: 19 }
       ]
@@ -129,6 +126,7 @@ function buildMapStyle(basemapMode, pmtilesOk) {
     if (cartoKey) {
       return {
         version: 8,
+        glyphs: MAP_GLYPHS_URL,
         sources: {
           "carto-dark": {
             type: "raster",
@@ -142,13 +140,17 @@ function buildMapStyle(basemapMode, pmtilesOk) {
             attribution: "\u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap</a> \u00a9 <a href='https://carto.com/attributions'>CARTO</a>"
           }
         },
-        layers: [{ id: "carto-dark-tiles", type: "raster", source: "carto-dark", minzoom: 0, maxzoom: 20 }]
+        layers: [
+          { id: "basemap-bg", type: "background", paint: { "background-color": "#14171a" } },
+          { id: "carto-dark-tiles", type: "raster", source: "carto-dark", minzoom: 0, maxzoom: 20 }
+        ]
       };
     }
 
     // Free, high-performance, dark basemap with zero API key required and no watermarks (Esri Dark Gray Canvas)
     return {
       version: 8,
+      glyphs: MAP_GLYPHS_URL,
       sources: {
         "esri-dark-base": {
           type: "raster",
@@ -167,6 +169,7 @@ function buildMapStyle(basemapMode, pmtilesOk) {
         }
       },
       layers: [
+        { id: "basemap-bg", type: "background", paint: { "background-color": "#14171a" } },
         { id: "esri-dark-base-tiles", type: "raster", source: "esri-dark-base", minzoom: 0, maxzoom: 16 },
         { id: "esri-dark-ref-tiles", type: "raster", source: "esri-dark-ref", minzoom: 0, maxzoom: 16 }
       ]
@@ -176,6 +179,7 @@ function buildMapStyle(basemapMode, pmtilesOk) {
   // 3. Light raster fallback (OSM)
   return {
     version: 8,
+    glyphs: MAP_GLYPHS_URL,
     sources: {
       "osm-raster": {
         type: "raster",
@@ -184,7 +188,10 @@ function buildMapStyle(basemapMode, pmtilesOk) {
         attribution: "\u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>"
       }
     },
-    layers: [{ id: "osm-tiles", type: "raster", source: "osm-raster", minzoom: 0, maxzoom: 19 }]
+    layers: [
+      { id: "basemap-bg", type: "background", paint: { "background-color": "#aad3df" } },
+      { id: "osm-tiles", type: "raster", source: "osm-raster", minzoom: 0, maxzoom: 19 }
+    ]
   };
 }
 
@@ -1095,7 +1102,16 @@ export default function WorkspaceGTDMap() {
               clearSelection();
             }
           });
+
+          requestAnimationFrame(() => {
+            if (mapRef.current) mapRef.current.resize();
+          });
         });
+
+        const onResize = () => {
+          if (mapRef.current) mapRef.current.resize();
+        };
+        window.addEventListener("resize", onResize);
       } catch (mapError) {
         if (!isMounted) return;
         setError(mapError.message);
@@ -1202,13 +1218,17 @@ export default function WorkspaceGTDMap() {
         if (map.getLayer("gtd-clusters")) map.setLayoutProperty("gtd-clusters", "visibility", pointsVis);
         if (map.getLayer("gtd-cluster-count")) map.setLayoutProperty("gtd-cluster-count", "visibility", pointsVis);
         if (map.getLayer("gtd-unclustered")) map.setLayoutProperty("gtd-unclustered", "visibility", pointsVis);
+
+        requestAnimationFrame(() => {
+          if (mapRef.current) mapRef.current.resize();
+        });
       } catch (err) {
-        // Style not ready yet — retry after a short delay
         console.warn("[GTDMap] Style switch: layers not ready, retrying...", err.message);
-        setTimeout(reAddLayers, 120);
+        setTimeout(reAddLayers, 100);
       }
     };
 
+    map.once("style.load", () => requestAnimationFrame(reAddLayers));
     map.once("styledata", () => requestAnimationFrame(reAddLayers));
   }, [basemapMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -1243,7 +1263,14 @@ export default function WorkspaceGTDMap() {
   }, [isDarkMode]);
 
   return (
-    <div className="relative w-full h-screen">
+    <div className="relative w-full h-screen overflow-hidden select-none bg-slate-950">
+      {/* ── Base Map Canvas ── */}
+      <div
+        ref={mapContainerRef}
+        className="absolute inset-0 w-full h-full"
+        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0 }}
+      />
+
       {/* ── Top-left Intelligence Panel ── */}
       <div className="absolute top-4 left-4 z-20 flex flex-col gap-2 pointer-events-auto">
         {/* Back button */}
@@ -1516,8 +1543,6 @@ export default function WorkspaceGTDMap() {
           )}
         </div>
       </div>
-
-      <div ref={mapContainerRef} className="w-full h-full" />
     </div>
   );
 }
