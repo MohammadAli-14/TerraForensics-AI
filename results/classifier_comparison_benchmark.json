@@ -13,7 +13,7 @@
       "cv_macro_recall": 100.0,
       "cv_macro_f1": 86.65,
       "cv_macro_accuracy": 84.44,
-      "latency_ms": 0.0658
+      "latency_ms": 0.0474
     },
     {
       "method": "TF-IDF + Logistic Regression",
@@ -25,7 +25,7 @@
       "cv_macro_recall": 95.56,
       "cv_macro_f1": 97.68,
       "cv_macro_accuracy": 97.78,
-      "latency_ms": 0.6745
+      "latency_ms": 0.4446
     },
     {
       "method": "TF-IDF + Linear SVM",
@@ -37,7 +37,7 @@
       "cv_macro_recall": 97.78,
       "cv_macro_f1": 98.82,
       "cv_macro_accuracy": 98.89,
-      "latency_ms": 1.4296
+      "latency_ms": 0.4547
     },
     {
       "method": "TF-IDF + Multinomial Naive Bayes",
@@ -49,7 +49,7 @@
       "cv_macro_recall": 97.78,
       "cv_macro_f1": 98.82,
       "cv_macro_accuracy": 98.89,
-      "latency_ms": 1.8635
+      "latency_ms": 0.4333
     }
   ]
 }

@@ -544,29 +544,16 @@ class MongoDBContextExtractor {
       filter.suicide = conditions.suicide;
     }
 
-    // Date range handling - CRITICAL FIX: iyear is stored as STRING in GTD database
-    // Must use $expr with $toInt for proper numeric comparison
+    // Date range handling - Native Number comparisons (accelerated by idx_country_year index)
     if (conditions._yearRange) {
-      const startYear = parseInt(conditions._yearRange.start);
-      const endYear = parseInt(conditions._yearRange.end);
-
-      // Use $expr with $toInt for proper numeric comparison on string field
-      filter.$expr = {
-        $and: [
-          { $gte: [safeToInt("$iyear"), startYear] },
-          { $lte: [safeToInt("$iyear"), endYear] },
-        ],
-      };
+      const startYear = parseInt(conditions._yearRange.start, 10);
+      const endYear = parseInt(conditions._yearRange.end, 10);
+      filter.iyear = { $gte: startYear, $lte: endYear };
       console.log(
-        `[Filter Builder] Year range filter using $expr: ${startYear} to ${endYear}`
+        `[Filter Builder] Native numeric year range filter: ${startYear} to ${endYear} (idx_country_year ready)`
       );
     } else if (conditions.iyear) {
-      // Single year - support both number and string match
-      const yearNum = parseInt(conditions.iyear, 10);
-      filter.$or = [
-        { iyear: yearNum },
-        { iyear: conditions.iyear.toString() },
-      ];
+      filter.iyear = parseInt(conditions.iyear, 10);
     }
 
     // High-performance Geospatial Bounding-Box filter (2dsphere index accelerated)
@@ -605,47 +592,19 @@ class MongoDBContextExtractor {
       }
     }
 
-    // Casualty range handling - supports native Number fields with $expr fallback
+    // Casualty range handling - clean native Number comparison (utilizes idx_nkill_desc B-Tree index)
     if (conditions._minKilled !== undefined) {
-      const minKill = parseInt(conditions._minKilled);
-      const casualtyCond = {
-        $or: [
-          { $gte: ["$nkill", minKill] },
-          { $gte: [safeToInt("$nkill"), minKill] },
-        ],
-      };
-      if (filter.$expr && filter.$expr.$and) {
-        filter.$expr.$and.push(casualtyCond);
-      } else if (filter.$expr) {
-        filter.$expr = {
-          $and: [filter.$expr, casualtyCond],
-        };
-      } else {
-        filter.$expr = casualtyCond;
-      }
+      const minKill = parseInt(conditions._minKilled, 10);
+      filter.nkill = { $gte: minKill };
       console.log(
-        `[Filter Builder] Min killed filter: >= ${minKill} (hybrid native/expr)`
+        `[Filter Builder] Native min killed filter: nkill >= ${minKill} (idx_nkill_desc ready)`
       );
     }
     if (conditions._minWounded !== undefined) {
-      const minWound = parseInt(conditions._minWounded);
-      const woundedCond = {
-        $or: [
-          { $gte: ["$nwound", minWound] },
-          { $gte: [safeToInt("$nwound"), minWound] },
-        ],
-      };
-      if (filter.$expr && filter.$expr.$and) {
-        filter.$expr.$and.push(woundedCond);
-      } else if (filter.$expr) {
-        filter.$expr = {
-          $and: [filter.$expr, woundedCond],
-        };
-      } else {
-        filter.$expr = woundedCond;
-      }
+      const minWound = parseInt(conditions._minWounded, 10);
+      filter.nwound = { $gte: minWound };
       console.log(
-        `[Filter Builder] Min wounded filter: >= ${minWound} (hybrid native/expr)`
+        `[Filter Builder] Native min wounded filter: nwound >= ${minWound}`
       );
     }
 
@@ -740,64 +699,40 @@ class MongoDBContextExtractor {
       );
     }
 
-    // Handle year_start/year_end format (simplified format for LLM)
+    // Handle year_start/year_end format (simplified format from LLM)
     if (
       normalized.year_start !== undefined ||
       normalized.year_end !== undefined
     ) {
+      normalized.iyear = normalized.iyear || {};
+      if (typeof normalized.iyear !== "object") {
+        normalized.iyear = {};
+      }
       if (normalized.year_start !== undefined) {
-        exprConditions.push({
-          $gte: [safeToInt("$iyear"), parseInt(normalized.year_start)],
-        });
+        normalized.iyear.$gte = parseInt(normalized.year_start, 10);
         delete normalized.year_start;
       }
       if (normalized.year_end !== undefined) {
-        exprConditions.push({
-          $lte: [safeToInt("$iyear"), parseInt(normalized.year_end)],
-        });
+        normalized.iyear.$lte = parseInt(normalized.year_end, 10);
         delete normalized.year_end;
       }
-      console.log(`[Filter Normalizer] Converted year_start/year_end to $expr`);
+      console.log(`[Filter Normalizer] Converted year_start/year_end to native iyear range`);
     }
 
-    // Handle iyear - stored as STRING in GTD
+    // Handle iyear - native Number comparisons (accelerated by idx_country_year)
     if (normalized.iyear) {
       if (typeof normalized.iyear === "object") {
-        // Has operators like $gte, $lte, $gt, $lt
         const iyear = normalized.iyear;
-
-        if (iyear.$gte !== undefined) {
-          exprConditions.push({
-            $gte: [safeToInt("$iyear"), parseInt(iyear.$gte)],
-          });
-        }
-        if (iyear.$lte !== undefined) {
-          exprConditions.push({
-            $lte: [safeToInt("$iyear"), parseInt(iyear.$lte)],
-          });
-        }
-        if (iyear.$gt !== undefined) {
-          exprConditions.push({
-            $gt: [safeToInt("$iyear"), parseInt(iyear.$gt)],
-          });
-        }
-        if (iyear.$lt !== undefined) {
-          exprConditions.push({
-            $lt: [safeToInt("$iyear"), parseInt(iyear.$lt)],
-          });
-        }
-        if (iyear.$eq !== undefined) {
-          // For equality, string match is fine
-          normalized.iyear = iyear.$eq.toString();
-        } else {
-          // Remove iyear since we're using $expr
-          delete normalized.iyear;
-        }
-      } else if (typeof normalized.iyear === "number") {
-        // Convert number to string for exact match
-        normalized.iyear = normalized.iyear.toString();
+        const cleanIyear = {};
+        if (iyear.$gte !== undefined) cleanIyear.$gte = parseInt(iyear.$gte, 10);
+        if (iyear.$lte !== undefined) cleanIyear.$lte = parseInt(iyear.$lte, 10);
+        if (iyear.$gt !== undefined) cleanIyear.$gt = parseInt(iyear.$gt, 10);
+        if (iyear.$lt !== undefined) cleanIyear.$lt = parseInt(iyear.$lt, 10);
+        if (iyear.$eq !== undefined) cleanIyear.$eq = parseInt(iyear.$eq, 10);
+        normalized.iyear = cleanIyear;
+      } else if (typeof normalized.iyear === "string" || typeof normalized.iyear === "number") {
+        normalized.iyear = parseInt(normalized.iyear, 10);
       }
-      // String iyear is fine as-is
     }
 
     // Handle imonth - stored as STRING in GTD (1-12)
@@ -840,41 +775,28 @@ class MongoDBContextExtractor {
       console.log(`[Filter Normalizer] Normalized iday to: ${normalized.iday}`);
     }
 
-    // Handle nkill - stored as STRING in GTD
+    // Handle nkill - native Number comparison (utilizes idx_nkill_desc B-Tree index)
     if (normalized.nkill && typeof normalized.nkill === "object") {
       const nkill = normalized.nkill;
-      if (nkill.$gte !== undefined) {
-        exprConditions.push({
-          $gte: [safeToInt("$nkill"), parseInt(nkill.$gte)],
-        });
-      }
-      if (nkill.$lte !== undefined) {
-        exprConditions.push({
-          $lte: [safeToInt("$nkill"), parseInt(nkill.$lte)],
-        });
-      }
-      if (nkill.$gt !== undefined) {
-        exprConditions.push({
-          $gt: [safeToInt("$nkill"), parseInt(nkill.$gt)],
-        });
-      }
-      delete normalized.nkill;
+      const cleanNkill = {};
+      if (nkill.$gte !== undefined) cleanNkill.$gte = parseInt(nkill.$gte, 10);
+      if (nkill.$lte !== undefined) cleanNkill.$lte = parseInt(nkill.$lte, 10);
+      if (nkill.$gt !== undefined) cleanNkill.$gt = parseInt(nkill.$gt, 10);
+      if (nkill.$lt !== undefined) cleanNkill.$lt = parseInt(nkill.$lt, 10);
+      normalized.nkill = cleanNkill;
+      console.log(`[Filter Normalizer] Normalized nkill to native indexed range:`, cleanNkill);
     }
 
-    // Handle nwound - stored as STRING in GTD
+    // Handle nwound - native Number comparison
     if (normalized.nwound && typeof normalized.nwound === "object") {
       const nwound = normalized.nwound;
-      if (nwound.$gte !== undefined) {
-        exprConditions.push({
-          $gte: [safeToInt("$nwound"), parseInt(nwound.$gte)],
-        });
-      }
-      if (nwound.$lte !== undefined) {
-        exprConditions.push({
-          $lte: [safeToInt("$nwound"), parseInt(nwound.$lte)],
-        });
-      }
-      delete normalized.nwound;
+      const cleanNwound = {};
+      if (nwound.$gte !== undefined) cleanNwound.$gte = parseInt(nwound.$gte, 10);
+      if (nwound.$lte !== undefined) cleanNwound.$lte = parseInt(nwound.$lte, 10);
+      if (nwound.$gt !== undefined) cleanNwound.$gt = parseInt(nwound.$gt, 10);
+      if (nwound.$lt !== undefined) cleanNwound.$lt = parseInt(nwound.$lt, 10);
+      normalized.nwound = cleanNwound;
+      console.log(`[Filter Normalizer] Normalized nwound to native indexed range:`, cleanNwound);
     }
 
     // Build $expr if we have conditions

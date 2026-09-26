@@ -209,13 +209,14 @@ def benchmark_ml_pipeline(name, pipeline, queries, labels, cv_splits):
     }
 
 
-def benchmark_disjoint_temporal_split(queries, labels, raw_data):
+def benchmark_temporal_holdout_split(queries, labels, raw_data):
     """
-    Evaluates classifiers under strict Spatio-Temporal Disjoint Hold-Out Partition:
-    - GTD queries targeting incidents prior to 2005 (or historical events) form Training Set.
-    - GTD queries targeting modern incidents (2005–2021) form the Held-Out Test Set.
-    - Document queries are disjointly partitioned by domain topics to eliminate template leakage.
-    Demonstrates model generalization under temporal and entity distribution shift.
+    Evaluates classifiers under Temporal Hold-Out on Dated GTD Queries (Pre-2005 Train vs. Post-2005 Test)
+    with 50/50 Stratified Document Control:
+    - GTD queries targeting incidents prior to 2005 (1970–2004) form the Training Set (N=37).
+    - GTD queries targeting modern incidents (2005–2017) form the Held-Out Test Set (N=53).
+    - Document queries are 50/50 stratified across train and test sets (N=45 each) as a stable control.
+    Demonstrates model generalization and vocabulary drift under temporal distribution shift.
     """
     train_indices = []
     test_indices = []
@@ -377,12 +378,12 @@ def main():
         print(f"{r['method']:<38} | {r['accuracy']:>10.2f}% | {r['precision']:>11.2f}% | {r['recall']:>9.2f}% | {r['f1']:>10.2f}% | {r['latency_ms']:>10.4f} ms")
     print("=" * 105)
 
-    # Run Zero-Leakage Spatio-Temporal Disjoint Evaluation
-    print("\nRunning Zero-Leakage Spatio-Temporal Disjoint Evaluation (Pre-2005 Train vs. Post-2005 Test)...")
-    disjoint_results, n_train, n_test = benchmark_disjoint_temporal_split(queries, labels, raw_data)
+    # Run Temporal Hold-Out Evaluation
+    print("\nRunning Temporal Hold-Out Evaluation (Pre-2005 Train vs. Post-2005 Test)...")
+    disjoint_results, n_train, n_test = benchmark_temporal_holdout_split(queries, labels, raw_data)
 
     print("\n" + "=" * 105)
-    print(f"EXPERIMENT 2B: ZERO-LEAKAGE SPATIO-TEMPORAL DISJOINT EVALUATION (TRAIN: N={n_train}, TEST: N={n_test})")
+    print(f"EXPERIMENT 2B: TEMPORAL HOLD-OUT ON DATED GTD QUERIES WITH STRATIFIED CONTROL (TRAIN: N={n_train}, TEST: N={n_test})")
     print("=" * 105)
     print(f"{'Method / Architecture':<38} | {'Accuracy (%)':<12} | {'Precision (%)':<13} | {'Recall (%)':<11} | {'F1-Score (%)':<12} | {'Latency (ms)':<12}")
     print("-" * 105)
@@ -416,7 +417,7 @@ def main():
         json.dump(output_data_cv, f, indent=2)
 
     output_data_disjoint = {
-        "evaluation_protocol": "Zero-Leakage Spatio-Temporal Disjoint Hold-Out",
+        "evaluation_protocol": "Temporal Hold-Out on Dated GTD Queries with Stratified Document Control",
         "train_size": n_train,
         "test_size": n_test,
         "results": [
@@ -436,7 +437,7 @@ def main():
         json.dump(output_data_disjoint, f, indent=2)
 
     print(f"\nSaved Standard 5-Fold CV results to: {out_path_cv}")
-    print(f"Saved Zero-Leakage Disjoint results to: {out_path_disjoint}")
+    print(f"Saved Temporal Hold-Out results to: {out_path_disjoint}")
 
 if __name__ == "__main__":
     main()
