@@ -1249,11 +1249,7 @@ export default function WorkspaceGTDMap() {
         {/* Back button */}
         <Link
           to={`/workspace/${slug}`}
-          className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg shadow-lg backdrop-blur-sm transition-all w-fit font-medium border ${
-            isDarkMode
-              ? "bg-slate-950/90 text-slate-300 border-slate-600/70 hover:bg-slate-800/95 hover:text-white hover:border-slate-500"
-              : "bg-white/95 text-slate-700 border-slate-300 hover:bg-white hover:text-slate-950 hover:border-slate-400"
-          }`}
+          className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg shadow-md w-fit font-medium bg-gray-900 text-gray-300 border border-gray-700 hover:bg-gray-800 hover:text-white transition-colors"
         >
           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
@@ -1263,39 +1259,28 @@ export default function WorkspaceGTDMap() {
 
         {/* GTD Intelligence Card */}
         <div
-          className={`text-xs rounded-xl border min-w-[230px] max-w-[290px] shadow-2xl backdrop-blur-md transition-all ${
-            isDarkMode
-              ? "bg-slate-950/92 border-cyan-800/40 text-slate-200 ring-1 ring-white/5 shadow-black/70"
-              : "bg-white/96 border-slate-200 text-slate-800 ring-1 ring-black/5 shadow-slate-400/30"
-          }`}
+          className="rounded-xl min-w-[240px] max-w-[300px] shadow-2xl"
+          style={{ backgroundColor: '#111827', border: '1px solid #374151', color: '#e5e7eb', fontSize: '12px' }}
         >
           {/* Card header */}
           <div
-            className={`flex items-center gap-2 px-3.5 pt-3 pb-2.5 border-b ${
-              isDarkMode ? "border-slate-700/60" : "border-slate-200"
-            }`}
+          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 14px 10px 14px', borderBottom: '1px solid #374151' }}
           >
-            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse flex-shrink-0" />
-            <span className={`font-semibold text-[12px] tracking-wide leading-tight ${
-              isDarkMode ? "text-white" : "text-slate-900"
-            }`}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22d3ee', flexShrink: 0, animation: 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite', display: 'inline-block' }} />
+            <span style={{ fontWeight: 600, fontSize: '12px', letterSpacing: '0.02em', color: '#ffffff' }}>
               GTD Geospatial Intelligence
             </span>
           </div>
 
           {/* Status line */}
-          <div className={`px-3.5 py-2.5 leading-snug text-[11px] ${
-            isDarkMode ? "text-slate-400" : "text-slate-600"
-          }`}>
+          <div style={{ padding: '10px 14px', fontSize: '11px', color: '#9ca3af', lineHeight: 1.4 }}>
             {status}
           </div>
 
           {/* Load-more controls */}
           {hasMoreData && !loadingMore && (
-            <div className={`px-3.5 pb-3 border-t pt-2 ${
-              isDarkMode ? "border-slate-700/60" : "border-slate-200"
-            }`}>
-              <div className="text-amber-400 text-[11px] font-medium mb-1.5">
+            <div style={{ padding: '8px 14px 12px 14px', borderTop: '1px solid #374151' }}>
+              <div style={{ color: '#fbbf24', fontSize: '11px', fontWeight: 500, marginBottom: '6px' }}>
                 Showing {geoPoints.length.toLocaleString()} of {totalExpected.toLocaleString()}
               </div>
               {hasFilter && (
@@ -1321,23 +1306,15 @@ export default function WorkspaceGTDMap() {
 
           {/* Progress bar */}
           {loadingMore && (
-            <div className={`px-3.5 pb-3 border-t pt-2 ${
-              isDarkMode ? "border-slate-700/60" : "border-slate-200"
-            }`}>
+            <div style={{ padding: '8px 14px 12px 14px', borderTop: '1px solid #374151' }}>
               <div className="mb-1 text-[11px] text-cyan-400">{status}</div>
-              <div className={`w-full h-1.5 rounded-full overflow-hidden ${
-                isDarkMode ? "bg-slate-800" : "bg-slate-200"
-              }`}>
+              <div style={{ width: '100%', height: '6px', borderRadius: '3px', overflow: 'hidden', backgroundColor: '#1f2937' }}>
                 <div
                   className="h-full bg-cyan-500 transition-all duration-300 rounded-full"
                   style={{ width: `${loadMoreProgress}%` }}
                 />
               </div>
-              <div className={`mt-1 text-[10px] ${
-                isDarkMode ? "text-slate-500" : "text-slate-400"
-              }`}>
-                {loadMoreProgress}% complete
-              </div>
+              <div style={{ marginTop: '4px', fontSize: '10px', color: '#6b7280' }}>{loadMoreProgress}% complete</div>
             </div>
           )}
 

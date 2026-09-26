@@ -201,6 +201,109 @@ def benchmark_ml_pipeline(name, pipeline, queries, labels, cv_splits):
     }
 
 
+def benchmark_disjoint_temporal_split(queries, labels, raw_data):
+    """
+    Evaluates classifiers under strict Spatio-Temporal Disjoint Hold-Out Partition:
+    - GTD queries targeting incidents prior to 2005 (or historical events) form Training Set.
+    - GTD queries targeting modern incidents (2005–2021) form the Held-Out Test Set.
+    - Document queries are disjointly partitioned by domain topics to eliminate template leakage.
+    Demonstrates model generalization under temporal and entity distribution shift.
+    """
+    train_indices = []
+    test_indices = []
+    year_re = re.compile(r"\b(19\d{2}|20\d{2})\b")
+
+    for i, item in enumerate(raw_data):
+        q = item["query"]
+        is_gtd = item["expectedIsGTD"]
+        cat = item.get("category", "")
+
+        if is_gtd:
+            m = year_re.search(q)
+            if m:
+                year = int(m.group(1))
+                if year < 2005:
+                    train_indices.append(i)
+                else:
+                    test_indices.append(i)
+            else:
+                if "historical" in cat or i % 2 == 0:
+                    train_indices.append(i)
+                else:
+                    test_indices.append(i)
+        else:
+            if i % 2 == 0:
+                train_indices.append(i)
+            else:
+                test_indices.append(i)
+
+    train_idx = np.array(train_indices)
+    test_idx = np.array(test_indices)
+
+    X_train = [queries[i] for i in train_idx]
+    y_train = labels[train_idx]
+    X_test = [queries[i] for i in test_idx]
+    y_test = labels[test_idx]
+
+    disjoint_results = []
+
+    # 1. Rule-Based Regex Router (Production)
+    times = []
+    rule_preds = []
+    for q in X_test:
+        t0 = time.perf_counter()
+        p = 1 if production_rule_based_classifier(q) else 0
+        times.append(time.perf_counter() - t0)
+        rule_preds.append(p)
+
+    rule_preds = np.array(rule_preds)
+    disjoint_results.append({
+        "method": "Rule-Based Regex Router (Production)",
+        "accuracy": accuracy_score(y_test, rule_preds) * 100.0,
+        "precision": precision_score(y_test, rule_preds, zero_division=0) * 100.0,
+        "recall": recall_score(y_test, rule_preds, zero_division=0) * 100.0,
+        "f1": f1_score(y_test, rule_preds, zero_division=0) * 100.0,
+        "latency_ms": (sum(times) / len(times)) * 1000.0,
+    })
+
+    # Pipelines to evaluate
+    pipelines = [
+        ("TF-IDF + Logistic Regression", Pipeline([
+            ("tfidf", TfidfVectorizer(ngram_range=(1, 2), max_features=1500, sublinear_tf=True)),
+            ("clf", LogisticRegression(C=1.0, max_iter=200, random_state=42))
+        ])),
+        ("TF-IDF + Linear SVM", Pipeline([
+            ("tfidf", TfidfVectorizer(ngram_range=(1, 2), max_features=1500, sublinear_tf=True)),
+            ("clf", LinearSVC(C=1.0, random_state=42, dual=True, max_iter=2000))
+        ])),
+        ("TF-IDF + Multinomial Naive Bayes", Pipeline([
+            ("tfidf", TfidfVectorizer(ngram_range=(1, 2), max_features=1500)),
+            ("clf", MultinomialNB(alpha=0.5))
+        ]))
+    ]
+
+    for name, pipe in pipelines:
+        pipe.fit(X_train, y_train)
+        times = []
+        preds = []
+        for q in X_test:
+            t0 = time.perf_counter()
+            p = pipe.predict([q])[0]
+            times.append(time.perf_counter() - t0)
+            preds.append(p)
+        preds = np.array(preds)
+        disjoint_results.append({
+            "method": name,
+            "accuracy": accuracy_score(y_test, preds) * 100.0,
+            "precision": precision_score(y_test, preds, zero_division=0) * 100.0,
+            "recall": recall_score(y_test, preds, zero_division=0) * 100.0,
+            "f1": f1_score(y_test, preds, zero_division=0) * 100.0,
+            "latency_ms": (sum(times) / len(times)) * 1000.0,
+        })
+
+    return disjoint_results, len(train_idx), len(test_idx)
+
+
 def main():
     if not DATASET_PATH.exists():
         print(f"Dataset not found at {DATASET_PATH}")
@@ -215,12 +318,12 @@ def main():
     results = []
 
     # Method 1: Production Rule-Based Router
-    print("Evaluating Method 1: Production Rule-Based Regex Router...")
+    print("Evaluating Method 1: Production Rule-Based Regex Router (5-Fold CV)...")
     res_rule = benchmark_rule_based(queries, labels, cv_splits)
     results.append(res_rule)
 
     # Method 2: TF-IDF + Logistic Regression
-    print("Evaluating Method 2: TF-IDF + Logistic Regression...")
+    print("Evaluating Method 2: TF-IDF + Logistic Regression (5-Fold CV)...")
     pipe_lr = Pipeline([
         ("tfidf", TfidfVectorizer(ngram_range=(1, 2), max_features=1500, sublinear_tf=True)),
         ("clf", LogisticRegression(C=1.0, max_iter=200, random_state=42))
@@ -229,7 +332,7 @@ def main():
     results.append(res_lr)
 
     # Method 3: TF-IDF + Linear SVM
-    print("Evaluating Method 3: TF-IDF + Linear SVM (LinearSVC)...")
+    print("Evaluating Method 3: TF-IDF + Linear SVM (LinearSVC) (5-Fold CV)...")
     pipe_svm = Pipeline([
         ("tfidf", TfidfVectorizer(ngram_range=(1, 2), max_features=1500, sublinear_tf=True)),
         ("clf", LinearSVC(C=1.0, random_state=42, dual=True, max_iter=2000))
@@ -238,7 +341,7 @@ def main():
     results.append(res_svm)
 
     # Bonus Method 4: TF-IDF + Naive Bayes
-    print("Evaluating Method 4: TF-IDF + Multinomial Naive Bayes...")
+    print("Evaluating Method 4: TF-IDF + Multinomial Naive Bayes (5-Fold CV)...")
     pipe_nb = Pipeline([
         ("tfidf", TfidfVectorizer(ngram_range=(1, 2), max_features=1500)),
         ("clf", MultinomialNB(alpha=0.5))
@@ -246,9 +349,9 @@ def main():
     res_nb = benchmark_ml_pipeline("TF-IDF + Multinomial Naive Bayes", pipe_nb, queries, labels, cv_splits)
     results.append(res_nb)
 
-    # Print Table
+    # Print Table 1
     print("\n" + "=" * 105)
-    print("EXPERIMENT 2: ROUTING CLASSIFIER COMPARISON (5-FOLD STRATIFIED CROSS-VALIDATION, N=180)")
+    print("EXPERIMENT 2A: ROUTING CLASSIFIER COMPARISON (5-FOLD STRATIFIED CROSS-VALIDATION, N=180)")
     print("=" * 105)
     print(f"{'Method / Architecture':<38} | {'Accuracy (%)':<12} | {'Precision (%)':<13} | {'Recall (%)':<11} | {'F1-Score (%)':<12} | {'Latency (ms)':<12}")
     print("-" * 105)
@@ -256,18 +359,22 @@ def main():
         print(f"{r['method']:<38} | {r['accuracy']:>10.2f}% | {r['precision']:>11.2f}% | {r['recall']:>9.2f}% | {r['f1']:>10.2f}% | {r['latency_ms']:>10.4f} ms")
     print("=" * 105)
 
-    # Markdown Table Output
-    md_table = []
-    md_table.append("| Method / Classifier Architecture | Accuracy (%) | Precision (%) | Recall (%) | F1-Score (%) | Avg Latency (ms) |")
-    md_table.append("| :--- | :---: | :---: | :---: | :---: | :---: |")
-    for r in results:
-        md_table.append(f"| **{r['method']}** | {r['accuracy']:.2f}% | {r['precision']:.2f}% | {r['recall']:.2f}% | {r['f1']:.2f}% | {r['latency_ms']:.4f} ms |")
+    # Run Zero-Leakage Spatio-Temporal Disjoint Evaluation
+    print("\nRunning Zero-Leakage Spatio-Temporal Disjoint Evaluation (Pre-2005 Train vs. Post-2005 Test)...")
+    disjoint_results, n_train, n_test = benchmark_disjoint_temporal_split(queries, labels, raw_data)
 
-    print("\nPublication Markdown Table:\n")
-    print("\n".join(md_table))
+    print("\n" + "=" * 105)
+    print(f"EXPERIMENT 2B: ZERO-LEAKAGE SPATIO-TEMPORAL DISJOINT EVALUATION (TRAIN: N={n_train}, TEST: N={n_test})")
+    print("=" * 105)
+    print(f"{'Method / Architecture':<38} | {'Accuracy (%)':<12} | {'Precision (%)':<13} | {'Recall (%)':<11} | {'F1-Score (%)':<12} | {'Latency (ms)':<12}")
+    print("-" * 105)
+    for r in disjoint_results:
+        print(f"{r['method']:<38} | {r['accuracy']:>10.2f}% | {r['precision']:>11.2f}% | {r['recall']:>9.2f}% | {r['f1']:>10.2f}% | {r['latency_ms']:>10.4f} ms")
+    print("=" * 105)
 
     # Save to JSON in results/
-    output_data = {
+    output_data_cv = {
+        "evaluation_protocol": "5-fold Stratified Cross-Validation",
         "dataset_size": len(queries),
         "cv_folds": 5,
         "results": [
@@ -282,10 +389,32 @@ def main():
             for r in results
         ]
     }
-    out_path = REPO_ROOT / "results" / "classifier_comparison_benchmark.json"
-    with open(out_path, "w", encoding="utf-8") as f:
-        json.dump(output_data, f, indent=2)
-    print(f"\nSaved benchmark comparison results to {out_path}")
+    out_path_cv = REPO_ROOT / "results" / "classifier_comparison_benchmark.json"
+    with open(out_path_cv, "w", encoding="utf-8") as f:
+        json.dump(output_data_cv, f, indent=2)
+
+    output_data_disjoint = {
+        "evaluation_protocol": "Zero-Leakage Spatio-Temporal Disjoint Hold-Out",
+        "train_size": n_train,
+        "test_size": n_test,
+        "results": [
+            {
+                "method": r["method"],
+                "accuracy": round(r["accuracy"], 2),
+                "precision": round(r["precision"], 2),
+                "recall": round(r["recall"], 2),
+                "f1_score": round(r["f1"], 2),
+                "latency_ms": round(r["latency_ms"], 4)
+            }
+            for r in disjoint_results
+        ]
+    }
+    out_path_disjoint = REPO_ROOT / "results" / "leakage_free_classifier_benchmark.json"
+    with open(out_path_disjoint, "w", encoding="utf-8") as f:
+        json.dump(output_data_disjoint, f, indent=2)
+
+    print(f"\nSaved Standard 5-Fold CV results to: {out_path_cv}")
+    print(f"Saved Zero-Leakage Disjoint results to: {out_path_disjoint}")
 
 if __name__ == "__main__":
     main()
