@@ -1,5 +1,5 @@
 // Get all loopback addresses that are available for use or binding.
-function get192.168.0.201s() {
+function getLoopbacks() {
   const os = require("os");
   const interfaces = os.networkInterfaces();
   const results = new Set([undefined, "0.0.0.0"]);
@@ -42,5 +42,5 @@ async function isPortInUse(port, host) {
 
 module.exports = {
   isPortInUse,
-  get192.168.0.201s,
+  getLoopbacks,
 };

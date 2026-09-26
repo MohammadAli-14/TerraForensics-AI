@@ -1,4 +1,10 @@
 // server/utils/mongoDB/initialize.js
+const dns = require("dns");
+try {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+} catch (e) {
+  // Graceful fallback
+}
 const mongoose = require("mongoose");
 
 let isConnecting = false;

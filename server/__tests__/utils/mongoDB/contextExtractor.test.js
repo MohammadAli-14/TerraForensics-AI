@@ -61,8 +61,8 @@ describe('MongoDBContextExtractor', () => {
       const input = { country_txt: 'Iraq', year_start: 2010 };
       const result = contextExtractor.normalizeGTDFilter(input);
 
-      expect(result).toHaveProperty('iyear');
-      expect(result.iyear).toEqual({ $gte: 2010 });
+      expect(result).toHaveProperty('$or');
+      expect(result.$or[0].iyear).toEqual({ $gte: 2010 });
       expect(result.country_txt).toBeDefined();
       // Should not contain year_start in output
       expect(result.year_start).toBeUndefined();
@@ -72,16 +72,16 @@ describe('MongoDBContextExtractor', () => {
       const input = { country_txt: 'Pakistan', year_end: 2017 };
       const result = contextExtractor.normalizeGTDFilter(input);
 
-      expect(result).toHaveProperty('iyear');
-      expect(result.iyear).toEqual({ $lte: 2017 });
+      expect(result).toHaveProperty('$or');
+      expect(result.$or[0].iyear).toEqual({ $lte: 2017 });
     });
 
     test('should handle year_start and year_end together', () => {
       const input = { country_txt: 'Afghanistan', year_start: 2010, year_end: 2015 };
       const result = contextExtractor.normalizeGTDFilter(input);
 
-      expect(result).toHaveProperty('iyear');
-      expect(result.iyear).toEqual({ $gte: 2010, $lte: 2015 });
+      expect(result).toHaveProperty('$or');
+      expect(result.$or[0].iyear).toEqual({ $gte: 2010, $lte: 2015 });
     });
 
     test('should pass through other fields unchanged', () => {
