@@ -151,6 +151,10 @@ def benchmark_rule_based(queries, labels, cv_splits):
         "precision": np.mean(fold_precisions) * 100.0,
         "recall": np.mean(fold_recalls) * 100.0,
         "f1": np.mean(fold_f1s) * 100.0,
+        "pooled_accuracy": accuracy_score(labels, all_preds) * 100.0,
+        "pooled_precision": precision_score(labels, all_preds, zero_division=0) * 100.0,
+        "pooled_recall": recall_score(labels, all_preds, zero_division=0) * 100.0,
+        "pooled_f1": f1_score(labels, all_preds, zero_division=0) * 100.0,
         "latency_ms": avg_latency_ms,
         "predictions": all_preds
     }
@@ -196,6 +200,10 @@ def benchmark_ml_pipeline(name, pipeline, queries, labels, cv_splits):
         "precision": np.mean(fold_precisions) * 100.0,
         "recall": np.mean(fold_recalls) * 100.0,
         "f1": np.mean(fold_f1s) * 100.0,
+        "pooled_accuracy": accuracy_score(labels, all_preds) * 100.0,
+        "pooled_precision": precision_score(labels, all_preds, zero_division=0) * 100.0,
+        "pooled_recall": recall_score(labels, all_preds, zero_division=0) * 100.0,
+        "pooled_f1": f1_score(labels, all_preds, zero_division=0) * 100.0,
         "latency_ms": avg_latency_ms,
         "predictions": all_preds
     }
@@ -349,9 +357,19 @@ def main():
     res_nb = benchmark_ml_pipeline("TF-IDF + Multinomial Naive Bayes", pipe_nb, queries, labels, cv_splits)
     results.append(res_nb)
 
-    # Print Table 1
+    # Print Table 1: Pooled (Table IV Exact Match)
     print("\n" + "=" * 105)
-    print("EXPERIMENT 2A: ROUTING CLASSIFIER COMPARISON (5-FOLD STRATIFIED CROSS-VALIDATION, N=180)")
+    print("EXPERIMENT 2A-1: POOLED METRICS OVER ALL 180 QUERIES (EXACT PAPER TABLE IV CONTROL)")
+    print("=" * 105)
+    print(f"{'Method / Architecture':<38} | {'Accuracy (%)':<12} | {'Precision (%)':<13} | {'Recall (%)':<11} | {'F1-Score (%)':<12} | {'Latency (ms)':<12}")
+    print("-" * 105)
+    for r in results:
+        print(f"{r['method']:<38} | {r['pooled_accuracy']:>10.2f}% | {r['pooled_precision']:>11.2f}% | {r['pooled_recall']:>9.2f}% | {r['pooled_f1']:>10.2f}% | {r['latency_ms']:>10.4f} ms")
+    print("=" * 105)
+
+    # Print Table 2: 5-Fold Macro Averages
+    print("\n" + "=" * 105)
+    print("EXPERIMENT 2A-2: 5-FOLD STRATIFIED CROSS-VALIDATION (MACRO FOLD AVERAGE, N=180)")
     print("=" * 105)
     print(f"{'Method / Architecture':<38} | {'Accuracy (%)':<12} | {'Precision (%)':<13} | {'Recall (%)':<11} | {'F1-Score (%)':<12} | {'Latency (ms)':<12}")
     print("-" * 105)
@@ -380,10 +398,14 @@ def main():
         "results": [
             {
                 "method": r["method"],
-                "accuracy": round(r["accuracy"], 2),
-                "precision": round(r["precision"], 2),
-                "recall": round(r["recall"], 2),
-                "f1_score": round(r["f1"], 2),
+                "pooled_precision": round(r["pooled_precision"], 2),
+                "pooled_recall": round(r["pooled_recall"], 2),
+                "pooled_f1": round(r["pooled_f1"], 2),
+                "pooled_accuracy": round(r["pooled_accuracy"], 2),
+                "cv_macro_precision": round(r["precision"], 2),
+                "cv_macro_recall": round(r["recall"], 2),
+                "cv_macro_f1": round(r["f1"], 2),
+                "cv_macro_accuracy": round(r["accuracy"], 2),
                 "latency_ms": round(r["latency_ms"], 4)
             }
             for r in results
