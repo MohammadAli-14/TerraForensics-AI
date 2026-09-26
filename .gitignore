@@ -9,7 +9,6 @@ node_modules
 __pycache__
 .DS_Store
 aws_cf_deploy_anything_llm.json
-yarn.lock
 *.bak
 .idea
 .ag-kit-backups/

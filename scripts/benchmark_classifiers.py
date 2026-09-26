@@ -212,10 +212,10 @@ def benchmark_ml_pipeline(name, pipeline, queries, labels, cv_splits):
 def benchmark_temporal_holdout_split(queries, labels, raw_data):
     """
     Evaluates classifiers under Temporal Hold-Out on Dated GTD Queries (Pre-2005 Train vs. Post-2005 Test)
-    with 50/50 Stratified Document Control:
+    with 50/50 Index-Alternated Document Control:
     - GTD queries targeting incidents prior to 2005 (1970–2004) form the Training Set (N=37).
     - GTD queries targeting modern incidents (2005–2017) form the Held-Out Test Set (N=53).
-    - Document queries are 50/50 stratified across train and test sets (N=45 each) as a stable control.
+    - Document queries are partitioned 50/50 by index alternation across train and test sets (N=45 each) as a stable control.
     Demonstrates model generalization and vocabulary drift under temporal distribution shift.
     """
     train_indices = []
