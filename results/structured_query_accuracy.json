@@ -1,7 +1,7 @@
 {
   "totalGTDQueries": 90,
   "validFilterRate": 92.22222222222223,
-  "exactFieldMatchRate": 67.77777777777779,
+  "exactFieldMatchRate": 75.55555555555556,
   "entityMetrics": {
     "country": {
       "precision": 82.6086956521739,
@@ -14,9 +14,9 @@
       "f1": 97.74436090225565
     },
     "attackType": {
-      "precision": 66.66666666666666,
-      "recall": 36.36363636363637,
-      "f1": 47.05882352941176
+      "precision": 75,
+      "recall": 95.45454545454545,
+      "f1": 84
     },
     "casualty": {
       "precision": 100,
@@ -73,8 +73,9 @@
       },
       "filterKeys": [
         "country_txt",
+        "attacktype1_txt",
         "suicide",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -95,11 +96,12 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": true
       },
       "filterKeys": [
         "country_txt",
+        "attacktype1_txt",
         "$expr"
       ],
       "matchesExpectation": false
@@ -152,7 +154,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -178,7 +180,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -225,14 +227,15 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
+        "attacktype1_txt",
         "$expr"
       ],
-      "matchesExpectation": false
+      "matchesExpectation": true
     },
     {
       "id": 9,
@@ -254,7 +257,7 @@
         "casualty": false
       },
       "filterKeys": [
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -306,7 +309,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -326,13 +329,14 @@
       "detected": {
         "country": false,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
+        "attacktype1_txt",
         "$expr"
       ],
-      "matchesExpectation": false
+      "matchesExpectation": true
     },
     {
       "id": 13,
@@ -356,7 +360,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -455,7 +459,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -483,7 +487,7 @@
         "country_txt",
         "attacktype1_txt",
         "targtype1_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -504,14 +508,15 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "attacktype1_txt",
+        "$or"
       ],
-      "matchesExpectation": false
+      "matchesExpectation": true
     },
     {
       "id": 20,
@@ -535,8 +540,9 @@
       },
       "filterKeys": [
         "country_txt",
+        "attacktype1_txt",
         "suicide",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -666,7 +672,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -692,7 +698,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -713,14 +719,15 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
+        "attacktype1_txt",
         "$expr"
       ],
-      "matchesExpectation": false
+      "matchesExpectation": true
     },
     {
       "id": 28,
@@ -744,7 +751,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -765,14 +772,15 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "attacktype1_txt",
+        "$or"
       ],
-      "matchesExpectation": true
+      "matchesExpectation": false
     },
     {
       "id": 30,
@@ -796,7 +804,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -822,7 +830,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -848,7 +856,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -873,7 +881,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -898,7 +906,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -924,7 +932,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -948,7 +956,7 @@
         "casualty": false
       },
       "filterKeys": [
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -990,11 +998,12 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
+        "attacktype1_txt",
         "$expr"
       ],
       "matchesExpectation": false
@@ -1020,7 +1029,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -1045,7 +1054,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -1069,6 +1078,7 @@
         "casualty": false
       },
       "filterKeys": [
+        "attacktype1_txt",
         "suicide",
         "$expr"
       ],
@@ -1096,7 +1106,7 @@
       "filterKeys": [
         "country_txt",
         "targtype1_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -1144,7 +1154,7 @@
         "casualty": false
       },
       "filterKeys": [
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -1164,12 +1174,13 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "attacktype1_txt",
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -1194,7 +1205,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -1219,7 +1230,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -1243,7 +1254,7 @@
         "casualty": false
       },
       "filterKeys": [
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -1267,7 +1278,7 @@
         "casualty": false
       },
       "filterKeys": [
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -1292,7 +1303,7 @@
       },
       "filterKeys": [
         "region_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -1423,14 +1434,15 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "attacktype1_txt",
+        "$or"
       ],
-      "matchesExpectation": false
+      "matchesExpectation": true
     },
     {
       "id": 57,
@@ -1505,7 +1517,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear",
+        "$or",
         "imonth"
       ],
       "matchesExpectation": true
@@ -1532,7 +1544,7 @@
       "filterKeys": [
         "country_txt",
         "weaptype1_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -1584,6 +1596,7 @@
       },
       "filterKeys": [
         "country_txt",
+        "attacktype1_txt",
         "targtype1_txt",
         "suicide"
       ],
@@ -1611,7 +1624,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -1632,14 +1645,15 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "attacktype1_txt",
+        "$or"
       ],
-      "matchesExpectation": true
+      "matchesExpectation": false
     },
     {
       "id": 65,
@@ -1658,14 +1672,15 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "attacktype1_txt",
+        "$or"
       ],
-      "matchesExpectation": false
+      "matchesExpectation": true
     },
     {
       "id": 66,
@@ -1742,7 +1757,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -1763,14 +1778,15 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "attacktype1_txt",
+        "$or"
       ],
-      "matchesExpectation": false
+      "matchesExpectation": true
     },
     {
       "id": 70,
@@ -1814,14 +1830,15 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "attacktype1_txt",
+        "$or"
       ],
-      "matchesExpectation": false
+      "matchesExpectation": true
     },
     {
       "id": 72,
@@ -1845,7 +1862,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -1896,7 +1913,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -1920,7 +1937,7 @@
         "casualty": false
       },
       "filterKeys": [
-        "iyear",
+        "$or",
         "imonth"
       ],
       "matchesExpectation": true
@@ -1942,13 +1959,14 @@
       "detected": {
         "country": true,
         "year": false,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
-        "country_txt"
+        "country_txt",
+        "attacktype1_txt"
       ],
-      "matchesExpectation": true
+      "matchesExpectation": false
     },
     {
       "id": 77,
@@ -1996,8 +2014,9 @@
       },
       "filterKeys": [
         "country_txt",
+        "attacktype1_txt",
         "suicide",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -2049,7 +2068,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -2070,14 +2089,15 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "attacktype1_txt",
+        "$or"
       ],
-      "matchesExpectation": false
+      "matchesExpectation": true
     },
     {
       "id": 82,
@@ -2100,7 +2120,7 @@
       },
       "filterKeys": [
         "attacktype1_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -2150,7 +2170,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": false
     },
@@ -2171,14 +2191,15 @@
       "detected": {
         "country": true,
         "year": true,
-        "attackType": false,
+        "attackType": true,
         "casualty": false
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "attacktype1_txt",
+        "$or"
       ],
-      "matchesExpectation": false
+      "matchesExpectation": true
     },
     {
       "id": 86,
@@ -2202,7 +2223,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -2228,7 +2249,7 @@
       },
       "filterKeys": [
         "country_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -2254,8 +2275,9 @@
       },
       "filterKeys": [
         "country_txt",
+        "attacktype1_txt",
         "suicide",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     },
@@ -2308,7 +2330,7 @@
       "filterKeys": [
         "country_txt",
         "targtype1_txt",
-        "iyear"
+        "$or"
       ],
       "matchesExpectation": true
     }

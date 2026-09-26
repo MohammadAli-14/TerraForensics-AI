@@ -1,0 +1,39 @@
+{
+  "evaluation_protocol": "Zero-Leakage Spatio-Temporal Disjoint Hold-Out",
+  "train_size": 82,
+  "test_size": 98,
+  "results": [
+    {
+      "method": "Rule-Based Regex Router (Production)",
+      "accuracy": 85.71,
+      "precision": 79.1,
+      "recall": 100.0,
+      "f1_score": 88.33,
+      "latency_ms": 0.1358
+    },
+    {
+      "method": "TF-IDF + Logistic Regression",
+      "accuracy": 96.94,
+      "precision": 100.0,
+      "recall": 94.34,
+      "f1_score": 97.09,
+      "latency_ms": 1.2987
+    },
+    {
+      "method": "TF-IDF + Linear SVM",
+      "accuracy": 97.96,
+      "precision": 100.0,
+      "recall": 96.23,
+      "f1_score": 98.08,
+      "latency_ms": 1.0935
+    },
+    {
+      "method": "TF-IDF + Multinomial Naive Bayes",
+      "accuracy": 97.96,
+      "precision": 100.0,
+      "recall": 96.23,
+      "f1_score": 98.08,
+      "latency_ms": 1.0598
+    }
+  ]
+}

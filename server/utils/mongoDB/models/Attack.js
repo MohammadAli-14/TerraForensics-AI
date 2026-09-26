@@ -12,17 +12,14 @@ const attackSchema = new mongoose.Schema(
       trim: true,
     },
     iyear: {
-      type: String,
+      type: Number,
       index: true,
-      trim: true,
     },
     imonth: {
-      type: String,
-      trim: true,
+      type: Number,
     },
     iday: {
-      type: String,
-      trim: true,
+      type: Number,
     },
     country_txt: {
       type: String,
@@ -43,12 +40,20 @@ const attackSchema = new mongoose.Schema(
       trim: true,
     },
     latitude: {
-      type: String,
-      trim: true,
+      type: Number,
     },
     longitude: {
-      type: String,
-      trim: true,
+      type: Number,
+    },
+    location: {
+      type: {
+        type: String,
+        enum: ["Point"],
+        default: "Point",
+      },
+      coordinates: {
+        type: [Number], // [longitude, latitude] in GeoJSON standard order
+      },
     },
     summary: {
       type: mongoose.Schema.Types.Mixed,
@@ -86,12 +91,13 @@ const attackSchema = new mongoose.Schema(
       trim: true,
     },
     nkill: {
-      type: String,
-      trim: true,
+      type: Number,
+      default: 0,
+      index: true,
     },
     nwound: {
-      type: String,
-      trim: true,
+      type: Number,
+      default: 0,
     },
   },
   {
@@ -120,6 +126,24 @@ attackSchema.pre("save", function (next) {
   ) {
     this.motive = null;
   }
+
+  // Populate GeoJSON location if valid coordinates exist
+  if (
+    typeof this.latitude === "number" &&
+    typeof this.longitude === "number" &&
+    !isNaN(this.latitude) &&
+    !isNaN(this.longitude) &&
+    this.latitude >= -90 &&
+    this.latitude <= 90 &&
+    this.longitude >= -180 &&
+    this.longitude <= 180
+  ) {
+    this.location = {
+      type: "Point",
+      coordinates: [this.longitude, this.latitude],
+    };
+  }
+
   next();
 });
 
@@ -178,6 +202,13 @@ attackSchema.index(
     },
   }
 );
+
+// High-performance geospatial 2dsphere index for bounding box and proximity queries
+attackSchema.index({ location: "2dsphere" }, { sparse: true, name: "geospatial_2dsphere_index" });
+
+// High-performance compound indexes for forensic temporal and casualty aggregations
+attackSchema.index({ country_txt: 1, iyear: -1 }, { name: "idx_country_year" });
+attackSchema.index({ nkill: -1 }, { name: "idx_nkill_desc" });
 
 const Attack = mongoose.model("Attack", attackSchema);
 

@@ -68,7 +68,9 @@
 - **Node.js**: `v18.x` or `v20.x`
 - **Yarn**: `v1.22+`
 - **MongoDB**: Local or networked instance with the GTD `attacks` collection loaded
-- **Ollama**: Running locally with `llama3.1:8b` pulled (`ollama run llama3.1:8b`)
+- **Ollama Models**:
+  - **Production Deployment Target**: `llama3.1:8b` (`ollama run llama3.1:8b`) — recommended for defense workstations with 16GB+ RAM or discrete GPU.
+  - **Empirical CPU Evaluation Proxy**: `llama3.2:3b` (`ollama run llama3.2:3b`) — utilized in Table 10 of our IEEE Access manuscript for low-cost, edge CPU latency decomposition.
 
 ---
 
@@ -98,7 +100,7 @@ MONGODB_DB_NAME=gtd_database
 # Local Vector Storage & Database
 STORAGE_DIR=storage
 
-# Ollama Air-Gapped Inference
+# Ollama Air-Gapped Inference (Target: llama3.1:8b, Proxy: llama3.2:3b)
 LLM_PROVIDER=ollama
 OLLAMA_BASE_PATH=http://127.0.0.1:11434
 OLLAMA_MODEL_PREF=llama3.1:8b
@@ -132,29 +134,42 @@ yarn dev:collector
 ## 🗄️ GTD Forensic Engine Details
 
 1. **Early Database Lifecycle**: The GTD MongoDB connector initializes at server startup in [`server/index.js`](server/index.js), running non-blocking schema checks.
-2. **Context Extractor**: Incoming user queries are parsed by [`server/utils/mongoDB/contextExtractor.js`](server/utils/mongoDB/contextExtractor.js) to identify spatial bounding boxes, target groups, weapon types, and casualty thresholds.
-3. **Structured Aggregation**: Queries are translated into optimized MongoDB aggregation pipelines with pre-indexed filters on:
-   - Temporal: `iyear`, `imonth`, `iday`
-   - Spatial: `country_txt`, `region_txt`, `city`, `latitude`, `longitude`
+2. **Deterministic Semantic Firewall (DSF)**: Queries pass through [`server/utils/mongoDB/contextExtractor.js`](server/utils/mongoDB/contextExtractor.js) before LLM invocation.
+   - **Zero-Pollution Guarantee**: Formally defined as **Structural Context Isolation**:
+     $$\mathcal{I}_{\text{str}}(q) \cdot \mathcal{I}_{\text{doc}}(q) = 0 \quad \forall q$$
+     The firewall guarantees mutual exclusivity between structured database retrieval and unstructured document retrieval. Cross-channel contamination is eliminated by construction.
+3. **Structured Geospatial Aggregation**: Queries are translated into optimized MongoDB aggregation pipelines with indexed filters on:
+   - Temporal: `iyear`, `imonth`, `iday` (typed as `Number`)
+   - Spatial: `country_txt`, `region_txt`, `city`, `latitude`, `longitude`, and native GeoJSON `location` (`Point` with sparse `2dsphere` indexing)
    - Perpetrators & Targets: `gname`, `targtype1_txt`, `weaptype1_txt`
-   - Impact: `nkill`, `nwound`
-4. **Dynamic Telemetry & Grounding**: Results pass through [`server/utils/mongoDB/gtdGroundingScorer.js`](server/utils/mongoDB/gtdGroundingScorer.js), calculating factual alignment before streaming to the client.
+   - Impact: `nkill`, `nwound` (typed as `Number`, indexed on `idx_nkill_desc`)
+4. **Dynamic Telemetry & Grounding**: Results pass through [`server/utils/mongoDB/gtdGroundingScorer.js`](server/utils/mongoDB/gtdGroundingScorer.js), calculating factual alignment:
+   $$\mathcal{C} = 0.35\,\mathcal{S}_{\text{schema}} + 0.35\,\mathcal{S}_{\text{grounding}} + 0.30\,\mathcal{S}_{\text{faithfulness}}$$
+5. **Air-Gapped Sovereign Vector Tiles**: Offline basemaps are served via local Protomaps PMTiles (`frontend/public/tiles/world.pmtiles`) without external network egress.
 
 ---
 
 ## 📊 Benchmarks & Empirical Evaluation
 
-To reproduce the benchmark figures reported in our research papers:
+To reproduce the benchmark figures reported in our IEEE Access research paper:
 
 ```bash
-# Run structured query accuracy test
-node scripts/evaluate_structured_query_accuracy.js
+# 1. Run schema and geospatial 2dsphere migration
+node scripts/migrate_gtd_schema.cjs --dry-run
+node scripts/migrate_gtd_schema.cjs
 
-# Run latency decomposition benchmark
-node scripts/benchmark_latency_decomposition.cjs
+# 2. Verify or provision offline vector tiles for air-gapped map rendering
+python scripts/setup_offline_tiles.py --check
 
-# Run end-to-end classifier routing evaluation
+# 3. Run structured query accuracy test (90 hand-curated queries)
+node scripts/evaluate_structured_query_accuracy.cjs
+
+# 4. Run end-to-end classifier routing evaluation
+# (Generates both 5-Fold Stratified CV and Zero-Leakage Spatio-Temporal Disjoint tables)
 python scripts/benchmark_classifiers.py
+
+# 5. Run latency decomposition benchmark (Local Edge vs Hosted)
+node scripts/benchmark_latency_decomposition.cjs
 ```
 
 Benchmark output matrices and LaTeX formatting tables are generated automatically in `results/`.

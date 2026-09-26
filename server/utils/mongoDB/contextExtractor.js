@@ -561,8 +561,22 @@ class MongoDBContextExtractor {
         `[Filter Builder] Year range filter using $expr: ${startYear} to ${endYear}`
       );
     } else if (conditions.iyear) {
-      // Single year - can use direct string match
-      filter.iyear = conditions.iyear.toString();
+      // Single year - support both number and string match
+      const yearNum = parseInt(conditions.iyear, 10);
+      filter.$or = [
+        { iyear: yearNum },
+        { iyear: conditions.iyear.toString() },
+      ];
+    }
+
+    // High-performance Geospatial Bounding-Box filter (2dsphere index accelerated)
+    if (conditions.boundingBox && Array.isArray(conditions.boundingBox)) {
+      filter.location = {
+        $geoWithin: {
+          $box: conditions.boundingBox,
+        },
+      };
+      console.log(`[Filter Builder] Geospatial $geoWithin $box filter applied via 2dsphere index.`);
     }
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -591,38 +605,47 @@ class MongoDBContextExtractor {
       }
     }
 
-    // Casualty range handling - nkill/nwound are also stored as strings
-    // Use $expr for proper numeric comparison
+    // Casualty range handling - supports native Number fields with $expr fallback
     if (conditions._minKilled !== undefined) {
       const minKill = parseInt(conditions._minKilled);
-      // If we already have $expr.$and, add to it; otherwise create it
+      const casualtyCond = {
+        $or: [
+          { $gte: ["$nkill", minKill] },
+          { $gte: [safeToInt("$nkill"), minKill] },
+        ],
+      };
       if (filter.$expr && filter.$expr.$and) {
-        filter.$expr.$and.push({ $gte: [safeToInt("$nkill"), minKill] });
+        filter.$expr.$and.push(casualtyCond);
       } else if (filter.$expr) {
-        // $expr exists but not as $and - wrap it
         filter.$expr = {
-          $and: [filter.$expr, { $gte: [safeToInt("$nkill"), minKill] }],
+          $and: [filter.$expr, casualtyCond],
         };
       } else {
-        filter.$expr = { $gte: [safeToInt("$nkill"), minKill] };
+        filter.$expr = casualtyCond;
       }
       console.log(
-        `[Filter Builder] Min killed filter using $expr: >= ${minKill}`
+        `[Filter Builder] Min killed filter: >= ${minKill} (hybrid native/expr)`
       );
     }
     if (conditions._minWounded !== undefined) {
       const minWound = parseInt(conditions._minWounded);
+      const woundedCond = {
+        $or: [
+          { $gte: ["$nwound", minWound] },
+          { $gte: [safeToInt("$nwound"), minWound] },
+        ],
+      };
       if (filter.$expr && filter.$expr.$and) {
-        filter.$expr.$and.push({ $gte: [safeToInt("$nwound"), minWound] });
+        filter.$expr.$and.push(woundedCond);
       } else if (filter.$expr) {
         filter.$expr = {
-          $and: [filter.$expr, { $gte: [safeToInt("$nwound"), minWound] }],
+          $and: [filter.$expr, woundedCond],
         };
       } else {
-        filter.$expr = { $gte: [safeToInt("$nwound"), minWound] };
+        filter.$expr = woundedCond;
       }
       console.log(
-        `[Filter Builder] Min wounded filter using $expr: >= ${minWound}`
+        `[Filter Builder] Min wounded filter: >= ${minWound} (hybrid native/expr)`
       );
     }
 
