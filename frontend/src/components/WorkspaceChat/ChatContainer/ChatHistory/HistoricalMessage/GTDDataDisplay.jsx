@@ -334,6 +334,12 @@ export default function GTDDataDisplay({ gtdData: gtdDataProp, llmOutput }) {
       });
 
       if (!res.ok) {
+        if (res.status === 401) {
+          setRefetchError(
+            "Your login session has expired. Please log out and log back in to refresh your credentials."
+          );
+          return;
+        }
         const errText = await res.text().catch(() => res.statusText);
         setRefetchError(`Server error ${res.status}: ${errText}`);
         return;
@@ -422,6 +428,11 @@ export default function GTDDataDisplay({ gtdData: gtdDataProp, llmOutput }) {
         });
 
         if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error(
+              "Your login session has expired. Please log out and log back in to refresh your credentials."
+            );
+          }
           const errText = await res.text().catch(() => res.statusText);
           throw new Error(`Server error ${res.status}: ${errText}`);
         }

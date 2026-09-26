@@ -597,6 +597,15 @@ export default function WorkspaceGTDMap() {
             );
 
             if (cancelled) return;
+            if (!res.ok) {
+              if (res.status === 401) {
+                setError(
+                  "Your login session has expired or is invalid. Please log in again to refresh your authentication."
+                );
+                setStatus("Authentication required");
+                return;
+              }
+            }
             if (res.ok) {
               const result = await res.json();
               if (result.success) {
@@ -816,6 +825,11 @@ export default function WorkspaceGTDMap() {
         });
 
         if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error(
+              "Your login session has expired. Please log out and log back in to refresh your authentication."
+            );
+          }
           const errText = await res.text().catch(() => res.statusText);
           throw new Error(`Server error ${res.status}: ${errText}`);
         }
@@ -1012,6 +1026,11 @@ export default function WorkspaceGTDMap() {
         });
 
         if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error(
+              "Your login session has expired. Please log out and log back in to refresh your authentication."
+            );
+          }
           const errText = await res.text().catch(() => res.statusText);
           throw new Error(`Server error ${res.status}: ${errText}`);
         }
