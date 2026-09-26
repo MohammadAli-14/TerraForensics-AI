@@ -7,7 +7,12 @@ import ManageWorkspace, {
 } from "../../Modals/ManageWorkspace";
 import paths from "@/utils/paths";
 import { useParams, useNavigate } from "react-router-dom";
-import { GearSix, UploadSimple, DotsSixVertical, GlobeHemisphereWest } from "@phosphor-icons/react";
+import {
+  GearSix,
+  UploadSimple,
+  DotsSixVertical,
+  GlobeHemisphereWest,
+} from "@phosphor-icons/react";
 import useUser from "@/hooks/useUser";
 import ThreadContainer from "./ThreadContainer";
 import { useMatch } from "react-router-dom";
@@ -150,7 +155,9 @@ export default function ActiveWorkspaces() {
                                   onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
-                                    navigate(paths.workspace.gtdMap(workspace.slug));
+                                    navigate(
+                                      paths.workspace.gtdMap(workspace.slug)
+                                    );
                                   }}
                                   className="border-none rounded-md flex items-center justify-center ml-auto p-[2px] hover:bg-[#646768] text-[#A7A8A9] hover:text-white"
                                   title="GTD Geospatial Heatmap"

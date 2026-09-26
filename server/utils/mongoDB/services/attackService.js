@@ -9,7 +9,11 @@ class AttackService {
 
       // Use direct MongoDB driver for better control
       const mongoose = require("mongoose");
-      if (!mongoose.connection || mongoose.connection.readyState !== 1 || !mongoose.connection.db) {
+      if (
+        !mongoose.connection ||
+        mongoose.connection.readyState !== 1 ||
+        !mongoose.connection.db
+      ) {
         return [];
       }
       const db = mongoose.connection.db;
@@ -351,10 +355,15 @@ class AttackService {
       } = options;
 
       const mongoose = require("mongoose");
-      if (!mongoose.connection || mongoose.connection.readyState !== 1 || !mongoose.connection.db) {
+      if (
+        !mongoose.connection ||
+        mongoose.connection.readyState !== 1 ||
+        !mongoose.connection.db
+      ) {
         return {
           success: false,
-          error: "MongoDB connection is offline. Verify MONGODB_URI in server/.env",
+          error:
+            "MongoDB connection is offline. Verify MONGODB_URI in server/.env",
           totalCount: 0,
           returnedCount: 0,
           results: [],

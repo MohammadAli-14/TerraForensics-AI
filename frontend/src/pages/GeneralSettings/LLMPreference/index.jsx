@@ -30,7 +30,8 @@ export const AVAILABLE_LLM_PROVIDERS = [
     value: "openrouter",
     logo: OpenRouterLogo,
     options: (settings) => <OpenRouterOptions settings={settings} />,
-    description: "Access open-weights models like Llama 3.1 8B Free Tier via OpenRouter.",
+    description:
+      "Access open-weights models like Llama 3.1 8B Free Tier via OpenRouter.",
     requiredConfig: ["OpenRouterApiKey"],
   },
   {
@@ -68,7 +69,8 @@ export const AVAILABLE_LLM_PROVIDERS = [
     value: "gemini",
     logo: GeminiLogo,
     options: (settings) => <GeminiLLMOptions settings={settings} />,
-    description: "Google's high-speed and capable Gemini models (Gemini 2.0 Flash).",
+    description:
+      "Google's high-speed and capable Gemini models (Gemini 2.0 Flash).",
     requiredConfig: ["GeminiLLMApiKey"],
   },
   {

@@ -441,7 +441,9 @@ const SystemSettings = {
     return {
       // OpenRouter Keys
       OpenRouterApiKey: !!process.env.OPENROUTER_API_KEY,
-      OpenRouterModelPref: process.env.OPENROUTER_MODEL_PREF || "meta-llama/llama-3.1-8b-instruct:free",
+      OpenRouterModelPref:
+        process.env.OPENROUTER_MODEL_PREF ||
+        "meta-llama/llama-3.1-8b-instruct:free",
       OpenRouterTimeout: process.env.OPENROUTER_TIMEOUT_MS,
 
       // Ollama LLM Keys
@@ -472,7 +474,8 @@ const SystemSettings = {
 
       // Anthropic Keys
       AnthropicApiKey: !!process.env.ANTHROPIC_API_KEY,
-      AnthropicModelPref: process.env.ANTHROPIC_MODEL_PREF || "claude-3-5-sonnet-20241022",
+      AnthropicModelPref:
+        process.env.ANTHROPIC_MODEL_PREF || "claude-3-5-sonnet-20241022",
       AnthropicCacheControl: process.env.ANTHROPIC_CACHE_CONTROL || "none",
     };
   },

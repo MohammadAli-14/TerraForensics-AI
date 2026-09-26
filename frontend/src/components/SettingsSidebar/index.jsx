@@ -356,8 +356,6 @@ const SidebarOptions = ({ user = null, t }) => (
   </CanViewChatHistoryProvider>
 );
 
-
-
 function AppVersion() {
   const { version, isLoading } = useAppVersion();
   if (isLoading) return null;

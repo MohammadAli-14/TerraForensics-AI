@@ -330,13 +330,14 @@ class MongoDBContextExtractor {
     // Check if context has expired
     if (Date.now() - stored.timestamp > this.contextTimeout) {
       this.conversationContext.delete(key);
-      console.log(
-        `[Context Tracker] Context expired for session [${key}]`
-      );
+      console.log(`[Context Tracker] Context expired for session [${key}]`);
       return null;
     }
 
-    console.log(`[Context Tracker] Retrieved stored context for [${key}]:`, stored);
+    console.log(
+      `[Context Tracker] Retrieved stored context for [${key}]:`,
+      stored
+    );
     return stored;
   }
 
@@ -571,7 +572,9 @@ class MongoDBContextExtractor {
           $box: conditions.boundingBox,
         },
       };
-      console.log(`[Filter Builder] Geospatial $geoWithin $box filter applied via 2dsphere index.`);
+      console.log(
+        `[Filter Builder] Geospatial $geoWithin $box filter applied via 2dsphere index.`
+      );
     }
 
     // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
@@ -724,7 +727,9 @@ class MongoDBContextExtractor {
         normalized.iyear.$lte = parseInt(normalized.year_end, 10);
         delete normalized.year_end;
       }
-      console.log(`[Filter Normalizer] Converted year_start/year_end to native iyear range`);
+      console.log(
+        `[Filter Normalizer] Converted year_start/year_end to native iyear range`
+      );
     }
 
     // Handle iyear - support both native Number and String records in GTD
@@ -736,14 +741,43 @@ class MongoDBContextExtractor {
           const eqStr = String(iyear.$eq).trim();
           normalized.iyear = { $in: [eqNum, eqStr] };
         } else {
-          const cleanIyear = {};
-          if (iyear.$gte !== undefined) cleanIyear.$gte = parseInt(iyear.$gte, 10);
-          if (iyear.$lte !== undefined) cleanIyear.$lte = parseInt(iyear.$lte, 10);
-          if (iyear.$gt !== undefined) cleanIyear.$gt = parseInt(iyear.$gt, 10);
-          if (iyear.$lt !== undefined) cleanIyear.$lt = parseInt(iyear.$lt, 10);
-          normalized.iyear = cleanIyear;
+          const cleanIyearNum = {};
+          const cleanIyearStr = {};
+          if (iyear.$gte !== undefined) {
+            cleanIyearNum.$gte = parseInt(iyear.$gte, 10);
+            cleanIyearStr.$gte = String(cleanIyearNum.$gte);
+          }
+          if (iyear.$lte !== undefined) {
+            cleanIyearNum.$lte = parseInt(iyear.$lte, 10);
+            cleanIyearStr.$lte = String(cleanIyearNum.$lte);
+          }
+          if (iyear.$gt !== undefined) {
+            cleanIyearNum.$gt = parseInt(iyear.$gt, 10);
+            cleanIyearStr.$gt = String(cleanIyearNum.$gt);
+          }
+          if (iyear.$lt !== undefined) {
+            cleanIyearNum.$lt = parseInt(iyear.$lt, 10);
+            cleanIyearStr.$lt = String(cleanIyearNum.$lt);
+          }
+          delete normalized.iyear;
+          const yearOrConditions = [
+            { iyear: cleanIyearNum },
+            { iyear: cleanIyearStr },
+          ];
+          if (normalized.$or && Array.isArray(normalized.$or)) {
+            normalized.$and = (normalized.$and || []).concat([
+              { $or: normalized.$or },
+              { $or: yearOrConditions },
+            ]);
+            delete normalized.$or;
+          } else {
+            normalized.$or = yearOrConditions;
+          }
         }
-      } else if (typeof normalized.iyear === "string" || typeof normalized.iyear === "number") {
+      } else if (
+        typeof normalized.iyear === "string" ||
+        typeof normalized.iyear === "number"
+      ) {
         const yNum = parseInt(normalized.iyear, 10);
         const yStr = String(normalized.iyear).trim();
         normalized.iyear = { $in: [yNum, yStr] };
@@ -799,19 +833,27 @@ class MongoDBContextExtractor {
       if (nkill.$gt !== undefined) cleanNkill.$gt = parseInt(nkill.$gt, 10);
       if (nkill.$lt !== undefined) cleanNkill.$lt = parseInt(nkill.$lt, 10);
       normalized.nkill = cleanNkill;
-      console.log(`[Filter Normalizer] Normalized nkill to native indexed range:`, cleanNkill);
+      console.log(
+        `[Filter Normalizer] Normalized nkill to native indexed range:`,
+        cleanNkill
+      );
     }
 
     // Handle nwound - native Number comparison
     if (normalized.nwound && typeof normalized.nwound === "object") {
       const nwound = normalized.nwound;
       const cleanNwound = {};
-      if (nwound.$gte !== undefined) cleanNwound.$gte = parseInt(nwound.$gte, 10);
-      if (nwound.$lte !== undefined) cleanNwound.$lte = parseInt(nwound.$lte, 10);
+      if (nwound.$gte !== undefined)
+        cleanNwound.$gte = parseInt(nwound.$gte, 10);
+      if (nwound.$lte !== undefined)
+        cleanNwound.$lte = parseInt(nwound.$lte, 10);
       if (nwound.$gt !== undefined) cleanNwound.$gt = parseInt(nwound.$gt, 10);
       if (nwound.$lt !== undefined) cleanNwound.$lt = parseInt(nwound.$lt, 10);
       normalized.nwound = cleanNwound;
-      console.log(`[Filter Normalizer] Normalized nwound to native indexed range:`, cleanNwound);
+      console.log(
+        `[Filter Normalizer] Normalized nwound to native indexed range:`,
+        cleanNwound
+      );
     }
 
     // Build $expr if we have conditions
@@ -2491,7 +2533,9 @@ class MongoDBContextExtractor {
       }
 
       // Check for open-ended temporal patterns: "since 2014", "after 2014", "from 2014 onwards"
-      const afterMatch = query.match(/\b(?:since|after|from)\s+(\d{4})(?:\s+onwards)?\b/i);
+      const afterMatch = query.match(
+        /\b(?:since|after|from)\s+(\d{4})(?:\s+onwards)?\b/i
+      );
       if (afterMatch && !dateRangeFound) {
         const y = parseInt(afterMatch[1], 10);
         if (y >= 1970 && y <= 2021) {
@@ -2499,13 +2543,17 @@ class MongoDBContextExtractor {
             start: String(y),
             end: "2021",
           };
-          console.log(`[Query Parser] Found open-ended start year (since/after): >= ${y}`);
+          console.log(
+            `[Query Parser] Found open-ended start year (since/after): >= ${y}`
+          );
           dateRangeFound = true;
         }
       }
 
       // Check for open-ended temporal patterns: "before 2014", "prior to 2014", "until 2014", "up to 2014"
-      const beforeMatch = query.match(/\b(?:before|prior\s+to|until|up\s+to)\s+(\d{4})\b/i);
+      const beforeMatch = query.match(
+        /\b(?:before|prior\s+to|until|up\s+to)\s+(\d{4})\b/i
+      );
       if (beforeMatch && !dateRangeFound) {
         const y = parseInt(beforeMatch[1], 10);
         if (y >= 1970 && y <= 2021) {
@@ -2513,7 +2561,9 @@ class MongoDBContextExtractor {
             start: "1970",
             end: String(y),
           };
-          console.log(`[Query Parser] Found open-ended end year (before/until): <= ${y}`);
+          console.log(
+            `[Query Parser] Found open-ended end year (before/until): <= ${y}`
+          );
           dateRangeFound = true;
         }
       }
@@ -2833,7 +2883,9 @@ class MongoDBContextExtractor {
       lowerQuery.includes(pattern)
     );
     const hasStatisticalWord =
-      /\b(count|total|statistics?|how\s+many|number\s+of|trends?|analysis|analyze|analytics|overview|patterns?|breakdown|distribution)\b/i.test(lowerQuery);
+      /\b(count|total|statistics?|how\s+many|number\s+of|trends?|analysis|analyze|analytics|overview|patterns?|breakdown|distribution)\b/i.test(
+        lowerQuery
+      );
 
     // Also check if query asks for a quantity/number - use ATTACK_SYNONYMS_REGEX for full coverage
     const asksForQuantityPattern = new RegExp(
@@ -3065,19 +3117,38 @@ class MongoDBContextExtractor {
       // CARDINAL DIRECTION GUARD: Standalone directions (e.g. "South", "North", "East", "West")
       // MUST NOT be matched as provinces unless the query explicitly contains province keywords
       const cardinalDirections = [
-        "north", "south", "east", "west", "central",
-        "northeast", "northwest", "southeast", "southwest",
-        "upper", "lower", "inner", "outer",
-        "western", "eastern", "northern", "southern"
+        "north",
+        "south",
+        "east",
+        "west",
+        "central",
+        "northeast",
+        "northwest",
+        "southeast",
+        "southwest",
+        "upper",
+        "lower",
+        "inner",
+        "outer",
+        "western",
+        "eastern",
+        "northern",
+        "southern",
       ];
-      const hasProvinceKeyword = /\b(province|state|governorate|dist|district)\b/i.test(lowerQuery);
-      if (cardinalDirections.includes(lowercaseProvince) && !hasProvinceKeyword) {
+      const hasProvinceKeyword =
+        /\b(province|state|governorate|dist|district)\b/i.test(lowerQuery);
+      if (
+        cardinalDirections.includes(lowercaseProvince) &&
+        !hasProvinceKeyword
+      ) {
         continue;
       }
 
       // SUB-TOKEN SHIELD: Do not extract province if it's a constituent word of the matched Region
       if (conditions.region_txt) {
-        const regionTokens = conditions.region_txt.toLowerCase().split(/[\s&,-]+/);
+        const regionTokens = conditions.region_txt
+          .toLowerCase()
+          .split(/[\s&,-]+/);
         if (regionTokens.includes(lowercaseProvince)) {
           continue;
         }
@@ -3085,8 +3156,17 @@ class MongoDBContextExtractor {
 
       // SUB-TOKEN SHIELD: Do not extract province if it's a constituent word of the matched Country
       if (conditions.country_txt) {
-        const countryList = Array.isArray(conditions.country_txt) ? conditions.country_txt : [conditions.country_txt];
-        if (countryList.some((c) => c.toLowerCase().split(/[\s&,-]+/).includes(lowercaseProvince))) {
+        const countryList = Array.isArray(conditions.country_txt)
+          ? conditions.country_txt
+          : [conditions.country_txt];
+        if (
+          countryList.some((c) =>
+            c
+              .toLowerCase()
+              .split(/[\s&,-]+/)
+              .includes(lowercaseProvince)
+          )
+        ) {
           continue;
         }
       }
@@ -4223,7 +4303,12 @@ class MongoDBContextExtractor {
 
   // Main function to extract GTD context - COMPREHENSIVE VERSION
   // Accepts workspace, user, and thread to enforce composite session isolation (Figure 10 fix)
-  async extractGTDContext(userQuery, workspace = null, user = null, thread = null) {
+  async extractGTDContext(
+    userQuery,
+    workspace = null,
+    user = null,
+    thread = null
+  ) {
     console.log(`[GTD Extractor] Checking query: "${userQuery}"`);
 
     try {
@@ -4523,37 +4608,38 @@ VERIFICATION CODE: GTD-SAMPLE-${attack.eventid}
 
           // Get aggregated casualty statistics
           const statsResult = await attacksCollection
-            .aggregate([
-              { $match: matchStage },
-              {
-                $group: {
-                  _id: null,
-                  totalKilled: {
-                    $sum: {
-                      $convert: {
-                        input: "$nkill",
-                        to: "int",
-                        onError: 0,
-                        onNull: 0,
+            .aggregate(
+              [
+                { $match: matchStage },
+                {
+                  $group: {
+                    _id: null,
+                    totalKilled: {
+                      $sum: {
+                        $convert: {
+                          input: "$nkill",
+                          to: "int",
+                          onError: 0,
+                          onNull: 0,
+                        },
                       },
                     },
-                  },
-                  totalWounded: {
-                    $sum: {
-                      $convert: {
-                        input: "$nwound",
-                        to: "int",
-                        onError: 0,
-                        onNull: 0,
+                    totalWounded: {
+                      $sum: {
+                        $convert: {
+                          input: "$nwound",
+                          to: "int",
+                          onError: 0,
+                          onNull: 0,
+                        },
                       },
                     },
                   },
                 },
-              },
-            ],
-            { allowDiskUse: true }
-          )
-          .toArray();
+              ],
+              { allowDiskUse: true }
+            )
+            .toArray();
 
           const killed = statsResult[0]?.totalKilled || 0;
           const wounded = statsResult[0]?.totalWounded || 0;
@@ -4859,7 +4945,10 @@ VERIFICATION CODE: GTD-SAMPLE-${attack.eventid}
                   });
                 }
               } catch (grpErr) {
-                console.warn("[GTD Extractor] Failed to aggregate top groups:", grpErr.message);
+                console.warn(
+                  "[GTD Extractor] Failed to aggregate top groups:",
+                  grpErr.message
+                );
               }
             }
           }

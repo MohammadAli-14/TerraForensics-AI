@@ -1493,15 +1493,23 @@ The database query has been executed. The result is ${exactCount} attacks, ${exa
       // Compute scientific Multi-Factor Grounding Telemetry (replaces hardcoded 1.0)
       let groundingTelemetry = null;
       try {
-        const { computeConfidenceTelemetry } = require("../mongoDB/gtdGroundingScorer");
+        const {
+          computeConfidenceTelemetry,
+        } = require("../mongoDB/gtdGroundingScorer");
         groundingTelemetry = computeConfidenceTelemetry({
-          filter: gtdFormattedData.filter || gtdFormattedData.simpleFilter || mongoContext?.filter,
+          filter:
+            gtdFormattedData.filter ||
+            gtdFormattedData.simpleFilter ||
+            mongoContext?.filter,
           gtdData: gtdFormattedData,
           responseText: completeText,
           isOutOfRange: mongoContext?.type === "gtd_out_of_range",
         });
       } catch (err) {
-        console.warn("[STREAM DEBUG] Grounding telemetry computation skipped:", err.message);
+        console.warn(
+          "[STREAM DEBUG] Grounding telemetry computation skipped:",
+          err.message
+        );
       }
 
       responseChunk.gtdData = {
@@ -1519,7 +1527,9 @@ The database query has been executed. The result is ${exactCount} attacks, ${exa
         answer: gtdFormattedData.answer,
         llm_metadata: {
           ...(gtdFormattedData.llm_metadata || {}),
-          confidence: groundingTelemetry ? groundingTelemetry.confidence : (gtdFormattedData.llm_metadata?.confidence || 0.95),
+          confidence: groundingTelemetry
+            ? groundingTelemetry.confidence
+            : gtdFormattedData.llm_metadata?.confidence || 0.95,
         },
         grounding_telemetry: groundingTelemetry,
         totalKilled: resolvedKilled,

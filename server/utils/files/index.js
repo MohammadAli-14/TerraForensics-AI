@@ -408,7 +408,9 @@ function fastExtractJsonMetadata(pathToFile, fileSize) {
     const chunkSourceMatch = headStr.match(/"chunkSource"\s*:\s*"([^"]*)"/);
     const publishedMatch = headStr.match(/"published"\s*:\s*"([^"]+)"/);
     const wordCountMatch = headStr.match(/"wordCount"\s*:\s*([0-9]+)/);
-    const tokenCountMatch = tailStr.match(/"token_count_estimate"\s*:\s*([0-9]+)/);
+    const tokenCountMatch = tailStr.match(
+      /"token_count_estimate"\s*:\s*([0-9]+)/
+    );
 
     return {
       id: idMatch[1],

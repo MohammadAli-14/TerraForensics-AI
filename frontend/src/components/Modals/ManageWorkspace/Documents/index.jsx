@@ -139,7 +139,9 @@ export default function DocumentSettings({ workspace, systemSettings }) {
       : [];
     for (const itemId of Object.keys(selectedItems)) {
       for (const folder of availableFolders) {
-        const foundItem = (folder?.items || []).find((file) => file.id === itemId);
+        const foundItem = (folder?.items || []).find(
+          (file) => file.id === itemId
+        );
         if (foundItem) {
           newMovedItems.push({ ...foundItem, folderName: folder.name });
           break;

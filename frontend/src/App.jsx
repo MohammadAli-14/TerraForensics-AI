@@ -79,9 +79,6 @@ const SystemPromptVariables = lazy(
 const DefaultSystemPrompt = lazy(
   () => import("@/pages/Admin/DefaultSystemPrompt")
 );
-const PageAgentToggle = lazy(
-  () => import("@/components/PageAgent/PageAgentToggle")
-);
 
 export default function App() {
   return (
@@ -144,7 +141,9 @@ export default function App() {
                       />
                       <Route
                         path="/settings/system-prompt-variables"
-                        element={<AdminRoute Component={SystemPromptVariables} />}
+                        element={
+                          <AdminRoute Component={SystemPromptVariables} />
+                        }
                       />
                       <Route
                         path="/settings/default-system-prompt"
@@ -158,22 +157,30 @@ export default function App() {
                       />
                       <Route
                         path="/settings/llm-preference"
-                        element={<ManagerRoute Component={GeneralLLMPreference} />}
+                        element={
+                          <ManagerRoute Component={GeneralLLMPreference} />
+                        }
                       />
                       <Route
                         path="/settings/transcription-preference"
                         element={
-                          <ManagerRoute Component={GeneralTranscriptionPreference} />
+                          <ManagerRoute
+                            Component={GeneralTranscriptionPreference}
+                          />
                         }
                       />
                       <Route
                         path="/settings/audio-preference"
-                        element={<ManagerRoute Component={GeneralAudioPreference} />}
+                        element={
+                          <ManagerRoute Component={GeneralAudioPreference} />
+                        }
                       />
                       <Route
                         path="/settings/embedding-preference"
                         element={
-                          <ManagerRoute Component={GeneralEmbeddingPreference} />
+                          <ManagerRoute
+                            Component={GeneralEmbeddingPreference}
+                          />
                         }
                       />
                       <Route
@@ -186,7 +193,9 @@ export default function App() {
                       />
                       <Route
                         path="/settings/vector-database"
-                        element={<ManagerRoute Component={GeneralVectorDatabase} />}
+                        element={
+                          <ManagerRoute Component={GeneralVectorDatabase} />
+                        }
                       />
                       <Route
                         path="/settings/event-logs"
@@ -240,7 +249,9 @@ export default function App() {
                       />
                       <Route
                         path="/settings/sovereign-engine"
-                        element={<AdminRoute Component={SovereignEngineSettings} />}
+                        element={
+                          <AdminRoute Component={SovereignEngineSettings} />
+                        }
                       />
                       <Route
                         path="/settings/workspaces"
@@ -256,9 +267,6 @@ export default function App() {
                   </ErrorBoundary>
                   <ToastContainer />
                   <KeyboardShortcutsHelp />
-                  <Suspense fallback={null}>
-                    <PageAgentToggle />
-                  </Suspense>
                 </I18nextProvider>
               </PfpProvider>
             </LogoProvider>

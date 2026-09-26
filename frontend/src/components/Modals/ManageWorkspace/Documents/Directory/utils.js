@@ -15,7 +15,10 @@ export const stripUuidAndJsonFromString = (input = "") => {
     ?.replace("-", " "); // turn slugged names into spaces
 };
 
-export function filterFileSearchResults(files = { items: [] }, searchTerm = "") {
+export function filterFileSearchResults(
+  files = { items: [] },
+  searchTerm = ""
+) {
   if (!searchTerm) return files?.items || [];
 
   const normalizedSearchTerm = searchTerm.toLowerCase().trim();

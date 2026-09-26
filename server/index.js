@@ -1,3 +1,11 @@
+// Set public DNS servers to guarantee MongoDB Atlas SRV resolution on Windows
+const dns = require("dns");
+try {
+  dns.setServers(["8.8.8.8", "1.1.1.1"]);
+} catch (e) {
+  // Graceful fallback
+}
+
 if (!process.env.NODE_ENV) {
   process.env.NODE_ENV = "development";
 }

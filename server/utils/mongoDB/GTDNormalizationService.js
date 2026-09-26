@@ -115,9 +115,11 @@ class GTDNormalizationService {
     }
 
     // 2. Starts With Check (e.g. "Bombing" -> "Bombing/Explosion", or "bombings" -> "Bombing/Explosion")
-    const startsWithMatch = sortedValues.find((val) =>
-      val.toLowerCase().startsWith(cleanInput) ||
-      (singularInput.length >= 3 && val.toLowerCase().startsWith(singularInput))
+    const startsWithMatch = sortedValues.find(
+      (val) =>
+        val.toLowerCase().startsWith(cleanInput) ||
+        (singularInput.length >= 3 &&
+          val.toLowerCase().startsWith(singularInput))
     );
     if (startsWithMatch) {
       console.log(

@@ -417,7 +417,8 @@ const TRANSLATIONS = {
     },
     branding: {
       title: "Bränding ja valgesildistamine",
-      description: "Valgesildista oma TerraForensics AI kohandatud brändinguga.",
+      description:
+        "Valgesildista oma TerraForensics AI kohandatud brändinguga.",
     },
     chat: {
       title: "Vestlus",

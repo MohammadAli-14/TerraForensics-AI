@@ -190,8 +190,8 @@ describe('MongoDBContextExtractor', () => {
       const conditions = { _yearRange: { start: 2010, end: 2015 } };
       const filter = contextExtractor.buildMongoDBFilter(conditions);
 
-      expect(filter).toHaveProperty('iyear');
-      expect(filter.iyear).toEqual({ $gte: 2010, $lte: 2015 });
+      expect(filter).toHaveProperty('$or');
+      expect(filter.$or[0].iyear).toEqual({ $gte: 2010, $lte: 2015 });
     });
 
     test('should build filter for attack type', () => {

@@ -30,7 +30,6 @@
     "markdown-it": "^13.0.1",
     "moment": "^2.30.1",
     "onnxruntime-web": "^1.18.0",
-    "page-agent": "1.5.5",
     "pluralize": "^8.0.0",
     "pmtiles": "^4.4.0",
     "qrcode.react": "^4.2.0",

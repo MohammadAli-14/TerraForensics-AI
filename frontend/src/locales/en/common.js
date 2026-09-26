@@ -38,7 +38,8 @@ const TRANSLATIONS = {
     },
     survey: {
       title: "Welcome to TerraForensics AI",
-      description: "Help us make TerraForensics AI built for your needs. Optional.",
+      description:
+        "Help us make TerraForensics AI built for your needs. Optional.",
 
       email: "What's your email?",
       useCase: "What will you use TerraForensics AI for?",
@@ -144,27 +145,32 @@ const TRANSLATIONS = {
     checklist: {
       title: "Getting Started",
       tasksLeft: "tasks left",
-      completed: "You're all set to analyze Global Terrorism Database records and private documents!",
+      completed:
+        "You're all set to analyze Global Terrorism Database records and private documents!",
       dismiss: "close",
       tasks: {
         create_workspace: {
           title: "Create a Workspace",
-          description: "Create your dedicated workspace to begin intelligence analysis",
+          description:
+            "Create your dedicated workspace to begin intelligence analysis",
           action: "Create",
         },
         query_gtd: {
           title: "Query GTD Intelligence",
-          description: "Ask natural language questions on 181,000+ terrorism incident records",
+          description:
+            "Ask natural language questions on 181,000+ terrorism incident records",
           action: "Query GTD",
         },
         explore_gtd_map: {
           title: "Explore Geospatial Heatmap",
-          description: "Visualize global incident density and coordinates on MapLibre",
+          description:
+            "Visualize global incident density and coordinates on MapLibre",
           action: "Open Map",
         },
         embed_document: {
           title: "Ingest Documents (LanceDB)",
-          description: "Upload PDFs or text files for embedded local vector RAG",
+          description:
+            "Upload PDFs or text files for embedded local vector RAG",
           action: "Embed",
         },
       },
@@ -181,17 +187,20 @@ const TRANSLATIONS = {
       features: {
         gtdHeatmap: {
           title: "GTD Geospatial Heatmap",
-          description: "Explore interactive incident clustering, density heatmaps, and coordinates.",
+          description:
+            "Explore interactive incident clustering, density heatmaps, and coordinates.",
           primaryAction: "Open Heatmap View",
         },
         analyticsCharts: {
           title: "In-Chat Recharts Analytics",
-          description: "Generate bar, line, area, and scatter charts directly from natural language queries.",
+          description:
+            "Generate bar, line, area, and scatter charts directly from natural language queries.",
           primaryAction: "Ask in Chat",
         },
         documentRag: {
           title: "Local Document RAG (LanceDB)",
-          description: "Zero-cost local vector database for private document analysis and semantic search.",
+          description:
+            "Zero-cost local vector database for private document analysis and semantic search.",
           primaryAction: "Manage Documents",
         },
       },

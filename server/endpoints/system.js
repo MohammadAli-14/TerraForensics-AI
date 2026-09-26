@@ -436,36 +436,30 @@ function systemEndpoints(app) {
     }
   );
 
-  app.get(
-    "/system/document-processing-status",
-    async (_, response) => {
-      try {
-        const online = await new CollectorApi().online();
-        response.sendStatus(online ? 200 : 503);
-      } catch (e) {
-        console.error(e.message, e);
-        response.sendStatus(500).end();
-      }
+  app.get("/system/document-processing-status", async (_, response) => {
+    try {
+      const online = await new CollectorApi().online();
+      response.sendStatus(online ? 200 : 503);
+    } catch (e) {
+      console.error(e.message, e);
+      response.sendStatus(500).end();
     }
-  );
+  });
 
-  app.get(
-    "/system/accepted-document-types",
-    async (_, response) => {
-      try {
-        const types = await new CollectorApi().acceptedFileTypes();
-        if (!types) {
-          response.sendStatus(404).end();
-          return;
-        }
-
-        response.status(200).json({ types });
-      } catch (e) {
-        console.error(e.message, e);
-        response.sendStatus(500).end();
+  app.get("/system/accepted-document-types", async (_, response) => {
+    try {
+      const types = await new CollectorApi().acceptedFileTypes();
+      if (!types) {
+        response.sendStatus(404).end();
+        return;
       }
+
+      response.status(200).json({ types });
+    } catch (e) {
+      console.error(e.message, e);
+      response.sendStatus(500).end();
     }
-  );
+  });
 
   app.post(
     "/system/update-env",

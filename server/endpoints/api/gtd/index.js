@@ -61,7 +61,8 @@ function gtdEndpoints(app) {
           includeClusters,
           country: detectedCountry,
         });
-        result.query = naturalLanguageQuery || "Global Terrorism Database (1970–2017)";
+        result.query =
+          naturalLanguageQuery || "Global Terrorism Database (1970–2017)";
         result.filter = normalizedFilter;
         result.originalFilter = explicitFilter; // Keep original for debugging
         result.compassFilter = contextExtractor.toCompassFilter(explicitFilter); // Compass-ready filter
@@ -83,12 +84,15 @@ function gtdEndpoints(app) {
         }
       } else {
         // Default global GTD overview (no filter and empty query)
-        result = await contextExtractor.executeAndFormat({}, {
-          limit,
-          skip,
-          includeGeoJSON,
-          includeClusters,
-        });
+        result = await contextExtractor.executeAndFormat(
+          {},
+          {
+            limit,
+            skip,
+            includeGeoJSON,
+            includeClusters,
+          }
+        );
         result.query = "Global Terrorism Database (1970–2017)";
         result.filter = {};
       }

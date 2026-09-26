@@ -27,7 +27,8 @@ function engineStatusEndpoints(app) {
 
       // 2. Sovereign Local Model Status
       const modelName = process.env.OLLAMA_MODEL_PREF || "llama3.1:8b";
-      const ollamaHost = process.env.OLLAMA_BASE_PATH || "http://127.0.0.1:11434";
+      const ollamaHost =
+        process.env.OLLAMA_BASE_PATH || "http://127.0.0.1:11434";
 
       const localLLMStatus = {
         provider: "Sovereign Local Inference (Ollama)",

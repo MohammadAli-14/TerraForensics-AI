@@ -136,7 +136,9 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
   const [activeData, setActiveData] = useState(() => {
     if (typeof window !== "undefined") {
       if (window.__tfLatestGtdData) return window.__tfLatestGtdData;
-      const slug = workspace?.slug || window.location.pathname.split("/workspace/")[1]?.split("/")[0];
+      const slug =
+        workspace?.slug ||
+        window.location.pathname.split("/workspace/")[1]?.split("/")[0];
       if (slug) {
         try {
           const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
@@ -258,38 +260,55 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
             "interpolate",
             ["linear"],
             ["case", ["has", "point_count"], ["get", "point_count"], 1],
-            1, 0.5,
-            25, 1.5,
-            100, 3,
-            1000, 6,
+            1,
+            0.5,
+            25,
+            1.5,
+            100,
+            3,
+            1000,
+            6,
           ],
           "heatmap-intensity": [
             "interpolate",
             ["linear"],
             ["zoom"],
-            0, 1.2,
-            3, 2,
-            9, 4,
+            0,
+            1.2,
+            3,
+            2,
+            9,
+            4,
           ],
           "heatmap-color": [
             "interpolate",
             ["linear"],
             ["heatmap-density"],
-            0, "rgba(0, 0, 0, 0)",
-            0.1, "rgba(56, 189, 248, 0.6)",
-            0.3, "rgba(245, 158, 11, 0.8)",
-            0.6, "rgba(239, 68, 68, 0.92)",
-            0.85, "rgba(220, 38, 38, 0.98)",
-            1.0, "rgba(254, 240, 138, 1.0)",
+            0,
+            "rgba(0, 0, 0, 0)",
+            0.1,
+            "rgba(56, 189, 248, 0.6)",
+            0.3,
+            "rgba(245, 158, 11, 0.8)",
+            0.6,
+            "rgba(239, 68, 68, 0.92)",
+            0.85,
+            "rgba(220, 38, 38, 0.98)",
+            1.0,
+            "rgba(254, 240, 138, 1.0)",
           ],
           "heatmap-radius": [
             "interpolate",
             ["linear"],
             ["zoom"],
-            0, 20,
-            3, 28,
-            6, 38,
-            9, 50,
+            0,
+            20,
+            3,
+            28,
+            6,
+            38,
+            9,
+            50,
           ],
           "heatmap-opacity": 0.92,
         },
@@ -299,14 +318,19 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
 
     // Click cluster to zoom in
     map.on("click", "gtd-clusters", (e) => {
-      const features = map.queryRenderedFeatures(e.point, { layers: ["gtd-clusters"] });
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: ["gtd-clusters"],
+      });
       if (!features || !features.length) return;
       const clusterId = features[0].properties.cluster_id;
       const source = map.getSource("gtd-clustered-source");
       if (source && typeof source.getClusterExpansionZoom === "function") {
         source.getClusterExpansionZoom(clusterId, (err, zoom) => {
           if (err) return;
-          map.easeTo({ center: features[0].geometry.coordinates, zoom: zoom + 1 });
+          map.easeTo({
+            center: features[0].geometry.coordinates,
+            zoom: zoom + 1,
+          });
         });
       }
     });
@@ -366,16 +390,20 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
       attributionControl: false,
     });
 
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "top-right");
+    map.addControl(
+      new maplibregl.NavigationControl({ showCompass: false }),
+      "top-right"
+    );
 
     map.on("load", () => {
       mapRef.current = map;
       window.__workstationMap = map;
       setupMapLayers(map);
       setMapReady(true);
-      const initialBasemap = typeof window !== "undefined"
-        ? localStorage.getItem("tf_preferred_basemap") || "dark"
-        : "dark";
+      const initialBasemap =
+        typeof window !== "undefined"
+          ? localStorage.getItem("tf_preferred_basemap") || "dark"
+          : "dark";
       if (initialBasemap !== "dark") {
         toggleBasemap(initialBasemap);
       }
@@ -394,73 +422,76 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
   }, [setupMapLayers]);
 
   // Push GeoJSON data into dual sources and fit bounds
-  const updateMapData = useCallback((dataset) => {
-    if (!mapRef.current || !mapReady) return;
-    const map = mapRef.current;
-    const clusterSource = map.getSource("gtd-clustered-source");
-    if (!clusterSource) return;
+  const updateMapData = useCallback(
+    (dataset) => {
+      if (!mapRef.current || !mapReady) return;
+      const map = mapRef.current;
+      const clusterSource = map.getSource("gtd-clustered-source");
+      if (!clusterSource) return;
 
-    const points = dataset?.geo_points || dataset?.geo_samples || [];
-    if (!Array.isArray(points) || points.length === 0) {
-      clusterSource.setData({ type: "FeatureCollection", features: [] });
-      return;
-    }
-
-    const features = [];
-    const bounds = new maplibregl.LngLatBounds();
-
-    points.forEach((pt) => {
-      const lat = parseFloat(pt.lat ?? pt.latitude);
-      // Support lng, longitude, or lon
-      const lng = parseFloat(pt.lng ?? pt.longitude ?? pt.lon);
-
-      if (
-        isNaN(lat) ||
-        isNaN(lng) ||
-        (lat === 0 && lng === 0) ||
-        lat < -90 ||
-        lat > 90 ||
-        lng < -180 ||
-        lng > 180
-      ) {
+      const points = dataset?.geo_points || dataset?.geo_samples || [];
+      if (!Array.isArray(points) || points.length === 0) {
+        clusterSource.setData({ type: "FeatureCollection", features: [] });
         return;
       }
 
-      features.push({
-        type: "Feature",
-        geometry: { type: "Point", coordinates: [lng, lat] },
-        properties: {
-          id: pt.eventid || pt.id || "N/A",
-          country: pt.country_txt || pt.country || "Unknown",
-          city: pt.city || "Unknown",
-          date: pt.iyear
-            ? `${pt.iyear}${pt.imonth ? `-${String(pt.imonth).padStart(2, "0")}` : ""}${
-                pt.iday ? `-${String(pt.iday).padStart(2, "0")}` : ""
-              }`
-            : "Unknown",
-          group: pt.gname || pt.group || "Unknown",
-          attackType: pt.attacktype1_txt || pt.attackType || "Incident",
-          targetType: pt.targtype1_txt || pt.targetType || "Unknown",
-          weaponType: pt.weaptype1_txt || pt.weaponType || "Unknown",
-          nkill: parseInt(pt.nkill ?? 0, 10) || 0,
-          nwound: parseInt(pt.nwound ?? 0, 10) || 0,
-        },
+      const features = [];
+      const bounds = new maplibregl.LngLatBounds();
+
+      points.forEach((pt) => {
+        const lat = parseFloat(pt.lat ?? pt.latitude);
+        // Support lng, longitude, or lon
+        const lng = parseFloat(pt.lng ?? pt.longitude ?? pt.lon);
+
+        if (
+          isNaN(lat) ||
+          isNaN(lng) ||
+          (lat === 0 && lng === 0) ||
+          lat < -90 ||
+          lat > 90 ||
+          lng < -180 ||
+          lng > 180
+        ) {
+          return;
+        }
+
+        features.push({
+          type: "Feature",
+          geometry: { type: "Point", coordinates: [lng, lat] },
+          properties: {
+            id: pt.eventid || pt.id || "N/A",
+            country: pt.country_txt || pt.country || "Unknown",
+            city: pt.city || "Unknown",
+            date: pt.iyear
+              ? `${pt.iyear}${pt.imonth ? `-${String(pt.imonth).padStart(2, "0")}` : ""}${
+                  pt.iday ? `-${String(pt.iday).padStart(2, "0")}` : ""
+                }`
+              : "Unknown",
+            group: pt.gname || pt.group || "Unknown",
+            attackType: pt.attacktype1_txt || pt.attackType || "Incident",
+            targetType: pt.targtype1_txt || pt.targetType || "Unknown",
+            weaponType: pt.weaptype1_txt || pt.weaponType || "Unknown",
+            nkill: parseInt(pt.nkill ?? 0, 10) || 0,
+            nwound: parseInt(pt.nwound ?? 0, 10) || 0,
+          },
+        });
+
+        bounds.extend([lng, lat]);
       });
 
-      bounds.extend([lng, lat]);
-    });
+      const featureCollection = {
+        type: "FeatureCollection",
+        features,
+      };
 
-    const featureCollection = {
-      type: "FeatureCollection",
-      features,
-    };
+      clusterSource.setData(featureCollection);
 
-    clusterSource.setData(featureCollection);
-
-    if (!bounds.isEmpty()) {
-      map.fitBounds(bounds, { padding: 45, maxZoom: 10, duration: 1200 });
-    }
-  }, [mapReady]);
+      if (!bounds.isEmpty()) {
+        map.fitBounds(bounds, { padding: 45, maxZoom: 10, duration: 1200 });
+      }
+    },
+    [mapReady]
+  );
 
   // Sync with activeData changes
   useEffect(() => {
@@ -478,7 +509,9 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
       setActiveData(window.__tfLatestGtdData);
       return;
     }
-    const slug = workspace?.slug || window.location.pathname.split("/workspace/")[1]?.split("/")[0];
+    const slug =
+      workspace?.slug ||
+      window.location.pathname.split("/workspace/")[1]?.split("/")[0];
     if (slug && !activeData) {
       try {
         const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
@@ -496,18 +529,29 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
     };
 
     window.addEventListener("aegis:active-gtd-data", handleActiveGtdData);
-    return () => window.removeEventListener("aegis:active-gtd-data", handleActiveGtdData);
+    return () =>
+      window.removeEventListener("aegis:active-gtd-data", handleActiveGtdData);
   }, []);
 
   // Automatic coordinate refetching for historical or storage-optimized records
   useEffect(() => {
     if (!activeData || loadingPoints) return;
     const points = activeData.geo_points || activeData.geo_samples || [];
-    const hasFilter = Boolean(activeData.filter || activeData.originalFilter || activeData.simpleFilter);
-    const isMissingPoints = points.length === 0 && (activeData._storageOptimized || hasFilter || (activeData.total_count > 0));
+    const hasFilter = Boolean(
+      activeData.filter || activeData.originalFilter || activeData.simpleFilter
+    );
+    const isMissingPoints =
+      points.length === 0 &&
+      (activeData._storageOptimized || hasFilter || activeData.total_count > 0);
 
     if (isMissingPoints) {
-      const querySig = JSON.stringify(activeData.filter || activeData.originalFilter || activeData.simpleFilter || activeData.query || activeData.total_count);
+      const querySig = JSON.stringify(
+        activeData.filter ||
+          activeData.originalFilter ||
+          activeData.simpleFilter ||
+          activeData.query ||
+          activeData.total_count
+      );
       if (!autoRefetchTrackerRef.current.has(querySig)) {
         autoRefetchTrackerRef.current.add(querySig);
         handleRefetchCoordinates();
@@ -526,7 +570,11 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
 
     const setVisibility = (layerId, isVisible) => {
       if (map.getLayer(layerId)) {
-        map.setLayoutProperty(layerId, "visibility", isVisible ? "visible" : "none");
+        map.setLayoutProperty(
+          layerId,
+          "visibility",
+          isVisible ? "visible" : "none"
+        );
       }
     };
 
@@ -552,7 +600,11 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
 
     const setVisibility = (layerId, isVisible) => {
       if (map.getLayer(layerId)) {
-        map.setLayoutProperty(layerId, "visibility", isVisible ? "visible" : "none");
+        map.setLayoutProperty(
+          layerId,
+          "visibility",
+          isVisible ? "visible" : "none"
+        );
       }
     };
 
@@ -621,8 +673,14 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
   // Historical Action: Refetch coordinates for historical query
   const handleRefetchCoordinates = async () => {
     if (!activeData) return;
-    const filter = activeData.filter || activeData.originalFilter || activeData.simpleFilter || {};
-    const slug = workspace?.slug || window.location.pathname.split("/workspace/")[1]?.split("/")[0];
+    const filter =
+      activeData.filter ||
+      activeData.originalFilter ||
+      activeData.simpleFilter ||
+      {};
+    const slug =
+      workspace?.slug ||
+      window.location.pathname.split("/workspace/")[1]?.split("/")[0];
 
     setLoadingPoints(true);
     setLoadingStatus("Plotting coordinates from database...");
@@ -677,11 +735,14 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
           window.__tfLatestGtdData = updated;
           if (slug) {
             try {
-              localStorage.setItem(`tf:latest-gtd-data:${slug}`, JSON.stringify({
-                ...updated,
-                geo_points: updated.geo_points.slice(0, 3000),
-                _storageOptimized: updated.geo_points.length > 3000,
-              }));
+              localStorage.setItem(
+                `tf:latest-gtd-data:${slug}`,
+                JSON.stringify({
+                  ...updated,
+                  geo_points: updated.geo_points.slice(0, 3000),
+                  _storageOptimized: updated.geo_points.length > 3000,
+                })
+              );
             } catch (e) {}
           }
         }
@@ -705,9 +766,14 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
 
   const currentPoints = activeData?.geo_points || activeData?.geo_samples || [];
   const currentCount = currentPoints.length || activeData?.total_count || 0;
-  const isHistoricalMissingPoints = activeData && currentPoints.length === 0 && (activeData.total_count > 0 || activeData.filter);
-  const killedCount = activeData?.totalKilled ?? activeData?.statistics?.total_killed ?? 0;
-  const woundedCount = activeData?.totalWounded ?? activeData?.statistics?.total_wounded ?? 0;
+  const isHistoricalMissingPoints =
+    activeData &&
+    currentPoints.length === 0 &&
+    (activeData.total_count > 0 || activeData.filter);
+  const killedCount =
+    activeData?.totalKilled ?? activeData?.statistics?.total_killed ?? 0;
+  const woundedCount =
+    activeData?.totalWounded ?? activeData?.statistics?.total_wounded ?? 0;
   const telemetry = activeData?.grounding_telemetry;
 
   return (
@@ -717,7 +783,8 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
         <div className="flex items-center gap-2 min-w-0 shrink">
           <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shadow-[0_0_8px_rgba(52,211,153,0.6)] shrink-0" />
           <span className="font-mono text-xs font-semibold uppercase tracking-wider text-slate-200 truncate">
-            <span className="hidden xl:inline">TerraForensics </span>Geospatial Canvas
+            <span className="hidden xl:inline">TerraForensics </span>Geospatial
+            Canvas
           </span>
           <span className="hidden 2xl:inline-flex px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-800/90 text-cyan-400 border border-slate-700 shrink-0">
             GTD 1970–2017
@@ -770,7 +837,11 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
                 <Stack size={14} className="text-amber-400" />
               )}
               <span className="font-mono text-[11px] uppercase">
-                {basemap === "satellite" ? "SAT" : basemap === "carto" ? "CARTO" : "DARK"}
+                {basemap === "satellite"
+                  ? "SAT"
+                  : basemap === "carto"
+                    ? "CARTO"
+                    : "DARK"}
               </span>
             </button>
 
@@ -807,8 +878,14 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
               title="Close Geospatial Canvas (Reclaim full screen for chat)"
               aria-label="Close Geospatial Canvas"
             >
-              <X size={15} weight="bold" className="text-rose-400 group-hover:text-white transition-transform group-hover:scale-110 shrink-0" />
-              <span className="font-mono text-[11px] uppercase tracking-wider hidden sm:inline">Close</span>
+              <X
+                size={15}
+                weight="bold"
+                className="text-rose-400 group-hover:text-white transition-transform group-hover:scale-110 shrink-0"
+              />
+              <span className="font-mono text-[11px] uppercase tracking-wider hidden sm:inline">
+                Close
+              </span>
             </button>
           )}
         </div>
@@ -818,13 +895,15 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
       <div className="px-4 py-2 bg-slate-900/80 border-b border-slate-800/80 flex items-center justify-between text-xs font-mono z-10 backdrop-blur-sm">
         <div className="flex items-center gap-4 text-slate-300">
           <div>
-            <span className="text-slate-500 text-[10px] block">PLOTTED INCIDENTS</span>
+            <span className="text-slate-500 text-[10px] block">
+              PLOTTED INCIDENTS
+            </span>
             <span className="font-semibold text-cyan-400">
               {currentPoints.length > 0
                 ? `${currentPoints.length.toLocaleString()} pts`
                 : currentCount > 0
-                ? `${currentCount.toLocaleString()} total`
-                : `${totalCatalogCount.toLocaleString()} catalog`}
+                  ? `${currentCount.toLocaleString()} total`
+                  : `${totalCatalogCount.toLocaleString()} catalog`}
             </span>
           </div>
           <div>
@@ -840,9 +919,14 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
             </span>
           </div>
           {activeData?.query && (
-            <div className="hidden xl:block max-w-[180px] truncate text-slate-400 text-[11px]" title={activeData.query}>
+            <div
+              className="hidden xl:block max-w-[180px] truncate text-slate-400 text-[11px]"
+              title={activeData.query}
+            >
               <span className="text-slate-500 text-[10px] block">QUERY</span>
-              <span className="truncate block font-sans">{activeData.query}</span>
+              <span className="truncate block font-sans">
+                {activeData.query}
+              </span>
             </div>
           )}
         </div>
@@ -863,7 +947,9 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
           <div className="flex items-center gap-2 text-amber-300">
             <WarningCircle size={15} className="text-amber-400 shrink-0" />
             <span>
-              Historical query dataset: <strong>{(activeData.total_count || 0).toLocaleString()}</strong> matching incidents.
+              Historical query dataset:{" "}
+              <strong>{(activeData.total_count || 0).toLocaleString()}</strong>{" "}
+              matching incidents.
             </span>
           </div>
           <button
@@ -896,14 +982,19 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
                 TerraForensics Sovereign Radar Standby
               </h4>
               <p className="text-xs text-slate-400 mt-1.5 leading-relaxed">
-                Connected to 181,691 verified GTD incident records. Query attacks, countries, or terror groups in the intelligence console, or initialize global threat radar.
+                Connected to 181,691 verified GTD incident records. Query
+                attacks, countries, or terror groups in the intelligence
+                console, or initialize global threat radar.
               </p>
               <div className="mt-4 flex justify-center">
                 <button
                   onClick={handleLoadGlobalRadar}
                   className="flex items-center gap-2 px-4 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 text-xs font-semibold shadow-lg transition-all group"
                 >
-                  <Globe size={16} className="text-cyan-400 group-hover:rotate-45 transition-transform" />
+                  <Globe
+                    size={16}
+                    className="text-cyan-400 group-hover:rotate-45 transition-transform"
+                  />
                   <span>Load Global Threat Radar (5,000 Incidents)</span>
                 </button>
               </div>
@@ -916,7 +1007,9 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/60 backdrop-blur-sm z-30">
             <div className="p-5 rounded-xl bg-slate-900/95 border border-slate-800 text-center shadow-2xl flex flex-col items-center gap-3">
               <CircleNotch size={32} className="text-cyan-400 animate-spin" />
-              <span className="text-xs font-mono text-slate-200">{loadingStatus || "Processing geospatial intelligence..."}</span>
+              <span className="text-xs font-mono text-slate-200">
+                {loadingStatus || "Processing geospatial intelligence..."}
+              </span>
             </div>
           </div>
         )}
@@ -925,7 +1018,10 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
         {errorMsg && (
           <div className="absolute top-4 left-4 right-4 bg-rose-950/90 border border-rose-500/50 text-rose-200 text-xs px-3 py-2 rounded-md shadow-xl flex items-center justify-between z-20">
             <span>{errorMsg}</span>
-            <button onClick={() => setErrorMsg(null)} className="text-rose-400 hover:text-white">
+            <button
+              onClick={() => setErrorMsg(null)}
+              className="text-rose-400 hover:text-white"
+            >
               <X size={14} />
             </button>
           </div>
@@ -957,7 +1053,8 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
                   </span>
                 </div>
                 <div className="text-[11px] text-slate-400 mt-0.5">
-                  {selectedIncident.attackType} against {selectedIncident.targetType}
+                  {selectedIncident.attackType} against{" "}
+                  {selectedIncident.targetType}
                 </div>
               </div>
               <button
@@ -974,16 +1071,26 @@ export default function WorkstationMapPanel({ workspace, onClose }) {
                 <span className="text-slate-200">{selectedIncident.date}</span>
               </div>
               <div className="bg-slate-950/60 p-2 rounded border border-slate-800/50">
-                <span className="text-slate-500 text-[10px] block">PERPETRATOR</span>
-                <span className="text-amber-400 truncate block">{selectedIncident.group}</span>
+                <span className="text-slate-500 text-[10px] block">
+                  PERPETRATOR
+                </span>
+                <span className="text-amber-400 truncate block">
+                  {selectedIncident.group}
+                </span>
               </div>
               <div className="bg-slate-950/60 p-2 rounded border border-slate-800/50">
                 <span className="text-slate-500 text-[10px] block">KILLED</span>
-                <span className="text-rose-400 font-semibold">{selectedIncident.nkill}</span>
+                <span className="text-rose-400 font-semibold">
+                  {selectedIncident.nkill}
+                </span>
               </div>
               <div className="bg-slate-950/60 p-2 rounded border border-slate-800/50">
-                <span className="text-slate-500 text-[10px] block">WOUNDED</span>
-                <span className="text-orange-400 font-semibold">{selectedIncident.nwound}</span>
+                <span className="text-slate-500 text-[10px] block">
+                  WOUNDED
+                </span>
+                <span className="text-orange-400 font-semibold">
+                  {selectedIncident.nwound}
+                </span>
               </div>
             </div>
           </div>
