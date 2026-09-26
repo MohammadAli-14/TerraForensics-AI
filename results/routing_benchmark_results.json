@@ -52,7 +52,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 1.1457,
+      "latencyMs": 1.0066,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -64,7 +64,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.4362,
+      "latencyMs": 0.5568,
       "category": "attack_type_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -76,7 +76,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.044,
+      "latencyMs": 0.0888,
       "category": "casualty_filter",
       "hasGenericKeyword": false,
       "keyword": null
@@ -88,7 +88,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0089,
+      "latencyMs": 0.0129,
       "category": "perpetrator_group",
       "hasGenericKeyword": false,
       "keyword": null
@@ -100,7 +100,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0312,
+      "latencyMs": 0.0266,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -112,7 +112,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0119,
+      "latencyMs": 0.0127,
       "category": "perpetrator_location",
       "hasGenericKeyword": false,
       "keyword": null
@@ -124,7 +124,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.2433,
+      "latencyMs": 0.2086,
       "category": "attack_type_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -136,7 +136,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 1.0094,
+      "latencyMs": 0.8549,
       "category": "attack_type_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -148,7 +148,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0196,
+      "latencyMs": 0.014,
       "category": "global_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -160,7 +160,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0179,
+      "latencyMs": 0.0137,
       "category": "attack_type_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -172,7 +172,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0077,
+      "latencyMs": 0.0064,
       "category": "city_year",
       "hasGenericKeyword": false,
       "keyword": null
@@ -184,7 +184,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0089,
+      "latencyMs": 0.0076,
       "category": "city_year",
       "hasGenericKeyword": false,
       "keyword": null
@@ -196,7 +196,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0059,
+      "latencyMs": 0.0048,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -208,7 +208,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0051,
+      "latencyMs": 0.0042,
       "category": "city_casualty",
       "hasGenericKeyword": false,
       "keyword": null
@@ -220,7 +220,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.006,
+      "latencyMs": 0.005,
       "category": "perpetrator_group",
       "hasGenericKeyword": false,
       "keyword": null
@@ -232,7 +232,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.5178,
+      "latencyMs": 0.4727,
       "category": "attack_type_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -244,7 +244,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 2.3975,
+      "latencyMs": 0.3156,
       "category": "region_historical",
       "hasGenericKeyword": false,
       "keyword": null
@@ -256,7 +256,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0784,
+      "latencyMs": 0.0245,
       "category": "target_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -268,7 +268,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0123,
+      "latencyMs": 0.0057,
       "category": "target_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -280,7 +280,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0127,
+      "latencyMs": 0.0116,
       "category": "city_attack_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -292,7 +292,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.3538,
+      "latencyMs": 0.1665,
       "category": "perpetrator_group",
       "hasGenericKeyword": false,
       "keyword": null
@@ -304,7 +304,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0126,
+      "latencyMs": 0.0054,
       "category": "perpetrator_group",
       "hasGenericKeyword": false,
       "keyword": null
@@ -316,7 +316,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0099,
+      "latencyMs": 0.0041,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -328,7 +328,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.7713,
+      "latencyMs": 0.3779,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -340,7 +340,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0768,
+      "latencyMs": 0.0312,
       "category": "weapon_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -352,7 +352,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0105,
+      "latencyMs": 0.0048,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -364,7 +364,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0118,
+      "latencyMs": 0.006,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -376,7 +376,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0085,
+      "latencyMs": 0.004,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -388,7 +388,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.087,
+      "latencyMs": 2.2559,
       "category": "attack_type_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -412,7 +412,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0565,
+      "latencyMs": 0.0343,
       "category": "city_year",
       "hasGenericKeyword": false,
       "keyword": null
@@ -424,7 +424,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0071,
+      "latencyMs": 0.0041,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -436,7 +436,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0096,
+      "latencyMs": 0.0044,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -448,7 +448,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0091,
+      "latencyMs": 0.0047,
       "category": "country_casualty",
       "hasGenericKeyword": false,
       "keyword": null
@@ -460,7 +460,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.009,
+      "latencyMs": 0.0043,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -472,7 +472,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0355,
+      "latencyMs": 0.0154,
       "category": "attack_type_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -484,7 +484,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0605,
+      "latencyMs": 0.028,
       "category": "country_perpetrator",
       "hasGenericKeyword": false,
       "keyword": null
@@ -496,7 +496,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.1078,
+      "latencyMs": 0.0416,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -508,7 +508,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0095,
+      "latencyMs": 0.0042,
       "category": "historical_event",
       "hasGenericKeyword": false,
       "keyword": null
@@ -520,7 +520,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0073,
+      "latencyMs": 0.0039,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -532,7 +532,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.012,
+      "latencyMs": 0.0064,
       "category": "region_attack_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -544,7 +544,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0089,
+      "latencyMs": 0.0042,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -556,7 +556,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0665,
+      "latencyMs": 0.0275,
       "category": "perpetrator_group",
       "hasGenericKeyword": false,
       "keyword": null
@@ -568,7 +568,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0086,
+      "latencyMs": 0.0038,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -580,7 +580,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0116,
+      "latencyMs": 0.0208,
       "category": "city_year",
       "hasGenericKeyword": false,
       "keyword": null
@@ -592,7 +592,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0227,
+      "latencyMs": 0.0077,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -604,7 +604,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0614,
+      "latencyMs": 0.0459,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -616,7 +616,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0096,
+      "latencyMs": 0.0072,
       "category": "country_casualty",
       "hasGenericKeyword": false,
       "keyword": null
@@ -628,7 +628,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0088,
+      "latencyMs": 0.0072,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -640,7 +640,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0088,
+      "latencyMs": 0.0072,
       "category": "region_year",
       "hasGenericKeyword": false,
       "keyword": null
@@ -652,7 +652,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.1399,
+      "latencyMs": 0.1423,
       "category": "event_id",
       "hasGenericKeyword": false,
       "keyword": null
@@ -664,7 +664,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0622,
+      "latencyMs": 0.0338,
       "category": "event_id",
       "hasGenericKeyword": false,
       "keyword": null
@@ -676,7 +676,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0581,
+      "latencyMs": 0.0319,
       "category": "event_id",
       "hasGenericKeyword": false,
       "keyword": null
@@ -688,7 +688,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0951,
+      "latencyMs": 0.0303,
       "category": "event_id",
       "hasGenericKeyword": false,
       "keyword": null
@@ -700,7 +700,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0606,
+      "latencyMs": 0.0275,
       "category": "event_id",
       "hasGenericKeyword": false,
       "keyword": null
@@ -712,7 +712,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0118,
+      "latencyMs": 0.0062,
       "category": "city_attack_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -724,7 +724,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0108,
+      "latencyMs": 0.0059,
       "category": "casualty_filter",
       "hasGenericKeyword": false,
       "keyword": null
@@ -736,7 +736,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 2.0795,
+      "latencyMs": 0.7631,
       "category": "target_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -748,7 +748,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0464,
+      "latencyMs": 0.0063,
       "category": "city_year",
       "hasGenericKeyword": false,
       "keyword": null
@@ -760,7 +760,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0169,
+      "latencyMs": 0.0049,
       "category": "weapon_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -772,7 +772,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.6476,
+      "latencyMs": 0.3222,
       "category": "perpetrator_group",
       "hasGenericKeyword": false,
       "keyword": null
@@ -784,7 +784,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0142,
+      "latencyMs": 0.0066,
       "category": "target_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -796,7 +796,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0204,
+      "latencyMs": 0.0063,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -808,7 +808,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0584,
+      "latencyMs": 0.02,
       "category": "weapon_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -820,7 +820,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.112,
+      "latencyMs": 0.0162,
       "category": "historical_event",
       "hasGenericKeyword": false,
       "keyword": null
@@ -832,7 +832,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0776,
+      "latencyMs": 0.0263,
       "category": "perpetrator_group",
       "hasGenericKeyword": false,
       "keyword": null
@@ -844,7 +844,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0151,
+      "latencyMs": 0.0048,
       "category": "target_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -856,7 +856,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.1028,
+      "latencyMs": 0.0322,
       "category": "city_attack_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -868,7 +868,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.016,
+      "latencyMs": 0.0051,
       "category": "city_attack_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -880,7 +880,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0104,
+      "latencyMs": 0.0036,
       "category": "target_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -892,7 +892,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0107,
+      "latencyMs": 0.0046,
       "category": "weapon_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -904,7 +904,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0885,
+      "latencyMs": 0.0345,
       "category": "attack_type_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -916,7 +916,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0116,
+      "latencyMs": 0.0043,
       "category": "target_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -928,7 +928,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0842,
+      "latencyMs": 0.0419,
       "category": "region_attack_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -940,7 +940,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 4.0195,
+      "latencyMs": 0.0064,
       "category": "city_year",
       "hasGenericKeyword": false,
       "keyword": null
@@ -952,7 +952,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.2997,
+      "latencyMs": 0.0181,
       "category": "perpetrator_group",
       "hasGenericKeyword": false,
       "keyword": null
@@ -964,7 +964,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.032,
+      "latencyMs": 0.0086,
       "category": "weapon_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -976,7 +976,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0169,
+      "latencyMs": 0.0091,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -988,7 +988,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0196,
+      "latencyMs": 0.0082,
       "category": "target_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1000,7 +1000,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0077,
+      "latencyMs": 0.0042,
       "category": "city_year",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1012,7 +1012,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0114,
+      "latencyMs": 0.0071,
       "category": "city_attack_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1024,7 +1024,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0121,
+      "latencyMs": 0.0066,
       "category": "historical_event",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1036,7 +1036,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0129,
+      "latencyMs": 0.0063,
       "category": "target_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1048,7 +1048,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0118,
+      "latencyMs": 0.0058,
       "category": "city_attack_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1060,7 +1060,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0118,
+      "latencyMs": 0.0083,
       "category": "city_attack_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1072,7 +1072,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0098,
+      "latencyMs": 0.0055,
       "category": "city_year",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1084,7 +1084,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0119,
+      "latencyMs": 0.0078,
       "category": "city_casualty",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1096,7 +1096,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0107,
+      "latencyMs": 0.0069,
       "category": "city_attack_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1108,7 +1108,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.0075,
+      "latencyMs": 0.0045,
       "category": "country_year_stats",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1120,7 +1120,7 @@
       "expectedIsGTD": true,
       "detectedIsGTD": true,
       "outcome": "TP",
-      "latencyMs": 0.009,
+      "latencyMs": 0.0064,
       "category": "target_type",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1132,7 +1132,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.3535,
+      "latencyMs": 0.1139,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1144,7 +1144,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1305,
+      "latencyMs": 0.0968,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1156,7 +1156,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1162,
+      "latencyMs": 0.1008,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1168,7 +1168,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1052,
+      "latencyMs": 0.1245,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1180,7 +1180,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1085,
+      "latencyMs": 0.093,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1192,7 +1192,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.1041,
+      "latencyMs": 0.0888,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1204,7 +1204,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1144,
+      "latencyMs": 0.0915,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1216,7 +1216,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1182,
+      "latencyMs": 0.0587,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1228,7 +1228,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1166,
+      "latencyMs": 0.0575,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1240,7 +1240,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1173,
+      "latencyMs": 0.0568,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1252,7 +1252,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1369,
+      "latencyMs": 0.08,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1264,7 +1264,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1162,
+      "latencyMs": 0.0604,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1276,7 +1276,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1308,
+      "latencyMs": 0.0595,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1288,7 +1288,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1107,
+      "latencyMs": 0.0593,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1300,7 +1300,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.12,
+      "latencyMs": 0.0559,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1312,7 +1312,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1049,
+      "latencyMs": 0.0554,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1324,7 +1324,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1377,
+      "latencyMs": 0.0672,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1336,7 +1336,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1192,
+      "latencyMs": 0.0585,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1348,7 +1348,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1081,
+      "latencyMs": 0.0567,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1360,7 +1360,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1328,
+      "latencyMs": 0.076,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1372,7 +1372,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1341,
+      "latencyMs": 0.0589,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1384,7 +1384,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1357,
+      "latencyMs": 0.0574,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1396,7 +1396,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1706,
+      "latencyMs": 0.0604,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1408,7 +1408,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1442,
+      "latencyMs": 0.0579,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1420,7 +1420,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1143,
+      "latencyMs": 0.0566,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1432,7 +1432,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1258,
+      "latencyMs": 0.0577,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1444,7 +1444,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1059,
+      "latencyMs": 0.0579,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1456,7 +1456,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.2048,
+      "latencyMs": 0.0565,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1468,7 +1468,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1291,
+      "latencyMs": 0.3465,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1480,7 +1480,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.096,
+      "latencyMs": 0.1458,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1492,7 +1492,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0875,
+      "latencyMs": 0.0823,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1504,7 +1504,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0895,
+      "latencyMs": 0.1338,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1516,7 +1516,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0864,
+      "latencyMs": 0.0673,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1528,7 +1528,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0887,
+      "latencyMs": 0.1085,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1540,7 +1540,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0873,
+      "latencyMs": 0.106,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1552,7 +1552,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0871,
+      "latencyMs": 0.1098,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1564,7 +1564,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.082,
+      "latencyMs": 0.1086,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1576,7 +1576,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0841,
+      "latencyMs": 0.1097,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1588,7 +1588,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0385,
+      "latencyMs": 0.0533,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1600,7 +1600,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0843,
+      "latencyMs": 0.1042,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1612,7 +1612,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0916,
+      "latencyMs": 0.1048,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1624,7 +1624,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.11,
+      "latencyMs": 0.1256,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1636,7 +1636,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0904,
+      "latencyMs": 0.1147,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1648,7 +1648,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1012,
+      "latencyMs": 0.0989,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1660,7 +1660,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0882,
+      "latencyMs": 0.1001,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1672,7 +1672,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0947,
+      "latencyMs": 0.1011,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1684,7 +1684,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0917,
+      "latencyMs": 0.1055,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1696,7 +1696,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0893,
+      "latencyMs": 0.1003,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1708,7 +1708,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0899,
+      "latencyMs": 0.1065,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1720,7 +1720,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0837,
+      "latencyMs": 0.0958,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1732,7 +1732,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0808,
+      "latencyMs": 0.0982,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1744,7 +1744,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0793,
+      "latencyMs": 0.0581,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1756,7 +1756,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0808,
+      "latencyMs": 0.0573,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1768,7 +1768,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0841,
+      "latencyMs": 0.0571,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1780,7 +1780,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0901,
+      "latencyMs": 0.0579,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1792,7 +1792,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.0859,
+      "latencyMs": 0.0574,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1804,7 +1804,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1118,
+      "latencyMs": 0.057,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1816,7 +1816,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1167,
+      "latencyMs": 0.0567,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1828,7 +1828,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.114,
+      "latencyMs": 0.0571,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1840,7 +1840,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1107,
+      "latencyMs": 0.0556,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1852,7 +1852,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1153,
+      "latencyMs": 0.0592,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1864,7 +1864,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1177,
+      "latencyMs": 0.0561,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1876,7 +1876,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1172,
+      "latencyMs": 0.0568,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1888,7 +1888,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1331,
+      "latencyMs": 0.0582,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1900,7 +1900,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": false,
       "outcome": "TN",
-      "latencyMs": 0.1157,
+      "latencyMs": 0.0577,
       "category": "standard_doc",
       "hasGenericKeyword": false,
       "keyword": null
@@ -1912,7 +1912,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.1187,
+      "latencyMs": 0.0649,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "report"
@@ -1924,7 +1924,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.1298,
+      "latencyMs": 0.0584,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "find"
@@ -1936,7 +1936,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.1136,
+      "latencyMs": 0.0691,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "list"
@@ -1948,7 +1948,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.1164,
+      "latencyMs": 0.0564,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "data"
@@ -1960,7 +1960,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.2211,
+      "latencyMs": 0.056,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "search"
@@ -1972,7 +1972,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.3302,
+      "latencyMs": 0.0576,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "query"
@@ -1984,7 +1984,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.1149,
+      "latencyMs": 0.0554,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "report"
@@ -1996,7 +1996,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.1002,
+      "latencyMs": 0.0539,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "find"
@@ -2008,7 +2008,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.1017,
+      "latencyMs": 0.0556,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "list"
@@ -2020,7 +2020,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0992,
+      "latencyMs": 0.0558,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "find"
@@ -2032,7 +2032,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0977,
+      "latencyMs": 0.0538,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "data"
@@ -2044,7 +2044,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0996,
+      "latencyMs": 0.0542,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "report"
@@ -2056,7 +2056,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.1011,
+      "latencyMs": 0.0542,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "search"
@@ -2068,7 +2068,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.1125,
+      "latencyMs": 0.0537,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "list"
@@ -2080,7 +2080,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0779,
+      "latencyMs": 0.0547,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "query"
@@ -2092,7 +2092,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0706,
+      "latencyMs": 0.0517,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "data"
@@ -2104,7 +2104,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0746,
+      "latencyMs": 0.0542,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "find"
@@ -2116,7 +2116,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0719,
+      "latencyMs": 0.0534,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "list"
@@ -2128,7 +2128,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0744,
+      "latencyMs": 0.0552,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "search"
@@ -2140,7 +2140,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0733,
+      "latencyMs": 0.0548,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "query"
@@ -2152,7 +2152,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0958,
+      "latencyMs": 0.0543,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "data"
@@ -2164,7 +2164,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0746,
+      "latencyMs": 0.0538,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "report"
@@ -2176,7 +2176,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0795,
+      "latencyMs": 0.0536,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "find"
@@ -2188,7 +2188,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0769,
+      "latencyMs": 0.054,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "list"
@@ -2200,7 +2200,7 @@
       "expectedIsGTD": false,
       "detectedIsGTD": true,
       "outcome": "FP",
-      "latencyMs": 0.0761,
+      "latencyMs": 0.0542,
       "category": "ambiguous_generic",
       "hasGenericKeyword": true,
       "keyword": "search"

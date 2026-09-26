@@ -9,16 +9,11 @@ on:
     branches: ['3906-global-default-system-prompt'] # put your current branch to create a build. Core team only.
     paths-ignore:
       - '**.md'
-      - 'cloud-deployments/*'
-      - 'images/**/*'
       - '.vscode/**/*'
       - '**/.env.example'
       - '.github/ISSUE_TEMPLATE/**/*'
       - '.devcontainer/**/*'
-      - 'embed/**/*' # Embed should be published to frontend (yarn build:publish) if any changes are introduced
-      - 'browser-extension/**/*' # Chrome extension is submodule
-      - 'server/utils/agents/aibitat/example/**/*' # Do not push new image for local dev testing of new aibitat images.
-      - 'extras/**/*' # Extra is just for news and other local content.
+      - 'server/utils/agents/aibitat/example/**/*'
 
 jobs:
   push_multi_platform_to_registries:
