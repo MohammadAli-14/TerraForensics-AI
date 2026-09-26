@@ -11,7 +11,11 @@ export default class ErrorBoundary extends React.Component {
   }
 
   componentDidCatch(error, errorInfo) {
-    console.error("ErrorBoundary caught an unhandled render error:", error, errorInfo);
+    console.error(
+      "ErrorBoundary caught an unhandled render error:",
+      error,
+      errorInfo
+    );
   }
 
   handleReload = () => {
@@ -37,11 +41,14 @@ export default class ErrorBoundary extends React.Component {
               Application Notice
             </h2>
             <p className="text-xs text-slate-400 mb-3 leading-relaxed">
-              A temporary render error occurred in this view. The session has been safely isolated.
+              A temporary render error occurred in this view. The session has
+              been safely isolated.
             </p>
             {this.state.error && (
               <div className="w-full text-left bg-black/50 p-3 rounded-lg border border-red-500/20 mb-4 overflow-x-auto text-[11px] font-mono text-red-300 max-h-40 select-text">
-                <p className="font-bold text-red-400 break-words">{this.state.error?.toString()}</p>
+                <p className="font-bold text-red-400 break-words">
+                  {this.state.error?.toString()}
+                </p>
                 <p className="text-slate-500 mt-1 whitespace-pre-wrap break-all text-[10px]">
                   {this.state.error?.stack?.split("\n").slice(1, 4).join("\n")}
                 </p>

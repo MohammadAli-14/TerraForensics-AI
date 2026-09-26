@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import maplibregl from "maplibre-gl";
 import { Protocol } from "pmtiles";
@@ -11,13 +17,14 @@ const PMTILES_URL = import.meta.env.VITE_PMTILES_URL || "/tiles/world.pmtiles";
 const PAGE_SIZE = 50;
 const MAX_RENDER_POINTS = 50000;
 const MAX_REFETCH_LIMIT = 50000;
-const LOAD_MORE_CHUNK = 50000;     // geo_points per "Load More" click
-const SERVER_PAGE_SIZE = 25000;    // records per server round-trip (fits in 50K cap)
-const BATCH_SIZE = 20000;          // render-batch increment
+const LOAD_MORE_CHUNK = 50000; // geo_points per "Load More" click
+const SERVER_PAGE_SIZE = 25000; // records per server round-trip (fits in 50K cap)
+const BATCH_SIZE = 20000; // render-batch increment
 const BATCH_DELAY_MS = 400;
 
 function buildGeoJson(points = [], maxPoints = MAX_RENDER_POINTS) {
-  const toRender = points.length > maxPoints ? points.slice(0, maxPoints) : points;
+  const toRender =
+    points.length > maxPoints ? points.slice(0, maxPoints) : points;
   return {
     type: "FeatureCollection",
     features: toRender
@@ -31,16 +38,16 @@ function buildGeoJson(points = [], maxPoints = MAX_RENDER_POINTS) {
           type: "Feature",
           geometry: {
             type: "Point",
-            coordinates: [lon, lat]
+            coordinates: [lon, lat],
           },
           properties: {
             eventid: point.eventid,
             nkill: Number(point.nkill) || 0,
-            nwound: Number(point.nwound) || 0
-          }
+            nwound: Number(point.nwound) || 0,
+          },
         };
       })
-      .filter(Boolean)
+      .filter(Boolean),
   };
 }
 
@@ -63,13 +70,14 @@ function calculateBounds(points = []) {
   if (!Number.isFinite(minLat) || !Number.isFinite(minLon)) return null;
   return [
     [minLon, minLat],
-    [maxLon, maxLat]
+    [maxLon, maxLat],
   ];
 }
 
 // ─── Build basemap style object for MapLibre ───
 // Supports: Esri Satellite Recon raster, Esri Dark Gray Canvas raster, CARTO dark raster, OSM light raster, and PMTiles vector
-const MAP_GLYPHS_URL = "https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf";
+const MAP_GLYPHS_URL =
+  "https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf";
 
 function buildMapStyle(basemapMode, pmtilesOk) {
   if (pmtilesOk && basemapMode !== "satellite") {
@@ -82,10 +90,13 @@ function buildMapStyle(basemapMode, pmtilesOk) {
         basemap: {
           type: "vector",
           url: `pmtiles://${PMTILES_URL}`,
-          attribution: "<a href='https://github.com/protomaps/basemaps'>Protomaps</a> \u00a9 <a href='https://openstreetmap.org'>OpenStreetMap</a>"
-        }
+          attribution:
+            "<a href='https://github.com/protomaps/basemaps'>Protomaps</a> \u00a9 <a href='https://openstreetmap.org'>OpenStreetMap</a>",
+        },
       },
-      layers: basemaps.layers("basemap", basemaps.namedFlavor(flavor), { lang: "en" })
+      layers: basemaps.layers("basemap", basemaps.namedFlavor(flavor), {
+        lang: "en",
+      }),
     };
   }
 
@@ -98,25 +109,41 @@ function buildMapStyle(basemapMode, pmtilesOk) {
         "esri-satellite-base": {
           type: "raster",
           tiles: [
-            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
           ],
           tileSize: 256,
-          attribution: "\u00a9 Esri, Maxar, Earthstar Geographics"
+          attribution: "\u00a9 Esri, Maxar, Earthstar Geographics",
         },
         "esri-satellite-ref": {
           type: "raster",
           tiles: [
-            "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}"
+            "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
           ],
           tileSize: 256,
-          attribution: "\u00a9 Esri, HERE, Garmin"
-        }
+          attribution: "\u00a9 Esri, HERE, Garmin",
+        },
       },
       layers: [
-        { id: "basemap-bg", type: "background", paint: { "background-color": "#061320" } },
-        { id: "esri-sat-base-tiles", type: "raster", source: "esri-satellite-base", minzoom: 0, maxzoom: 19 },
-        { id: "esri-sat-ref-tiles", type: "raster", source: "esri-satellite-ref", minzoom: 0, maxzoom: 19 }
-      ]
+        {
+          id: "basemap-bg",
+          type: "background",
+          paint: { "background-color": "#061320" },
+        },
+        {
+          id: "esri-sat-base-tiles",
+          type: "raster",
+          source: "esri-satellite-base",
+          minzoom: 0,
+          maxzoom: 19,
+        },
+        {
+          id: "esri-sat-ref-tiles",
+          type: "raster",
+          source: "esri-satellite-ref",
+          minzoom: 0,
+          maxzoom: 19,
+        },
+      ],
     };
   }
 
@@ -134,16 +161,27 @@ function buildMapStyle(basemapMode, pmtilesOk) {
               `https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey}`,
               `https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey}`,
               `https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey}`,
-              `https://d.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey}`
+              `https://d.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey}`,
             ],
             tileSize: 256,
-            attribution: "\u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap</a> \u00a9 <a href='https://carto.com/attributions'>CARTO</a>"
-          }
+            attribution:
+              "\u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap</a> \u00a9 <a href='https://carto.com/attributions'>CARTO</a>",
+          },
         },
         layers: [
-          { id: "basemap-bg", type: "background", paint: { "background-color": "#14171a" } },
-          { id: "carto-dark-tiles", type: "raster", source: "carto-dark", minzoom: 0, maxzoom: 20 }
-        ]
+          {
+            id: "basemap-bg",
+            type: "background",
+            paint: { "background-color": "#14171a" },
+          },
+          {
+            id: "carto-dark-tiles",
+            type: "raster",
+            source: "carto-dark",
+            minzoom: 0,
+            maxzoom: 20,
+          },
+        ],
       };
     }
 
@@ -155,24 +193,41 @@ function buildMapStyle(basemapMode, pmtilesOk) {
         "esri-dark-base": {
           type: "raster",
           tiles: [
-            "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}"
+            "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
           ],
           tileSize: 256,
-          attribution: "\u00a9 <a href='https://www.esri.com/'>Esri</a> \u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>"
+          attribution:
+            "\u00a9 <a href='https://www.esri.com/'>Esri</a> \u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>",
         },
         "esri-dark-ref": {
           type: "raster",
           tiles: [
-            "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}"
+            "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
           ],
-          tileSize: 256
-        }
+          tileSize: 256,
+        },
       },
       layers: [
-        { id: "basemap-bg", type: "background", paint: { "background-color": "#14171a" } },
-        { id: "esri-dark-base-tiles", type: "raster", source: "esri-dark-base", minzoom: 0, maxzoom: 16 },
-        { id: "esri-dark-ref-tiles", type: "raster", source: "esri-dark-ref", minzoom: 0, maxzoom: 16 }
-      ]
+        {
+          id: "basemap-bg",
+          type: "background",
+          paint: { "background-color": "#14171a" },
+        },
+        {
+          id: "esri-dark-base-tiles",
+          type: "raster",
+          source: "esri-dark-base",
+          minzoom: 0,
+          maxzoom: 16,
+        },
+        {
+          id: "esri-dark-ref-tiles",
+          type: "raster",
+          source: "esri-dark-ref",
+          minzoom: 0,
+          maxzoom: 16,
+        },
+      ],
     };
   }
 
@@ -185,13 +240,24 @@ function buildMapStyle(basemapMode, pmtilesOk) {
         type: "raster",
         tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
         tileSize: 256,
-        attribution: "\u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>"
-      }
+        attribution:
+          "\u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>",
+      },
     },
     layers: [
-      { id: "basemap-bg", type: "background", paint: { "background-color": "#aad3df" } },
-      { id: "osm-tiles", type: "raster", source: "osm-raster", minzoom: 0, maxzoom: 19 }
-    ]
+      {
+        id: "basemap-bg",
+        type: "background",
+        paint: { "background-color": "#aad3df" },
+      },
+      {
+        id: "osm-tiles",
+        type: "raster",
+        source: "osm-raster",
+        minzoom: 0,
+        maxzoom: 19,
+      },
+    ],
   };
 }
 
@@ -206,7 +272,7 @@ function addGTDDataLayers(map, isDark) {
       data: emptyGeoJson,
       cluster: true,
       clusterMaxZoom: 6,
-      clusterRadius: 50
+      clusterRadius: 50,
     });
   }
 
@@ -220,8 +286,8 @@ function addGTDDataLayers(map, isDark) {
         "circle-color": "#f97316",
         "circle-radius": ["step", ["get", "point_count"], 12, 100, 18, 750, 26],
         "circle-stroke-color": isDark ? "#374151" : "#1f2937",
-        "circle-stroke-width": 1
-      }
+        "circle-stroke-width": 1,
+      },
     });
   }
 
@@ -232,7 +298,7 @@ function addGTDDataLayers(map, isDark) {
       source: "gtd-points",
       filter: ["has", "point_count"],
       layout: { "text-field": "{point_count_abbreviated}", "text-size": 12 },
-      paint: { "text-color": isDark ? "#f9fafb" : "#111827" }
+      paint: { "text-color": isDark ? "#f9fafb" : "#111827" },
     });
   }
 
@@ -246,8 +312,8 @@ function addGTDDataLayers(map, isDark) {
         "circle-color": "#22c55e",
         "circle-radius": 5,
         "circle-stroke-color": isDark ? "#1e293b" : "#0f172a",
-        "circle-stroke-width": 1
-      }
+        "circle-stroke-width": 1,
+      },
     });
   }
 
@@ -258,20 +324,36 @@ function addGTDDataLayers(map, isDark) {
       source: "gtd-points",
       maxzoom: 10,
       paint: {
-        "heatmap-weight": ["interpolate", ["linear"], ["get", "weight"], 0, 0, 1, 1],
+        "heatmap-weight": [
+          "interpolate",
+          ["linear"],
+          ["get", "weight"],
+          0,
+          0,
+          1,
+          1,
+        ],
         "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 1, 10, 3],
         "heatmap-color": [
-          "interpolate", ["linear"], ["heatmap-density"],
-          0, "rgba(34,197,94,0)",
-          0.2, "rgba(34,197,94,0.4)",
-          0.4, "rgba(59,130,246,0.5)",
-          0.6, "rgba(249,115,22,0.6)",
-          0.8, "rgba(239,68,68,0.7)",
-          1, "rgba(185,28,28,0.85)"
+          "interpolate",
+          ["linear"],
+          ["heatmap-density"],
+          0,
+          "rgba(34,197,94,0)",
+          0.2,
+          "rgba(34,197,94,0.4)",
+          0.4,
+          "rgba(59,130,246,0.5)",
+          0.6,
+          "rgba(249,115,22,0.6)",
+          0.8,
+          "rgba(239,68,68,0.7)",
+          1,
+          "rgba(185,28,28,0.85)",
         ],
         "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 0, 4, 10, 25],
-        "heatmap-opacity": 0.8
-      }
+        "heatmap-opacity": 0.8,
+      },
     });
     map.setLayoutProperty("gtd-heatmap", "visibility", "none");
   }
@@ -287,13 +369,13 @@ export default function WorkspaceGTDMap() {
   const initialBoundsRef = useRef(null);
   const batchTimerRef = useRef(null);
   const refetchAbortRef = useRef(null);
-  const loadMoreAbortRef = useRef(null);   // AbortController for Load More fetch loop
-  const loadingMoreRef = useRef(false);    // synchronous guard — immune to React batched state updates
+  const loadMoreAbortRef = useRef(null); // AbortController for Load More fetch loop
+  const loadingMoreRef = useRef(false); // synchronous guard — immune to React batched state updates
   // Tracks deterministic pagination cursor across "Load More" clicks.
   // $sample (initial refetch) returns random rows, so we always restart from skip=0
   // with deterministic _id sort when the user clicks "Load More".
   const paginationRef = useRef({ skip: 0, deterministicStarted: false });
-  const cachedTotalsRef = useRef(null);    // cache killed/wounded once computed
+  const cachedTotalsRef = useRef(null); // cache killed/wounded once computed
   const [status, setStatus] = useState("Loading map...");
   const [error, setError] = useState(null);
   const [payload, setPayload] = useState(null);
@@ -323,20 +405,25 @@ export default function WorkspaceGTDMap() {
   });
   const isDarkMode = basemapMode !== "light";
   const pmtilesAvailableRef = useRef(false);
-  const basemapInitRef = useRef(true);   // skip first style-switch effect (initMap handles it)
-  const geoJsonRef = useRef(null);        // mutable ref for style-switch closure
-  const showHeatmapRef = useRef(false);   // mutable ref for style-switch closure
+  const basemapInitRef = useRef(true); // skip first style-switch effect (initMap handles it)
+  const geoJsonRef = useRef(null); // mutable ref for style-switch closure
+  const showHeatmapRef = useRef(false); // mutable ref for style-switch closure
 
   const key = searchParams.get("key");
 
-  const geoJson = useMemo(() => buildGeoJson(geoPoints, renderLimit), [geoPoints, renderLimit]);
-  geoJsonRef.current = geoJson;             // keep ref in sync for style-switch closure
-  showHeatmapRef.current = showHeatmap;     // keep ref in sync for style-switch closure
+  const geoJson = useMemo(
+    () => buildGeoJson(geoPoints, renderLimit),
+    [geoPoints, renderLimit]
+  );
+  geoJsonRef.current = geoJson; // keep ref in sync for style-switch closure
+  showHeatmapRef.current = showHeatmap; // keep ref in sync for style-switch closure
   const bounds = useMemo(() => calculateBounds(geoPoints), [geoPoints]);
 
   // Reliably detect whether there's more data to load
-  const totalExpected = payload?.records_with_coordinates || payload?.total_count || 0;
-  const hasMoreData = !allLoaded && totalExpected > 0 && geoPoints.length < totalExpected;
+  const totalExpected =
+    payload?.records_with_coordinates || payload?.total_count || 0;
+  const hasMoreData =
+    !allLoaded && totalExpected > 0 && geoPoints.length < totalExpected;
   const hasFilter = Boolean(payload?.filter || payload?.simpleFilter);
   const yearRange = useMemo(() => {
     if (payload?.year_range?.start && payload?.year_range?.end) {
@@ -401,7 +488,7 @@ export default function WorkspaceGTDMap() {
         point.weaptype1_txt,
         point.targtype1_txt,
         point.gname,
-        point.iyear
+        point.iyear,
       ]
         .filter(Boolean)
         .some((value) => String(value).toLowerCase().includes(needle));
@@ -476,7 +563,10 @@ export default function WorkspaceGTDMap() {
           setClusterInfo(null);
           setError(null);
 
-          if (Array.isArray(parsed.geo_points) && parsed.geo_points.length > 0) {
+          if (
+            Array.isArray(parsed.geo_points) &&
+            parsed.geo_points.length > 0
+          ) {
             setStatus(
               isChatQuery && parsed.query
                 ? `Showing ${parsed.geo_points.length.toLocaleString()} points for query: "${parsed.query}"`
@@ -485,19 +575,26 @@ export default function WorkspaceGTDMap() {
             return;
           }
 
-          const filter = parsed.filter || parsed.simpleFilter || parsed.originalFilter;
+          const filter =
+            parsed.filter || parsed.simpleFilter || parsed.originalFilter;
           if (filter) {
             setStatus("Plotting query points from database...");
-            const res = await fetch(`${API_BASE}/workspace/${slug}/gtd-refetch`, {
-              method: "POST",
-              headers: { ...baseHeaders(), "Content-Type": "application/json" },
-              body: JSON.stringify({
-                mongo_filter: filter,
-                limit: MAX_REFETCH_LIMIT,
-                page_size: MAX_REFETCH_LIMIT,
-              }),
-              signal: abortController.signal,
-            });
+            const res = await fetch(
+              `${API_BASE}/workspace/${slug}/gtd-refetch`,
+              {
+                method: "POST",
+                headers: {
+                  ...baseHeaders(),
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  mongo_filter: filter,
+                  limit: MAX_REFETCH_LIMIT,
+                  page_size: MAX_REFETCH_LIMIT,
+                }),
+                signal: abortController.signal,
+              }
+            );
 
             if (cancelled) return;
             if (res.ok) {
@@ -508,8 +605,12 @@ export default function WorkspaceGTDMap() {
                 setPayload((prev) => ({
                   ...prev,
                   total_count: result.total_count || prev.total_count,
-                  ...(result.total_killed != null && { total_killed: result.total_killed }),
-                  ...(result.total_wounded != null && { total_wounded: result.total_wounded }),
+                  ...(result.total_killed != null && {
+                    total_killed: result.total_killed,
+                  }),
+                  ...(result.total_wounded != null && {
+                    total_wounded: result.total_wounded,
+                  }),
                   geo_points: refetchedPoints,
                 }));
                 setStatus(
@@ -522,7 +623,10 @@ export default function WorkspaceGTDMap() {
             }
           }
         } catch (e) {
-          console.warn("Failed to parse stored chat key, falling back to global dataset:", e);
+          console.warn(
+            "Failed to parse stored chat key, falling back to global dataset:",
+            e
+          );
         }
       }
 
@@ -548,12 +652,19 @@ export default function WorkspaceGTDMap() {
 
         const result = await res.json();
         if (cancelled) return;
-        if (!result.success) throw new Error(result.error || "Failed to load GTD database");
+        if (!result.success)
+          throw new Error(result.error || "Failed to load GTD database");
 
         const points = result.geo_points || [];
         const total = result.total_count || 181691;
-        const totalKilled = points.reduce((sum, p) => sum + (Number(p.nkill) || 0), 0);
-        const totalWounded = points.reduce((sum, p) => sum + (Number(p.nwound) || 0), 0);
+        const totalKilled = points.reduce(
+          (sum, p) => sum + (Number(p.nkill) || 0),
+          0
+        );
+        const totalWounded = points.reduce(
+          (sum, p) => sum + (Number(p.nwound) || 0),
+          0
+        );
 
         setPayload({
           total_count: total,
@@ -568,7 +679,9 @@ export default function WorkspaceGTDMap() {
         setSelectedPoint(null);
         setClusterPoints([]);
         setClusterInfo(null);
-        setStatus(`Showing ${points.length.toLocaleString()} of ${total.toLocaleString()} global incident records`);
+        setStatus(
+          `Showing ${points.length.toLocaleString()} of ${total.toLocaleString()} global incident records`
+        );
       } catch (fetchError) {
         if (cancelled || fetchError.name === "AbortError") return;
         console.error("Global GTD load failed:", fetchError);
@@ -584,8 +697,6 @@ export default function WorkspaceGTDMap() {
       abortController.abort();
     };
   }, [key, slug]);
-
-
 
   const showPointPopup = (point, coordinatesOverride = null) => {
     const map = mapRef.current;
@@ -613,7 +724,10 @@ export default function WorkspaceGTDMap() {
     `;
 
     if (!popupRef.current) {
-      popupRef.current = new maplibregl.Popup({ closeButton: true, closeOnClick: false });
+      popupRef.current = new maplibregl.Popup({
+        closeButton: true,
+        closeOnClick: false,
+      });
     }
 
     const coordinates = coordinatesOverride || [lon, lat];
@@ -673,7 +787,7 @@ export default function WorkspaceGTDMap() {
       }
 
       const TOTAL_LIMIT = 200000; // hard cap, communicated to server
-      let chunkPoints = [];       // points fetched in THIS click
+      let chunkPoints = []; // points fetched in THIS click
       let currentSkip = paginationRef.current.skip;
       const chunkTarget = currentSkip + LOAD_MORE_CHUNK; // fetch up to this skip value
       let totalCount = payload?.total_count || 0;
@@ -681,7 +795,9 @@ export default function WorkspaceGTDMap() {
       let serverKilled = 0;
       let serverWounded = 0;
 
-      setStatus(`Fetching records from skip=${currentSkip.toLocaleString()}...`);
+      setStatus(
+        `Fetching records from skip=${currentSkip.toLocaleString()}...`
+      );
 
       // Paginated fetch loop — SERVER_PAGE_SIZE records per round-trip
       while (hasMore && currentSkip < chunkTarget) {
@@ -705,14 +821,16 @@ export default function WorkspaceGTDMap() {
         }
 
         const result = await res.json();
-        if (!result.success) throw new Error(result.error || "Failed to fetch records");
+        if (!result.success)
+          throw new Error(result.error || "Failed to fetch records");
 
         const pagePoints = result.geo_points || [];
         // Use push for O(1) amortised append instead of concat (which copies the entire array)
-        for (let i = 0; i < pagePoints.length; i++) chunkPoints.push(pagePoints[i]);
+        for (let i = 0; i < pagePoints.length; i++)
+          chunkPoints.push(pagePoints[i]);
         totalCount = result.total_count || totalCount;
         hasMore = result.has_more === true;
-        currentSkip = result.next_skip || (currentSkip + pagePoints.length);
+        currentSkip = result.next_skip || currentSkip + pagePoints.length;
 
         // Pick up server-computed killed/wounded if available
         if (result.total_killed) serverKilled = result.total_killed;
@@ -742,7 +860,8 @@ export default function WorkspaceGTDMap() {
       // covers rows 0–50K which overlaps/replaces the initial $sample set.
       // For simplicity and correctness, on the first click we REPLACE;
       // on subsequent clicks we APPEND.
-      const isFirstDeterministicChunk = currentSkip <= LOAD_MORE_CHUNK + SERVER_PAGE_SIZE;
+      const isFirstDeterministicChunk =
+        currentSkip <= LOAD_MORE_CHUNK + SERVER_PAGE_SIZE;
       let mergedPoints;
       if (isFirstDeterministicChunk) {
         // Replace $sample data with deterministic page 0–50K
@@ -750,7 +869,8 @@ export default function WorkspaceGTDMap() {
       } else {
         // Append — reuse the existing array to avoid copying 100K+ elements
         mergedPoints = geoPoints.slice(); // shallow copy to avoid mutating React state
-        for (let i = 0; i < chunkPoints.length; i++) mergedPoints.push(chunkPoints[i]);
+        for (let i = 0; i < chunkPoints.length; i++)
+          mergedPoints.push(chunkPoints[i]);
       }
 
       setLoadMoreProgress(85);
@@ -771,7 +891,7 @@ export default function WorkspaceGTDMap() {
       const fullyLoaded = !hasMore || currentSkip >= totalCount;
 
       setGeoPoints(mergedPoints);
-      setPayload(prev => ({ ...prev, total_count: totalCount }));
+      setPayload((prev) => ({ ...prev, total_count: totalCount }));
       setAllLoaded(fullyLoaded);
 
       // Progressive render-limit ramp-up to avoid MapLibre freeze
@@ -783,9 +903,17 @@ export default function WorkspaceGTDMap() {
         const renderNextBatch = () => {
           currentLimit = Math.min(currentLimit + BATCH_SIZE, total);
           setRenderLimit(currentLimit);
-          const pct = 85 + Math.floor(((currentLimit - MAX_RENDER_POINTS) / (total - MAX_RENDER_POINTS)) * 15);
+          const pct =
+            85 +
+            Math.floor(
+              ((currentLimit - MAX_RENDER_POINTS) /
+                (total - MAX_RENDER_POINTS)) *
+                15
+            );
           setLoadMoreProgress(Math.min(pct, 100));
-          setStatus(`Rendering points... ${currentLimit.toLocaleString()} / ${total.toLocaleString()}`);
+          setStatus(
+            `Rendering points... ${currentLimit.toLocaleString()} / ${total.toLocaleString()}`
+          );
 
           if (currentLimit < total) {
             batchTimerRef.current = setTimeout(renderNextBatch, BATCH_DELAY_MS);
@@ -818,7 +946,9 @@ export default function WorkspaceGTDMap() {
     if (fullyLoaded) {
       setStatus(`Map ready — all ${total.toLocaleString()} records loaded`);
     } else {
-      setStatus(`Showing ${total.toLocaleString()} points — click Load More for the next batch`);
+      setStatus(
+        `Showing ${total.toLocaleString()} points — click Load More for the next batch`
+      );
     }
   }, []);
 
@@ -887,21 +1017,30 @@ export default function WorkspaceGTDMap() {
         }
 
         const result = await res.json();
-        if (!result.success) throw new Error(result.error || "Failed to fetch records");
+        if (!result.success)
+          throw new Error(result.error || "Failed to fetch records");
 
         const pagePoints = result.geo_points || [];
-        for (let i = 0; i < pagePoints.length; i++) allFetchedPoints.push(pagePoints[i]);
+        for (let i = 0; i < pagePoints.length; i++)
+          allFetchedPoints.push(pagePoints[i]);
 
         totalCount = result.total_count || totalCount;
         hasMore = result.has_more === true;
-        currentSkip = result.next_skip || (currentSkip + pagePoints.length);
+        currentSkip = result.next_skip || currentSkip + pagePoints.length;
 
         if (result.total_killed) serverKilled = result.total_killed;
         if (result.total_wounded) serverWounded = result.total_wounded;
 
-        const fetchPct = totalCount > 0
-          ? Math.min(80, Math.floor((allFetchedPoints.length / totalCount) * 80))
-          : Math.min(80, Math.floor((allFetchedPoints.length / TOTAL_LIMIT) * 80));
+        const fetchPct =
+          totalCount > 0
+            ? Math.min(
+                80,
+                Math.floor((allFetchedPoints.length / totalCount) * 80)
+              )
+            : Math.min(
+                80,
+                Math.floor((allFetchedPoints.length / TOTAL_LIMIT) * 80)
+              );
         setLoadMoreProgress(fetchPct);
         setStatus(
           `Loading all records... ${allFetchedPoints.length.toLocaleString()} of ${totalCount.toLocaleString()}`
@@ -915,18 +1054,23 @@ export default function WorkspaceGTDMap() {
       paginationRef.current.skip = currentSkip;
 
       if (serverKilled > 0 || serverWounded > 0) {
-        cachedTotalsRef.current = { totalKilled: serverKilled, totalWounded: serverWounded };
+        cachedTotalsRef.current = {
+          totalKilled: serverKilled,
+          totalWounded: serverWounded,
+        };
       } else {
         cachedTotalsRef.current = null;
       }
 
       setLoadMoreProgress(85);
-      setStatus(`Rendering ${allFetchedPoints.length.toLocaleString()} points...`);
+      setStatus(
+        `Rendering ${allFetchedPoints.length.toLocaleString()} points...`
+      );
 
       const fullyLoaded = !hasMore || currentSkip >= totalCount;
 
       setGeoPoints(allFetchedPoints);
-      setPayload(prev => ({ ...prev, total_count: totalCount }));
+      setPayload((prev) => ({ ...prev, total_count: totalCount }));
       setAllLoaded(fullyLoaded);
 
       // Progressive render ramp-up
@@ -937,9 +1081,17 @@ export default function WorkspaceGTDMap() {
         const renderNextBatch = () => {
           currentLimit = Math.min(currentLimit + BATCH_SIZE, total);
           setRenderLimit(currentLimit);
-          const pct = 85 + Math.floor(((currentLimit - MAX_RENDER_POINTS) / (total - MAX_RENDER_POINTS)) * 15);
+          const pct =
+            85 +
+            Math.floor(
+              ((currentLimit - MAX_RENDER_POINTS) /
+                (total - MAX_RENDER_POINTS)) *
+                15
+            );
           setLoadMoreProgress(Math.min(pct, 100));
-          setStatus(`Rendering points... ${currentLimit.toLocaleString()} / ${total.toLocaleString()}`);
+          setStatus(
+            `Rendering points... ${currentLimit.toLocaleString()} / ${total.toLocaleString()}`
+          );
 
           if (currentLimit < total) {
             batchTimerRef.current = setTimeout(renderNextBatch, BATCH_DELAY_MS);
@@ -988,7 +1140,7 @@ export default function WorkspaceGTDMap() {
         if (!gl) {
           throw new Error(
             "WebGL is not available. Please enable hardware acceleration in your browser " +
-            "(Chrome: Settings \u2192 System \u2192 Use hardware acceleration when available, then restart)."
+              "(Chrome: Settings \u2192 System \u2192 Use hardware acceleration when available, then restart)."
           );
         }
 
@@ -1000,7 +1152,9 @@ export default function WorkspaceGTDMap() {
           const pmtilesCheck = await fetch(PMTILES_URL, {
             method: "HEAD",
             // Only send the pmtiles protocol Range header for remote URLs
-            ...(PMTILES_URL.startsWith("http") ? { headers: { Range: "bytes=0-127" } } : {}),
+            ...(PMTILES_URL.startsWith("http")
+              ? { headers: { Range: "bytes=0-127" } }
+              : {}),
           });
           // 200 or 206 (Partial Content for range request) both mean the file is reachable
           pmtilesAvailable = pmtilesCheck.ok || pmtilesCheck.status === 206;
@@ -1012,7 +1166,11 @@ export default function WorkspaceGTDMap() {
             );
           }
         } catch (pingErr) {
-          console.warn("[GTDMap] PMTiles reachability check failed:", pingErr.message, "— falling back to OSM raster tiles.");
+          console.warn(
+            "[GTDMap] PMTiles reachability check failed:",
+            pingErr.message,
+            "— falling back to OSM raster tiles."
+          );
           pmtilesAvailable = false;
         }
 
@@ -1030,7 +1188,7 @@ export default function WorkspaceGTDMap() {
           style,
           center: [0, 20],
           zoom: 2,
-          attributionControl: true
+          attributionControl: true,
         });
 
         // Catch runtime WebGL / tile-loading errors so they surface in the UI
@@ -1056,7 +1214,7 @@ export default function WorkspaceGTDMap() {
 
           map.on("click", "gtd-clusters", (event) => {
             const features = map.queryRenderedFeatures(event.point, {
-              layers: ["gtd-clusters"]
+              layers: ["gtd-clusters"],
             });
             const clusterId = features[0]?.properties?.cluster_id;
             const clusterCount = features[0]?.properties?.point_count || 0;
@@ -1069,7 +1227,9 @@ export default function WorkspaceGTDMap() {
                 .map((leaf) => leaf.properties || {})
                 .map((props) => {
                   const eventId = props.eventid ? String(props.eventid) : null;
-                  return eventId ? pointByEventIdRef.current.get(eventId) || props : props;
+                  return eventId
+                    ? pointByEventIdRef.current.get(eventId) || props
+                    : props;
                 });
               setClusterPoints(points);
               setClusterInfo({ count: clusterCount });
@@ -1079,7 +1239,7 @@ export default function WorkspaceGTDMap() {
               if (err) return;
               map.easeTo({
                 center: features[0].geometry.coordinates,
-                zoom
+                zoom,
               });
             });
           });
@@ -1089,14 +1249,16 @@ export default function WorkspaceGTDMap() {
             if (!feature) return;
             const props = feature.properties || {};
             const eventId = props.eventid ? String(props.eventid) : null;
-            const point = eventId ? pointByEventIdRef.current.get(eventId) : null;
+            const point = eventId
+              ? pointByEventIdRef.current.get(eventId)
+              : null;
             setSelectedPoint(point || props);
             showPointPopup(point || props, feature.geometry.coordinates);
           });
 
           map.on("click", (event) => {
             const features = map.queryRenderedFeatures(event.point, {
-              layers: ["gtd-unclustered", "gtd-clusters"]
+              layers: ["gtd-unclustered", "gtd-clusters"],
             });
             if (!features.length) {
               clearSelection();
@@ -1170,7 +1332,11 @@ export default function WorkspaceGTDMap() {
       map.setLayoutProperty("gtd-clusters", "visibility", pointsVisibility);
     }
     if (map.getLayer("gtd-cluster-count")) {
-      map.setLayoutProperty("gtd-cluster-count", "visibility", pointsVisibility);
+      map.setLayoutProperty(
+        "gtd-cluster-count",
+        "visibility",
+        pointsVisibility
+      );
     }
     if (map.getLayer("gtd-unclustered")) {
       map.setLayoutProperty("gtd-unclustered", "visibility", pointsVisibility);
@@ -1214,16 +1380,23 @@ export default function WorkspaceGTDMap() {
         const currentHeatmap = showHeatmapRef.current;
         const heatVis = currentHeatmap ? "visible" : "none";
         const pointsVis = currentHeatmap ? "none" : "visible";
-        if (map.getLayer("gtd-heatmap")) map.setLayoutProperty("gtd-heatmap", "visibility", heatVis);
-        if (map.getLayer("gtd-clusters")) map.setLayoutProperty("gtd-clusters", "visibility", pointsVis);
-        if (map.getLayer("gtd-cluster-count")) map.setLayoutProperty("gtd-cluster-count", "visibility", pointsVis);
-        if (map.getLayer("gtd-unclustered")) map.setLayoutProperty("gtd-unclustered", "visibility", pointsVis);
+        if (map.getLayer("gtd-heatmap"))
+          map.setLayoutProperty("gtd-heatmap", "visibility", heatVis);
+        if (map.getLayer("gtd-clusters"))
+          map.setLayoutProperty("gtd-clusters", "visibility", pointsVis);
+        if (map.getLayer("gtd-cluster-count"))
+          map.setLayoutProperty("gtd-cluster-count", "visibility", pointsVis);
+        if (map.getLayer("gtd-unclustered"))
+          map.setLayoutProperty("gtd-unclustered", "visibility", pointsVis);
 
         requestAnimationFrame(() => {
           if (mapRef.current) mapRef.current.resize();
         });
       } catch (err) {
-        console.warn("[GTDMap] Style switch: layers not ready, retrying...", err.message);
+        console.warn(
+          "[GTDMap] Style switch: layers not ready, retrying...",
+          err.message
+        );
         setTimeout(reAddLayers, 100);
       }
     };
@@ -1258,7 +1431,8 @@ export default function WorkspaceGTDMap() {
       .maplibregl-popup-close-button { color: ${closeBtnColor} !important; }
     `;
     return () => {
-      if (styleEl && styleEl.parentNode) styleEl.parentNode.removeChild(styleEl);
+      if (styleEl && styleEl.parentNode)
+        styleEl.parentNode.removeChild(styleEl);
     };
   }, [isDarkMode]);
 
@@ -1268,7 +1442,14 @@ export default function WorkspaceGTDMap() {
       <div
         ref={mapContainerRef}
         className="absolute inset-0 w-full h-full"
-        style={{ position: "absolute", top: 0, left: 0, width: "100%", height: "100%", zIndex: 0 }}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 0,
+        }}
       />
 
       {/* ── Top-left Intelligence Panel ── */}
@@ -1278,8 +1459,18 @@ export default function WorkspaceGTDMap() {
           to={`/workspace/${slug}`}
           className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg shadow-md w-fit font-medium bg-gray-900 text-gray-300 border border-gray-700 hover:bg-gray-800 hover:text-white transition-colors"
         >
-          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+          <svg
+            className="w-3.5 h-3.5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth="2"
+              d="M10 19l-7-7m0 0l7-7m-7 7h18"
+            />
           </svg>
           <span>Back to chat</span>
         </Link>
@@ -1287,28 +1478,76 @@ export default function WorkspaceGTDMap() {
         {/* GTD Intelligence Card */}
         <div
           className="rounded-xl min-w-[240px] max-w-[300px] shadow-2xl"
-          style={{ backgroundColor: '#111827', border: '1px solid #374151', color: '#e5e7eb', fontSize: '12px' }}
+          style={{
+            backgroundColor: "#111827",
+            border: "1px solid #374151",
+            color: "#e5e7eb",
+            fontSize: "12px",
+          }}
         >
           {/* Card header */}
           <div
-          style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 14px 10px 14px', borderBottom: '1px solid #374151' }}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px",
+              padding: "12px 14px 10px 14px",
+              borderBottom: "1px solid #374151",
+            }}
           >
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#22d3ee', flexShrink: 0, animation: 'pulse 2s cubic-bezier(0.4,0,0.6,1) infinite', display: 'inline-block' }} />
-            <span style={{ fontWeight: 600, fontSize: '12px', letterSpacing: '0.02em', color: '#ffffff' }}>
+            <span
+              style={{
+                width: "8px",
+                height: "8px",
+                borderRadius: "50%",
+                backgroundColor: "#22d3ee",
+                flexShrink: 0,
+                animation: "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite",
+                display: "inline-block",
+              }}
+            />
+            <span
+              style={{
+                fontWeight: 600,
+                fontSize: "12px",
+                letterSpacing: "0.02em",
+                color: "#ffffff",
+              }}
+            >
               GTD Geospatial Intelligence
             </span>
           </div>
 
           {/* Status line */}
-          <div style={{ padding: '10px 14px', fontSize: '11px', color: '#9ca3af', lineHeight: 1.4 }}>
+          <div
+            style={{
+              padding: "10px 14px",
+              fontSize: "11px",
+              color: "#9ca3af",
+              lineHeight: 1.4,
+            }}
+          >
             {status}
           </div>
 
           {/* Load-more controls */}
           {hasMoreData && !loadingMore && (
-            <div style={{ padding: '8px 14px 12px 14px', borderTop: '1px solid #374151' }}>
-              <div style={{ color: '#fbbf24', fontSize: '11px', fontWeight: 500, marginBottom: '6px' }}>
-                Showing {geoPoints.length.toLocaleString()} of {totalExpected.toLocaleString()}
+            <div
+              style={{
+                padding: "8px 14px 12px 14px",
+                borderTop: "1px solid #374151",
+              }}
+            >
+              <div
+                style={{
+                  color: "#fbbf24",
+                  fontSize: "11px",
+                  fontWeight: 500,
+                  marginBottom: "6px",
+                }}
+              >
+                Showing {geoPoints.length.toLocaleString()} of{" "}
+                {totalExpected.toLocaleString()}
               </div>
               {hasFilter && (
                 <div className="flex flex-col gap-1">
@@ -1333,21 +1572,40 @@ export default function WorkspaceGTDMap() {
 
           {/* Progress bar */}
           {loadingMore && (
-            <div style={{ padding: '8px 14px 12px 14px', borderTop: '1px solid #374151' }}>
+            <div
+              style={{
+                padding: "8px 14px 12px 14px",
+                borderTop: "1px solid #374151",
+              }}
+            >
               <div className="mb-1 text-[11px] text-cyan-400">{status}</div>
-              <div style={{ width: '100%', height: '6px', borderRadius: '3px', overflow: 'hidden', backgroundColor: '#1f2937' }}>
+              <div
+                style={{
+                  width: "100%",
+                  height: "6px",
+                  borderRadius: "3px",
+                  overflow: "hidden",
+                  backgroundColor: "#1f2937",
+                }}
+              >
                 <div
                   className="h-full bg-cyan-500 transition-all duration-300 rounded-full"
                   style={{ width: `${loadMoreProgress}%` }}
                 />
               </div>
-              <div style={{ marginTop: '4px', fontSize: '10px', color: '#6b7280' }}>{loadMoreProgress}% complete</div>
+              <div
+                style={{ marginTop: "4px", fontSize: "10px", color: "#6b7280" }}
+              >
+                {loadMoreProgress}% complete
+              </div>
             </div>
           )}
 
           {/* Error */}
           {error && (
-            <div className="px-3.5 pb-3 text-rose-400 text-[11px] font-medium">{error}</div>
+            <div className="px-3.5 pb-3 text-rose-400 text-[11px] font-medium">
+              {error}
+            </div>
           )}
         </div>
       </div>
@@ -1356,9 +1614,13 @@ export default function WorkspaceGTDMap() {
         <div className="px-3 py-2 border-b border-theme-sidebar-border">
           <div className="text-xs font-semibold">Summary</div>
           <div className="mt-1 text-[11px] text-theme-text-secondary">
-            <div>Total attacks: {summaryTotals.totalCount.toLocaleString()}</div>
+            <div>
+              Total attacks: {summaryTotals.totalCount.toLocaleString()}
+            </div>
             {yearRange && (
-              <div>Year range: {yearRange.start}–{yearRange.end}</div>
+              <div>
+                Year range: {yearRange.start}–{yearRange.end}
+              </div>
             )}
             <div>Killed: {summaryTotals.totalKilled.toLocaleString()}</div>
             <div>Wounded: {summaryTotals.totalWounded.toLocaleString()}</div>
@@ -1424,7 +1686,9 @@ export default function WorkspaceGTDMap() {
             </button>
           </div>
 
-          <div className="mt-3 text-xs font-semibold">Attacks ({filteredPoints.length.toLocaleString()})</div>
+          <div className="mt-3 text-xs font-semibold">
+            Attacks ({filteredPoints.length.toLocaleString()})
+          </div>
           <input
             type="text"
             placeholder="Search city, year, group..."
@@ -1459,7 +1723,8 @@ export default function WorkspaceGTDMap() {
         <div className="max-h-[45vh] overflow-y-auto">
           {pageItems.map((point, idx) => {
             const displayIndex = page * PAGE_SIZE + idx + 1;
-            const label = `${point.city || "Unknown"}, ${point.country_txt || ""}`.trim();
+            const label =
+              `${point.city || "Unknown"}, ${point.country_txt || ""}`.trim();
             return (
               <button
                 key={`${point.eventid || displayIndex}`}
@@ -1470,14 +1735,23 @@ export default function WorkspaceGTDMap() {
                   const lat = Number(point.lat ?? point.latitude);
                   const lon = Number(point.lon ?? point.longitude);
                   if (map && Number.isFinite(lat) && Number.isFinite(lon)) {
-                    map.easeTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), 8) });
+                    map.easeTo({
+                      center: [lon, lat],
+                      zoom: Math.max(map.getZoom(), 8),
+                    });
                   }
                 }}
                 className="w-full text-left px-3 py-2 text-xs border-b border-theme-sidebar-border hover:bg-theme-bg-primary"
               >
-                <div className="font-semibold">#{displayIndex} {point.eventid || ""}</div>
-                <div className="text-theme-text-secondary">{label || "Unknown location"}</div>
-                <div className="text-theme-text-secondary">{point.iyear || "N/A"} • {point.attacktype1_txt || "Unknown"}</div>
+                <div className="font-semibold">
+                  #{displayIndex} {point.eventid || ""}
+                </div>
+                <div className="text-theme-text-secondary">
+                  {label || "Unknown location"}
+                </div>
+                <div className="text-theme-text-secondary">
+                  {point.iyear || "N/A"} • {point.attacktype1_txt || "Unknown"}
+                </div>
               </button>
             );
           })}
@@ -1486,7 +1760,10 @@ export default function WorkspaceGTDMap() {
         {clusterInfo && (
           <div className="px-3 py-2 border-t border-theme-sidebar-border">
             <div className="flex items-center justify-between text-xs font-semibold">
-              <span>Cluster points (showing {clusterPoints.length} of {clusterInfo.count})</span>
+              <span>
+                Cluster points (showing {clusterPoints.length} of{" "}
+                {clusterInfo.count})
+              </span>
               <button
                 onClick={clearClusterPoints}
                 className="px-2 py-1 rounded border border-theme-sidebar-border text-[11px]"
@@ -1508,12 +1785,17 @@ export default function WorkspaceGTDMap() {
                   const lat = Number(point.lat ?? point.latitude);
                   const lon = Number(point.lon ?? point.longitude);
                   if (map && Number.isFinite(lat) && Number.isFinite(lon)) {
-                    map.easeTo({ center: [lon, lat], zoom: Math.max(map.getZoom(), 10) });
+                    map.easeTo({
+                      center: [lon, lat],
+                      zoom: Math.max(map.getZoom(), 10),
+                    });
                   }
                 }}
                 className="w-full text-left px-3 py-2 text-xs border-t border-theme-sidebar-border hover:bg-theme-bg-primary"
               >
-                <div className="font-semibold">{point.eventid || "Unknown"}</div>
+                <div className="font-semibold">
+                  {point.eventid || "Unknown"}
+                </div>
                 <div className="text-theme-text-secondary">
                   {point.city || "Unknown"}, {point.country_txt || ""}
                 </div>
@@ -1534,7 +1816,7 @@ export default function WorkspaceGTDMap() {
           </div>
           {selectedPoint ? (
             <pre className="text-[11px] whitespace-pre-wrap break-all bg-theme-bg-primary rounded p-2">
-{JSON.stringify(selectedPoint, null, 2)}
+              {JSON.stringify(selectedPoint, null, 2)}
             </pre>
           ) : (
             <div className="text-xs text-theme-text-secondary">

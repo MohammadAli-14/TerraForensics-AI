@@ -15,16 +15,26 @@ export function syncActiveGTDData(gtdData) {
 
   // 2. Safe localStorage cache (capped to prevent QuotaExceededError)
   try {
-    const slug = window.location.pathname.split("/workspace/")[1]?.split("/")[0];
+    const slug = window.location.pathname
+      .split("/workspace/")[1]
+      ?.split("/")[0];
     if (slug) {
       const storageSafe = {
         ...gtdData,
-        geo_points: Array.isArray(gtdData.geo_points) && gtdData.geo_points.length <= 3000
-          ? gtdData.geo_points
-          : (gtdData.geo_points_sample || gtdData.geo_points?.slice(0, 500) || []),
-        _storageOptimized: !Array.isArray(gtdData.geo_points) || gtdData.geo_points.length > 3000,
+        geo_points:
+          Array.isArray(gtdData.geo_points) && gtdData.geo_points.length <= 3000
+            ? gtdData.geo_points
+            : gtdData.geo_points_sample ||
+              gtdData.geo_points?.slice(0, 500) ||
+              [],
+        _storageOptimized:
+          !Array.isArray(gtdData.geo_points) ||
+          gtdData.geo_points.length > 3000,
       };
-      localStorage.setItem(`tf:latest-gtd-data:${slug}`, JSON.stringify(storageSafe));
+      localStorage.setItem(
+        `tf:latest-gtd-data:${slug}`,
+        JSON.stringify(storageSafe)
+      );
     }
   } catch (e) {
     console.warn("[syncActiveGTDData] LocalStorage cache write failed:", e);

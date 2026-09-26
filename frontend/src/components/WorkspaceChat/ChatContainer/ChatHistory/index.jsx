@@ -280,7 +280,8 @@ const DEFAULT_GTD_SUGGESTIONS = [
 ];
 
 function WorkspaceChatSuggestions({ suggestions = [], sendSuggestion }) {
-  const activeSuggestions = suggestions.length > 0 ? suggestions : DEFAULT_GTD_SUGGESTIONS;
+  const activeSuggestions =
+    suggestions.length > 0 ? suggestions : DEFAULT_GTD_SUGGESTIONS;
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-2.5 text-theme-text-primary text-xs mt-8 w-full max-w-[650px] justify-center">
       {activeSuggestions.map((suggestion, index) => (
@@ -289,8 +290,12 @@ function WorkspaceChatSuggestions({ suggestions = [], sendSuggestion }) {
           className="text-left p-3 rounded-xl bg-theme-sidebar-footer-icon hover:bg-theme-sidebar-footer-icon-hover border border-theme-border hover:border-[#46C8FF]/40 transition-all cursor-pointer shadow-sm hover:shadow-md"
           onClick={() => sendSuggestion(suggestion.heading, suggestion.message)}
         >
-          <p className="font-semibold text-white/90 text-sm mb-1">{suggestion.heading}</p>
-          <p className="text-white/60 text-xs line-clamp-2">{suggestion.message}</p>
+          <p className="font-semibold text-white/90 text-sm mb-1">
+            {suggestion.heading}
+          </p>
+          <p className="text-white/60 text-xs line-clamp-2">
+            {suggestion.message}
+          </p>
         </button>
       ))}
     </div>

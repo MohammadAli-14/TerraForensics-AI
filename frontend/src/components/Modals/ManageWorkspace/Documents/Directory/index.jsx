@@ -62,7 +62,9 @@ function Directory({
 
       for (const itemId of Object.keys(selectedItems)) {
         for (const folder of files?.items || []) {
-          const foundItem = (folder?.items || []).find((file) => file.id === itemId);
+          const foundItem = (folder?.items || []).find(
+            (file) => file.id === itemId
+          );
           if (foundItem) {
             toRemove.push(`${folder.name}/${foundItem.name}`);
             break;
@@ -108,10 +110,14 @@ function Directory({
         // select all files in the folder
         if (newSelectedItems[item.name]) {
           delete newSelectedItems[item.name];
-          (item?.items || []).forEach((file) => delete newSelectedItems[file.id]);
+          (item?.items || []).forEach(
+            (file) => delete newSelectedItems[file.id]
+          );
         } else {
           newSelectedItems[item.name] = true;
-          (item?.items || []).forEach((file) => (newSelectedItems[file.id] = true));
+          (item?.items || []).forEach(
+            (file) => (newSelectedItems[file.id] = true)
+          );
         }
       } else {
         // single file selections

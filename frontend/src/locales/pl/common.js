@@ -430,7 +430,8 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "Preferencje interfejsu użytkownika",
-      description: "Ustaw preferencje interfejsu użytkownika dla TerraForensics AI.",
+      description:
+        "Ustaw preferencje interfejsu użytkownika dla TerraForensics AI.",
     },
     branding: {
       title: "Branding i white-labeling",

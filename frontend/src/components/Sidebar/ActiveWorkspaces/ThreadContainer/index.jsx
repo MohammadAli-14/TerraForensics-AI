@@ -1,7 +1,12 @@
 import Workspace from "@/models/workspace";
 import paths from "@/utils/paths";
 import showToast from "@/utils/toast";
-import { Plus, CircleNotch, Trash, GlobeHemisphereWest } from "@phosphor-icons/react";
+import {
+  Plus,
+  CircleNotch,
+  Trash,
+  GlobeHemisphereWest,
+} from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
 import ThreadItem from "./ThreadItem";
 import { useParams, Link } from "react-router-dom";

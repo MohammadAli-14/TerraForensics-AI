@@ -85,9 +85,9 @@ export default function SpeechToTextProvider({ settings }) {
           </div>
           <p className="text-xs leading-[18px] font-base text-white text-opacity-60">
             Here you can specify what kind of text-to-speech and speech-to-text
-            providers you would want to use in your TerraForensics AI experience. By
-            default, we use the browser's built in support for these services,
-            but you may want to use others.
+            providers you would want to use in your TerraForensics AI
+            experience. By default, we use the browser's built in support for
+            these services, but you may want to use others.
           </p>
         </div>
         <div className="w-full justify-end flex">

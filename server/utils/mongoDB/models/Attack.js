@@ -204,7 +204,10 @@ attackSchema.index(
 );
 
 // High-performance geospatial 2dsphere index for bounding box and proximity queries
-attackSchema.index({ location: "2dsphere" }, { sparse: true, name: "geospatial_2dsphere_index" });
+attackSchema.index(
+  { location: "2dsphere" },
+  { sparse: true, name: "geospatial_2dsphere_index" }
+);
 
 // High-performance compound indexes for forensic temporal and casualty aggregations
 attackSchema.index({ country_txt: 1, iyear: -1 }, { name: "idx_country_year" });

@@ -42,7 +42,9 @@ function WorkspaceDirectory({
   };
 
   const toggleSelectAll = () => {
-    const allItems = (files?.items || []).flatMap((folder) => folder.items || []);
+    const allItems = (files?.items || []).flatMap(
+      (folder) => folder.items || []
+    );
     const allSelected =
       allItems.length > 0 && allItems.every((item) => selectedItems[item.id]);
     if (allSelected) {
@@ -177,7 +179,9 @@ function WorkspaceDirectory({
                     <WorkspaceFileRow
                       key={item.id}
                       item={item}
-                      folderName={folder?.name || item?.folderName || "custom-documents"}
+                      folderName={
+                        folder?.name || item?.folderName || "custom-documents"
+                      }
                       workspace={workspace}
                       setLoading={setLoading}
                       setLoadingMessage={setLoadingMessage}
@@ -419,10 +423,9 @@ function RenderFileRows({ files, movedItems, children, workspace }) {
     )
     .sort(sortMovedItemsAndFiles)
     .map((item) => {
-      const folder =
-        (files?.items || []).find((f) =>
-          (f?.items || []).some((file) => file.id === item.id)
-        ) || { name: item.folderName || "custom-documents" };
+      const folder = (files?.items || []).find((f) =>
+        (f?.items || []).some((file) => file.id === item.id)
+      ) || { name: item.folderName || "custom-documents" };
       return children({ item, folder });
     });
 }

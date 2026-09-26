@@ -59,21 +59,24 @@ class MetaGenerator {
       {
         tag: "title",
         props: null,
-        content: "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
+        content:
+          "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
       },
 
       {
         tag: "meta",
         props: {
           name: "title",
-          content: "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
+          content:
+            "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
         },
       },
       {
         tag: "meta",
         props: {
           name: "description",
-          content: "TerraForensics AI: Sovereign, defense-grade Geospatial Incident & Threat Intelligence Platform powered by local inference and GTD forensic analytics.",
+          content:
+            "TerraForensics AI: Sovereign, defense-grade Geospatial Incident & Threat Intelligence Platform powered by local inference and GTD forensic analytics.",
         },
       },
 
@@ -87,14 +90,16 @@ class MetaGenerator {
         tag: "meta",
         props: {
           property: "og:title",
-          content: "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
+          content:
+            "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
         },
       },
       {
         tag: "meta",
         props: {
           property: "og:description",
-          content: "TerraForensics AI: Sovereign, defense-grade Geospatial Incident & Threat Intelligence Platform powered by local inference and GTD forensic analytics.",
+          content:
+            "TerraForensics AI: Sovereign, defense-grade Geospatial Incident & Threat Intelligence Platform powered by local inference and GTD forensic analytics.",
         },
       },
       {
@@ -112,20 +117,25 @@ class MetaGenerator {
       },
       {
         tag: "meta",
-        props: { property: "twitter:url", content: "https://terraforensics.ai" },
+        props: {
+          property: "twitter:url",
+          content: "https://terraforensics.ai",
+        },
       },
       {
         tag: "meta",
         props: {
           property: "twitter:title",
-          content: "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
+          content:
+            "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
         },
       },
       {
         tag: "meta",
         props: {
           property: "twitter:description",
-          content: "TerraForensics AI: Sovereign, defense-grade Geospatial Incident & Threat Intelligence Platform powered by local inference and GTD forensic analytics.",
+          content:
+            "TerraForensics AI: Sovereign, defense-grade Geospatial Incident & Threat Intelligence Platform powered by local inference and GTD forensic analytics.",
         },
       },
       {
@@ -226,7 +236,8 @@ class MetaGenerator {
             tag: "title",
             props: null,
             content:
-              customTitle ?? "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
+              customTitle ??
+              "TerraForensics AI | Sovereign Geospatial Intelligence Platform",
           };
         }
         // Override meta title

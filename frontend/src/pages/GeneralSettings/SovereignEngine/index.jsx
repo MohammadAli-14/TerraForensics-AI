@@ -75,7 +75,8 @@ export default function SovereignEngineSettings() {
               </span>
             </div>
             <p className="text-sm text-slate-400 mt-1">
-              Aegis-GTD Sovereign Incident & Threat Intelligence Engine — Locked to Local Infrastructure
+              Aegis-GTD Sovereign Incident & Threat Intelligence Engine — Locked
+              to Local Infrastructure
             </p>
           </div>
           <button
@@ -83,7 +84,10 @@ export default function SovereignEngineSettings() {
             disabled={loading}
             className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-xs font-medium text-slate-200 border border-slate-700 transition"
           >
-            <ArrowsClockwise size={14} className={loading ? "animate-spin" : ""} />
+            <ArrowsClockwise
+              size={14}
+              className={loading ? "animate-spin" : ""}
+            />
             Refresh Telemetry
           </button>
         </div>
@@ -99,7 +103,8 @@ export default function SovereignEngineSettings() {
               <Database size={20} className="text-amber-400" />
             </div>
             <div className="text-2xl font-mono font-bold text-white mb-1">
-              {engineStatus?.gtdDatabase?.recordCount?.toLocaleString() || "181,691"}
+              {engineStatus?.gtdDatabase?.recordCount?.toLocaleString() ||
+                "181,691"}
             </div>
             <div className="text-xs text-slate-400 mb-4">
               Verified Global Terrorism Database records (1970–2017)
@@ -163,7 +168,11 @@ export default function SovereignEngineSettings() {
                 ✅ Concurrency & Follow-up State Isolation (Figure 10)
               </div>
               <div className="text-slate-400">
-                Follow-up memory keyed by composite <code className="text-amber-400">${"{workspaceId}:${threadId}:${userId}"}</code>. Multi-user cross-overwrites completely prevented.
+                Follow-up memory keyed by composite{" "}
+                <code className="text-amber-400">
+                  ${"{workspaceId}:${threadId}:${userId}"}
+                </code>
+                . Multi-user cross-overwrites completely prevented.
               </div>
             </div>
 
@@ -173,7 +182,9 @@ export default function SovereignEngineSettings() {
               </div>
               <div className="text-slate-400">
                 Hardcoded 1.0 confidence replaced by formal composite formula:
-                <code className="text-emerald-300 block mt-1">C = 0.35 S_schema + 0.35 S_ground + 0.30 S_faith</code>
+                <code className="text-emerald-300 block mt-1">
+                  C = 0.35 S_schema + 0.35 S_ground + 0.30 S_faith
+                </code>
               </div>
             </div>
 
@@ -182,7 +193,8 @@ export default function SovereignEngineSettings() {
                 ✅ Dual-Channel Context Synthesis (Section 4.2)
               </div>
               <div className="text-slate-400">
-                Fused retrieval path concurrently executes exact MongoDB queries alongside LanceDB vector chunks without misrouting failures.
+                Fused retrieval path concurrently executes exact MongoDB queries
+                alongside LanceDB vector chunks without misrouting failures.
               </div>
             </div>
 
@@ -191,7 +203,8 @@ export default function SovereignEngineSettings() {
                 ✅ Split-Pane Workstation (Section 2.2)
               </div>
               <div className="text-slate-400">
-                Direct integration of MapLibre geospatial canvas alongside conversational console, replacing external URL map popups.
+                Direct integration of MapLibre geospatial canvas alongside
+                conversational console, replacing external URL map popups.
               </div>
             </div>
           </div>
@@ -206,7 +219,8 @@ export default function SovereignEngineSettings() {
                 Empirical Evaluation Benchmark (150 Queries)
               </h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                Executes standardized evaluation across Structured GTD, Vector RAG, and Hybrid queries to export publishable LaTeX tables.
+                Executes standardized evaluation across Structured GTD, Vector
+                RAG, and Hybrid queries to export publishable LaTeX tables.
               </p>
             </div>
             <button
@@ -229,34 +243,68 @@ export default function SovereignEngineSettings() {
             <div className="mt-4 p-4 rounded-lg bg-slate-950/80 border border-slate-800 animate-fadeIn">
               <div className="grid grid-cols-2 md:grid-cols-6 gap-3 text-center mb-4">
                 <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                  <span className="text-[10px] font-mono text-slate-500 block">PRECISION</span>
-                  <span className="text-base font-mono font-bold text-emerald-400">{benchmarkResult.precision}</span>
+                  <span className="text-[10px] font-mono text-slate-500 block">
+                    PRECISION
+                  </span>
+                  <span className="text-base font-mono font-bold text-emerald-400">
+                    {benchmarkResult.precision}
+                  </span>
                 </div>
                 <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                  <span className="text-[10px] font-mono text-slate-500 block">RECALL</span>
-                  <span className="text-base font-mono font-bold text-emerald-400">{benchmarkResult.recall}</span>
+                  <span className="text-[10px] font-mono text-slate-500 block">
+                    RECALL
+                  </span>
+                  <span className="text-base font-mono font-bold text-emerald-400">
+                    {benchmarkResult.recall}
+                  </span>
                 </div>
                 <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                  <span className="text-[10px] font-mono text-slate-500 block">F1-SCORE</span>
-                  <span className="text-base font-mono font-bold text-amber-400">{benchmarkResult.f1}</span>
+                  <span className="text-[10px] font-mono text-slate-500 block">
+                    F1-SCORE
+                  </span>
+                  <span className="text-base font-mono font-bold text-amber-400">
+                    {benchmarkResult.f1}
+                  </span>
                 </div>
                 <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                  <span className="text-[10px] font-mono text-slate-500 block">GROUNDING</span>
-                  <span className="text-base font-mono font-bold text-blue-400">{benchmarkResult.grounding}</span>
+                  <span className="text-[10px] font-mono text-slate-500 block">
+                    GROUNDING
+                  </span>
+                  <span className="text-base font-mono font-bold text-blue-400">
+                    {benchmarkResult.grounding}
+                  </span>
                 </div>
                 <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                  <span className="text-[10px] font-mono text-slate-500 block">P95 LATENCY</span>
-                  <span className="text-base font-mono font-bold text-rose-400">{benchmarkResult.p95Latency}</span>
+                  <span className="text-[10px] font-mono text-slate-500 block">
+                    P95 LATENCY
+                  </span>
+                  <span className="text-base font-mono font-bold text-rose-400">
+                    {benchmarkResult.p95Latency}
+                  </span>
                 </div>
                 <div className="bg-slate-900 p-2.5 rounded border border-slate-800">
-                  <span className="text-[10px] font-mono text-slate-500 block">TOTAL CASES</span>
-                  <span className="text-base font-mono font-bold text-slate-200">{benchmarkResult.total}</span>
+                  <span className="text-[10px] font-mono text-slate-500 block">
+                    TOTAL CASES
+                  </span>
+                  <span className="text-base font-mono font-bold text-slate-200">
+                    {benchmarkResult.total}
+                  </span>
                 </div>
               </div>
 
               <div className="flex items-center justify-between text-xs font-mono text-slate-400 border-t border-slate-800/80 pt-3">
-                <span>LaTeX Export: <code className="text-amber-400">{benchmarkResult.exportedLatex}</code></span>
-                <span>Trace Data: <code className="text-slate-300">{benchmarkResult.exportedCsv}</code></span>
+                <span>
+                  LaTeX Export:{" "}
+                  <code className="text-amber-400">
+                    {benchmarkResult.exportedLatex}
+                  </code>
+                </span>
+                <span>
+                  Trace Data:{" "}
+                  <code className="text-slate-300">
+                    {benchmarkResult.exportedCsv}
+                  </code>
+                </span>
               </div>
             </div>
           )}

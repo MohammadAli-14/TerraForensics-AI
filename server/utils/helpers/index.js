@@ -115,7 +115,9 @@ function getLLMProvider({ provider = null, model = null } = {}) {
       const { AnthropicLLM } = require("../AiProviders/anthropic");
       return new AnthropicLLM(embedder, model);
     default:
-      const { OpenRouterLLM: DefaultLLM } = require("../AiProviders/openRouter");
+      const {
+        OpenRouterLLM: DefaultLLM,
+      } = require("../AiProviders/openRouter");
       return new DefaultLLM(embedder, model);
   }
 }
@@ -210,7 +212,10 @@ function getLLMProviderClass({ provider = null } = {}) {
 function getBaseLLMProviderModel({ provider = null } = {}) {
   switch (provider) {
     case "openrouter":
-      return process.env.OPENROUTER_MODEL_PREF || "meta-llama/llama-3.1-8b-instruct:free";
+      return (
+        process.env.OPENROUTER_MODEL_PREF ||
+        "meta-llama/llama-3.1-8b-instruct:free"
+      );
     case "ollama":
       return process.env.OLLAMA_MODEL_PREF || "llama3.1:latest";
     case "openai":

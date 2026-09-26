@@ -41,8 +41,8 @@ function RefusalInfoPanel() {
         <div className="mt-1 p-3 rounded-lg bg-theme-bg-secondary text-theme-text-secondary text-xs leading-relaxed max-w-md">
           <p className="font-semibold mb-1">Query Mode Response</p>
           <p>
-            This workspace is configured in <strong>query</strong> mode, so
-            the assistant only answers when relevant context is found in the
+            This workspace is configured in <strong>query</strong> mode, so the
+            assistant only answers when relevant context is found in the
             embedded documents. The model could not find information matching
             your question.
           </p>
@@ -175,7 +175,9 @@ const HistoricalMessage = ({
           />
         </div>
         {role === "assistant" && <Citations sources={sources} />}
-        {role === "assistant" && gtdData && <GTDDataDisplay gtdData={gtdData} llmOutput={llmOutput} />}
+        {role === "assistant" && gtdData && (
+          <GTDDataDisplay gtdData={gtdData} llmOutput={llmOutput} />
+        )}
       </div>
     </div>
   );

@@ -450,7 +450,8 @@ const TRANSLATIONS = {
       },
       "display-language": {
         title: "显示语言",
-        description: "选择显示 TerraForensics AI 界面所用的语言（若有翻译可用）。",
+        description:
+          "选择显示 TerraForensics AI 界面所用的语言（若有翻译可用）。",
       },
       logo: {
         title: "品牌标志",
@@ -497,7 +498,8 @@ const TRANSLATIONS = {
   },
   api: {
     title: "API 密钥",
-    description: "API 密钥允许持有者以编程方式访问和管理此 TerraForensics AI 实例。",
+    description:
+      "API 密钥允许持有者以编程方式访问和管理此 TerraForensics AI 实例。",
     link: "阅读 API 文档",
     generate: "生成新的 API 密钥",
     table: {

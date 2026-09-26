@@ -6,11 +6,7 @@ import { useManageWorkspaceModal } from "@/components/Modals/ManageWorkspace";
 import ManageWorkspace from "@/components/Modals/ManageWorkspace";
 import { useState } from "react";
 import showToast from "@/utils/toast";
-import {
-  GlobeHemisphereWest,
-  ChartBar,
-  FileText,
-} from "@phosphor-icons/react";
+import { GlobeHemisphereWest, ChartBar, FileText } from "@phosphor-icons/react";
 
 export default function ExploreFeatures() {
   const { t } = useTranslation();
@@ -49,24 +45,36 @@ export default function ExploreFeatures() {
         <FeatureCard
           icon={GlobeHemisphereWest}
           title={t("main-page.exploreMore.features.gtdHeatmap.title")}
-          description={t("main-page.exploreMore.features.gtdHeatmap.description")}
-          primaryAction={t("main-page.exploreMore.features.gtdHeatmap.primaryAction")}
+          description={t(
+            "main-page.exploreMore.features.gtdHeatmap.description"
+          )}
+          primaryAction={t(
+            "main-page.exploreMore.features.gtdHeatmap.primaryAction"
+          )}
           onPrimaryAction={openGtdMap}
           badge="Interactive Map"
         />
         <FeatureCard
           icon={ChartBar}
           title={t("main-page.exploreMore.features.analyticsCharts.title")}
-          description={t("main-page.exploreMore.features.analyticsCharts.description")}
-          primaryAction={t("main-page.exploreMore.features.analyticsCharts.primaryAction")}
+          description={t(
+            "main-page.exploreMore.features.analyticsCharts.description"
+          )}
+          primaryAction={t(
+            "main-page.exploreMore.features.analyticsCharts.primaryAction"
+          )}
           onPrimaryAction={openChat}
           badge="Recharts"
         />
         <FeatureCard
           icon={FileText}
           title={t("main-page.exploreMore.features.documentRag.title")}
-          description={t("main-page.exploreMore.features.documentRag.description")}
-          primaryAction={t("main-page.exploreMore.features.documentRag.primaryAction")}
+          description={t(
+            "main-page.exploreMore.features.documentRag.description"
+          )}
+          primaryAction={t(
+            "main-page.exploreMore.features.documentRag.primaryAction"
+          )}
           onPrimaryAction={manageDocuments}
           badge="LanceDB"
         />

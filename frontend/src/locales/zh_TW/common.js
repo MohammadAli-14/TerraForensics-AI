@@ -747,7 +747,8 @@ const TRANSLATIONS = {
       },
       "display-language": {
         title: "顯示語言",
-        description: "選擇 TerraForensics AI 使用者介面的顯示語言（如有提供翻譯）。",
+        description:
+          "選擇 TerraForensics AI 使用者介面的顯示語言（如有提供翻譯）。",
       },
       logo: {
         title: "品牌標誌",

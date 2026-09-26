@@ -293,8 +293,8 @@ export default function MultiUserAuth() {
                 </p>
               </div>
               <p className="text-sm text-theme-text-secondary text-center">
-                {t("login.sign-in.start")} {customAppName || "TerraForensics AI"}{" "}
-                {t("login.sign-in.end")}
+                {t("login.sign-in.start")}{" "}
+                {customAppName || "TerraForensics AI"} {t("login.sign-in.end")}
               </p>
             </div>
           </div>

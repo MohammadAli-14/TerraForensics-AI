@@ -35,18 +35,22 @@ function ShowWorkspaceChat() {
     localStorage.setItem("tf_show_map", String(nextVal));
     if (nextVal) {
       window.dispatchEvent(new CustomEvent("tf:open-map"));
-      const activeDataToDispatch = window.__tfLatestGtdData || (() => {
-        try {
-          const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
-          return cached ? JSON.parse(cached) : null;
-        } catch (e) {
-          return null;
-        }
-      })();
+      const activeDataToDispatch =
+        window.__tfLatestGtdData ||
+        (() => {
+          try {
+            const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
+            return cached ? JSON.parse(cached) : null;
+          } catch (e) {
+            return null;
+          }
+        })();
       if (activeDataToDispatch) {
         setTimeout(() => {
           window.dispatchEvent(
-            new CustomEvent("aegis:active-gtd-data", { detail: activeDataToDispatch })
+            new CustomEvent("aegis:active-gtd-data", {
+              detail: activeDataToDispatch,
+            })
           );
         }, 60);
       }
@@ -60,18 +64,22 @@ function ShowWorkspaceChat() {
     const handleOpenMap = () => {
       setShowMap(true);
       localStorage.setItem("tf_show_map", "true");
-      const activeDataToDispatch = window.__tfLatestGtdData || (() => {
-        try {
-          const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
-          return cached ? JSON.parse(cached) : null;
-        } catch (e) {
-          return null;
-        }
-      })();
+      const activeDataToDispatch =
+        window.__tfLatestGtdData ||
+        (() => {
+          try {
+            const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
+            return cached ? JSON.parse(cached) : null;
+          } catch (e) {
+            return null;
+          }
+        })();
       if (activeDataToDispatch) {
         setTimeout(() => {
           window.dispatchEvent(
-            new CustomEvent("aegis:active-gtd-data", { detail: activeDataToDispatch })
+            new CustomEvent("aegis:active-gtd-data", {
+              detail: activeDataToDispatch,
+            })
           );
         }, 60);
       }
@@ -137,8 +145,13 @@ function ShowWorkspaceChat() {
               title="Open TerraForensics Geospatial Canvas"
             >
               <span className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse shadow-[0_0_8px_rgba(34,211,238,0.8)]" />
-              <Globe size={16} className="text-cyan-400 group-hover:rotate-45 transition-transform" />
-              <span className="font-semibold tracking-wide">Geospatial Canvas</span>
+              <Globe
+                size={16}
+                className="text-cyan-400 group-hover:rotate-45 transition-transform"
+              />
+              <span className="font-semibold tracking-wide">
+                Geospatial Canvas
+              </span>
             </button>
           )}
         </div>

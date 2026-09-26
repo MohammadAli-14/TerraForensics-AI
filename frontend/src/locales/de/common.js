@@ -133,7 +133,8 @@ const TRANSLATIONS = {
     checklist: {
       title: "Erste Schritte",
       tasksLeft: "Aufgaben übrig",
-      completed: "Sie sind auf dem Weg, ein TerraForensics AI-Experte zu werden!",
+      completed:
+        "Sie sind auf dem Weg, ein TerraForensics AI-Experte zu werden!",
       dismiss: "schließen",
       tasks: {
         create_workspace: {
@@ -429,7 +430,8 @@ const TRANSLATIONS = {
   customization: {
     interface: {
       title: "UI Einstellungen",
-      description: "Passen Sie die Benutzeroberfläche von TerraForensics AI an.",
+      description:
+        "Passen Sie die Benutzeroberfläche von TerraForensics AI an.",
     },
     branding: {
       title: "Branding & Whitelabeling",
@@ -438,7 +440,8 @@ const TRANSLATIONS = {
     },
     chat: {
       title: "Chat",
-      description: "Passen Sie Ihre Chat-Einstellungen für TerraForensics AI an.",
+      description:
+        "Passen Sie Ihre Chat-Einstellungen für TerraForensics AI an.",
       auto_submit: {
         title: "Spracheingaben automatisch senden",
         description:

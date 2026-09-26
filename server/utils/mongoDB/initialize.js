@@ -18,7 +18,9 @@ async function initMongoDBIntegration(isRetry = false) {
     }
 
     if (isConnecting && connectionPromise) {
-      console.log("🔗 MongoDB connection already in progress, awaiting existing promise...");
+      console.log(
+        "🔗 MongoDB connection already in progress, awaiting existing promise..."
+      );
       return await connectionPromise;
     }
 
@@ -96,7 +98,9 @@ async function initMongoDBIntegration(isRetry = false) {
           mongoose.connection._listenersSetup = true;
 
           mongoose.connection.on("disconnected", () => {
-            console.log("⚠️ MongoDB disconnected. Scheduling auto-reconnect...");
+            console.log(
+              "⚠️ MongoDB disconnected. Scheduling auto-reconnect..."
+            );
             scheduleAutoReconnect();
           });
 
@@ -178,10 +182,18 @@ async function ensureMongoDBConnected(timeoutMs = 15000) {
     const res = await Promise.race([
       initMongoDBIntegration(false),
       new Promise((resolve) =>
-        setTimeout(() => resolve({ success: false, reason: "Timeout" }), timeoutMs)
+        setTimeout(
+          () => resolve({ success: false, reason: "Timeout" }),
+          timeoutMs
+        )
       ),
     ]);
-    return Boolean(res && res.success && mongoose.connection && mongoose.connection.readyState === 1);
+    return Boolean(
+      res &&
+      res.success &&
+      mongoose.connection &&
+      mongoose.connection.readyState === 1
+    );
   } catch (e) {
     return false;
   }
@@ -219,4 +231,3 @@ module.exports = {
   checkMongoDBHealth,
   mongoose,
 };
-

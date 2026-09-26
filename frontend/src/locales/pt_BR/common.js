@@ -52,7 +52,8 @@ const TRANSLATIONS = {
     },
     workspace: {
       title: "Crie seu primeiro workspace",
-      description: "Crie seu primeiro workspace e comece a usar o TerraForensics AI.",
+      description:
+        "Crie seu primeiro workspace e comece a usar o TerraForensics AI.",
     },
   },
   common: {
@@ -427,7 +428,8 @@ const TRANSLATIONS = {
     },
     branding: {
       title: "Marca & Etiqueta Branca",
-      description: "Personalize sua instância do TerraForensics AI com sua marca.",
+      description:
+        "Personalize sua instância do TerraForensics AI com sua marca.",
     },
     chat: {
       title: "Chat",
