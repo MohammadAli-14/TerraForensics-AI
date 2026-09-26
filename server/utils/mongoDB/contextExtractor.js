@@ -2469,21 +2469,52 @@ class MongoDBContextExtractor {
         /from\s+(\d{4})\s+to\s+(\d{4})/i,
         /(\d{4})\s*-\s*(\d{4})/,
         /(\d{4})\s+to\s+(\d{4})/i,
+        /(\d{4})\s+and\s+(\d{4})/i,
       ];
 
       let dateRangeFound = false;
       for (const pattern of dateRangePatterns) {
         const match = query.match(pattern);
         if (match && match[1] && match[2]) {
+          const y1 = parseInt(match[1], 10);
+          const y2 = parseInt(match[2], 10);
           conditions._yearRange = {
-            start: match[1],
-            end: match[2],
+            start: String(Math.min(y1, y2)),
+            end: String(Math.max(y1, y2)),
           };
           console.log(
-            `[Query Parser] Found date range: ${match[1]} to ${match[2]}`
+            `[Query Parser] Found date range: ${conditions._yearRange.start} to ${conditions._yearRange.end}`
           );
           dateRangeFound = true;
           break;
+        }
+      }
+
+      // Check for open-ended temporal patterns: "since 2014", "after 2014", "from 2014 onwards"
+      const afterMatch = query.match(/\b(?:since|after|from)\s+(\d{4})(?:\s+onwards)?\b/i);
+      if (afterMatch && !dateRangeFound) {
+        const y = parseInt(afterMatch[1], 10);
+        if (y >= 1970 && y <= 2021) {
+          conditions._yearRange = {
+            start: String(y),
+            end: "2021",
+          };
+          console.log(`[Query Parser] Found open-ended start year (since/after): >= ${y}`);
+          dateRangeFound = true;
+        }
+      }
+
+      // Check for open-ended temporal patterns: "before 2014", "prior to 2014", "until 2014", "up to 2014"
+      const beforeMatch = query.match(/\b(?:before|prior\s+to|until|up\s+to)\s+(\d{4})\b/i);
+      if (beforeMatch && !dateRangeFound) {
+        const y = parseInt(beforeMatch[1], 10);
+        if (y >= 1970 && y <= 2021) {
+          conditions._yearRange = {
+            start: "1970",
+            end: String(y),
+          };
+          console.log(`[Query Parser] Found open-ended end year (before/until): <= ${y}`);
+          dateRangeFound = true;
         }
       }
 
@@ -3189,7 +3220,7 @@ class MongoDBContextExtractor {
         if (match && match[1]) {
           const potentialCity = match[1].trim();
 
-          // Skip common words that aren't cities
+          // Skip common words and phrases that aren't cities
           const skipWords = [
             "how",
             "many",
@@ -3203,8 +3234,61 @@ class MongoDBContextExtractor {
             "by",
             "from",
             "to",
+            "and",
+            "with",
+            "for",
+            "on",
+            "at",
+            "all",
+            "any",
+            "incidents",
+            "incident",
+            "bombings",
+            "bombing",
+            "happened",
+            "occurred",
+            "deaths",
+            "casualties",
+            "killed",
+            "wounded",
+            "targets",
+            "events",
+            "data",
+            "tell",
+            "show",
+            "details",
+            "information",
+            "list",
+            "report",
+            "find",
+            "search",
+            "query",
+            "what",
+            "where",
+            "when",
+            "which",
+            "who",
           ];
-          if (skipWords.includes(potentialCity.toLowerCase())) continue;
+          const lowerCity = potentialCity.toLowerCase();
+          const cityTokens = lowerCity.split(/\s+/);
+          if (
+            skipWords.includes(lowerCity) ||
+            cityTokens.some((t) =>
+              [
+                "attacks",
+                "attack",
+                "incident",
+                "incidents",
+                "bombing",
+                "bombings",
+                "happened",
+                "occurred",
+              ].includes(t)
+            ) ||
+            cityTokens.every((t) => skipWords.includes(t))
+          ) {
+            continue;
+          }
 
           // CRITICAL: Skip if this token is already identified as a province
           // Prevents "Punjab" from being double-interpreted as both province AND city
