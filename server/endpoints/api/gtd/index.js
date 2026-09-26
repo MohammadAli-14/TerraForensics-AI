@@ -10,7 +10,7 @@ const attackService = require("../../../utils/mongoDB/services/attackService");
 const contextExtractor = require("../../../utils/mongoDB/contextExtractor");
 const gtdResponseFormatter = require("../../../utils/mongoDB/gtdResponseFormatter");
 const { gtdDebugEndpoints } = require("./debug");
-const { gtdTestEndpoints } = require("./test");
+const { gtdTestEndpoints } = require("./testEndpoint");
 
 function gtdEndpoints(app) {
   if (!app) return;

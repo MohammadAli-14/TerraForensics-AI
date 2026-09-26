@@ -57,30 +57,31 @@ describe('MongoDBContextExtractor', () => {
   });
 
   describe('normalizeGTDFilter', () => {
-    test('should convert year_start to $expr with $toInt', () => {
+    test('should convert year_start to native iyear $gte condition', () => {
       const input = { country_txt: 'Iraq', year_start: 2010 };
       const result = contextExtractor.normalizeGTDFilter(input);
 
-      expect(result).toHaveProperty('$expr');
-      expect(result.$expr).toHaveProperty('$gte');
+      expect(result).toHaveProperty('iyear');
+      expect(result.iyear).toEqual({ $gte: 2010 });
       expect(result.country_txt).toBeDefined();
       // Should not contain year_start in output
       expect(result.year_start).toBeUndefined();
     });
 
-    test('should convert year_end to $expr with $toInt', () => {
+    test('should convert year_end to native iyear $lte condition', () => {
       const input = { country_txt: 'Pakistan', year_end: 2017 };
       const result = contextExtractor.normalizeGTDFilter(input);
 
-      expect(result).toHaveProperty('$expr');
+      expect(result).toHaveProperty('iyear');
+      expect(result.iyear).toEqual({ $lte: 2017 });
     });
 
     test('should handle year_start and year_end together', () => {
       const input = { country_txt: 'Afghanistan', year_start: 2010, year_end: 2015 };
       const result = contextExtractor.normalizeGTDFilter(input);
 
-      expect(result).toHaveProperty('$expr');
-      expect(result.$expr.$and.length).toBeGreaterThanOrEqual(2);
+      expect(result).toHaveProperty('iyear');
+      expect(result.iyear).toEqual({ $gte: 2010, $lte: 2015 });
     });
 
     test('should pass through other fields unchanged', () => {
@@ -185,11 +186,12 @@ describe('MongoDBContextExtractor', () => {
       expect(filter).toHaveProperty('country_txt');
     });
 
-    test('should build filter for year range', () => {
+    test('should build filter for year range with native iyear range', () => {
       const conditions = { _yearRange: { start: 2010, end: 2015 } };
       const filter = contextExtractor.buildMongoDBFilter(conditions);
 
-      expect(filter).toHaveProperty('$expr');
+      expect(filter).toHaveProperty('iyear');
+      expect(filter.iyear).toEqual({ $gte: 2010, $lte: 2015 });
     });
 
     test('should build filter for attack type', () => {

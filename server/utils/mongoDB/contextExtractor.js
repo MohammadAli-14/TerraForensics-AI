@@ -544,16 +544,24 @@ class MongoDBContextExtractor {
       filter.suicide = conditions.suicide;
     }
 
-    // Date range handling - Native Number comparisons (accelerated by idx_country_year index)
+    // Date range handling - Supports both native Number and String records in GTD
     if (conditions._yearRange) {
       const startYear = parseInt(conditions._yearRange.start, 10);
       const endYear = parseInt(conditions._yearRange.end, 10);
-      filter.iyear = { $gte: startYear, $lte: endYear };
+      filter.$or = [
+        { iyear: { $gte: startYear, $lte: endYear } },
+        { iyear: { $gte: String(startYear), $lte: String(endYear) } },
+      ];
       console.log(
-        `[Filter Builder] Native numeric year range filter: ${startYear} to ${endYear} (idx_country_year ready)`
+        `[Filter Builder] Dual-type year range filter: ${startYear} to ${endYear}`
       );
     } else if (conditions.iyear) {
-      filter.iyear = parseInt(conditions.iyear, 10);
+      const yearNum = parseInt(conditions.iyear, 10);
+      const yearStr = String(conditions.iyear).trim();
+      filter.iyear = { $in: [yearNum, yearStr] };
+      console.log(
+        `[Filter Builder] Dual-type year filter: ${yearNum} / "${yearStr}"`
+      );
     }
 
     // High-performance Geospatial Bounding-Box filter (2dsphere index accelerated)
@@ -719,19 +727,26 @@ class MongoDBContextExtractor {
       console.log(`[Filter Normalizer] Converted year_start/year_end to native iyear range`);
     }
 
-    // Handle iyear - native Number comparisons (accelerated by idx_country_year)
+    // Handle iyear - support both native Number and String records in GTD
     if (normalized.iyear) {
       if (typeof normalized.iyear === "object") {
         const iyear = normalized.iyear;
-        const cleanIyear = {};
-        if (iyear.$gte !== undefined) cleanIyear.$gte = parseInt(iyear.$gte, 10);
-        if (iyear.$lte !== undefined) cleanIyear.$lte = parseInt(iyear.$lte, 10);
-        if (iyear.$gt !== undefined) cleanIyear.$gt = parseInt(iyear.$gt, 10);
-        if (iyear.$lt !== undefined) cleanIyear.$lt = parseInt(iyear.$lt, 10);
-        if (iyear.$eq !== undefined) cleanIyear.$eq = parseInt(iyear.$eq, 10);
-        normalized.iyear = cleanIyear;
+        if (iyear.$eq !== undefined) {
+          const eqNum = parseInt(iyear.$eq, 10);
+          const eqStr = String(iyear.$eq).trim();
+          normalized.iyear = { $in: [eqNum, eqStr] };
+        } else {
+          const cleanIyear = {};
+          if (iyear.$gte !== undefined) cleanIyear.$gte = parseInt(iyear.$gte, 10);
+          if (iyear.$lte !== undefined) cleanIyear.$lte = parseInt(iyear.$lte, 10);
+          if (iyear.$gt !== undefined) cleanIyear.$gt = parseInt(iyear.$gt, 10);
+          if (iyear.$lt !== undefined) cleanIyear.$lt = parseInt(iyear.$lt, 10);
+          normalized.iyear = cleanIyear;
+        }
       } else if (typeof normalized.iyear === "string" || typeof normalized.iyear === "number") {
-        normalized.iyear = parseInt(normalized.iyear, 10);
+        const yNum = parseInt(normalized.iyear, 10);
+        const yStr = String(normalized.iyear).trim();
+        normalized.iyear = { $in: [yNum, yStr] };
       }
     }
 
