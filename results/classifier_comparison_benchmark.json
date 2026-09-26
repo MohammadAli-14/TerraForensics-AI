@@ -5,35 +5,51 @@
   "results": [
     {
       "method": "Rule-Based Regex Router (Production)",
-      "accuracy": 84.44,
-      "precision": 76.6,
-      "recall": 100.0,
-      "f1_score": 86.65,
-      "latency_ms": 0.0504
+      "pooled_precision": 76.27,
+      "pooled_recall": 100.0,
+      "pooled_f1": 86.54,
+      "pooled_accuracy": 84.44,
+      "cv_macro_precision": 76.6,
+      "cv_macro_recall": 100.0,
+      "cv_macro_f1": 86.65,
+      "cv_macro_accuracy": 84.44,
+      "latency_ms": 0.0474
     },
     {
       "method": "TF-IDF + Logistic Regression",
-      "accuracy": 97.78,
-      "precision": 100.0,
-      "recall": 95.56,
-      "f1_score": 97.68,
-      "latency_ms": 0.5424
+      "pooled_precision": 100.0,
+      "pooled_recall": 95.56,
+      "pooled_f1": 97.73,
+      "pooled_accuracy": 97.78,
+      "cv_macro_precision": 100.0,
+      "cv_macro_recall": 95.56,
+      "cv_macro_f1": 97.68,
+      "cv_macro_accuracy": 97.78,
+      "latency_ms": 0.4446
     },
     {
       "method": "TF-IDF + Linear SVM",
-      "accuracy": 98.89,
-      "precision": 100.0,
-      "recall": 97.78,
-      "f1_score": 98.82,
-      "latency_ms": 1.0127
+      "pooled_precision": 100.0,
+      "pooled_recall": 97.78,
+      "pooled_f1": 98.88,
+      "pooled_accuracy": 98.89,
+      "cv_macro_precision": 100.0,
+      "cv_macro_recall": 97.78,
+      "cv_macro_f1": 98.82,
+      "cv_macro_accuracy": 98.89,
+      "latency_ms": 0.4547
     },
     {
       "method": "TF-IDF + Multinomial Naive Bayes",
-      "accuracy": 98.89,
-      "precision": 100.0,
-      "recall": 97.78,
-      "f1_score": 98.82,
-      "latency_ms": 1.1511
+      "pooled_precision": 100.0,
+      "pooled_recall": 97.78,
+      "pooled_f1": 98.88,
+      "pooled_accuracy": 98.89,
+      "cv_macro_precision": 100.0,
+      "cv_macro_recall": 97.78,
+      "cv_macro_f1": 98.82,
+      "cv_macro_accuracy": 98.89,
+      "latency_ms": 0.4333
     }
   ]
 }

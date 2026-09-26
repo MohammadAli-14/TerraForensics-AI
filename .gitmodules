@@ -1,7 +1,0 @@
-[submodule "browser-extension"]
-	path = browser-extension
-	url = https://github.com/Mintplex-Labs/VertexAI-extension.git
-[submodule "embed"]
-	path = embed
-	url = https://github.com/Mintplex-Labs/VertexAI-embed.git
-	branch = main

@@ -151,6 +151,10 @@ def benchmark_rule_based(queries, labels, cv_splits):
         "precision": np.mean(fold_precisions) * 100.0,
         "recall": np.mean(fold_recalls) * 100.0,
         "f1": np.mean(fold_f1s) * 100.0,
+        "pooled_accuracy": accuracy_score(labels, all_preds) * 100.0,
+        "pooled_precision": precision_score(labels, all_preds, zero_division=0) * 100.0,
+        "pooled_recall": recall_score(labels, all_preds, zero_division=0) * 100.0,
+        "pooled_f1": f1_score(labels, all_preds, zero_division=0) * 100.0,
         "latency_ms": avg_latency_ms,
         "predictions": all_preds
     }
@@ -196,18 +200,23 @@ def benchmark_ml_pipeline(name, pipeline, queries, labels, cv_splits):
         "precision": np.mean(fold_precisions) * 100.0,
         "recall": np.mean(fold_recalls) * 100.0,
         "f1": np.mean(fold_f1s) * 100.0,
+        "pooled_accuracy": accuracy_score(labels, all_preds) * 100.0,
+        "pooled_precision": precision_score(labels, all_preds, zero_division=0) * 100.0,
+        "pooled_recall": recall_score(labels, all_preds, zero_division=0) * 100.0,
+        "pooled_f1": f1_score(labels, all_preds, zero_division=0) * 100.0,
         "latency_ms": avg_latency_ms,
         "predictions": all_preds
     }
 
 
-def benchmark_disjoint_temporal_split(queries, labels, raw_data):
+def benchmark_temporal_holdout_split(queries, labels, raw_data):
     """
-    Evaluates classifiers under strict Spatio-Temporal Disjoint Hold-Out Partition:
-    - GTD queries targeting incidents prior to 2005 (or historical events) form Training Set.
-    - GTD queries targeting modern incidents (2005–2021) form the Held-Out Test Set.
-    - Document queries are disjointly partitioned by domain topics to eliminate template leakage.
-    Demonstrates model generalization under temporal and entity distribution shift.
+    Evaluates classifiers under Temporal Hold-Out on Dated GTD Queries (Pre-2005 Train vs. Post-2005 Test)
+    with 50/50 Index-Alternated Document Control:
+    - GTD queries targeting incidents prior to 2005 (1970–2004) form the Training Set (N=37).
+    - GTD queries targeting modern incidents (2005–2017) form the Held-Out Test Set (N=53).
+    - Document queries are partitioned 50/50 by index alternation across train and test sets (N=45 each) as a stable control.
+    Demonstrates model generalization and vocabulary drift under temporal distribution shift.
     """
     train_indices = []
     test_indices = []
@@ -349,9 +358,19 @@ def main():
     res_nb = benchmark_ml_pipeline("TF-IDF + Multinomial Naive Bayes", pipe_nb, queries, labels, cv_splits)
     results.append(res_nb)
 
-    # Print Table 1
+    # Print Table 1: Pooled (Table IV Exact Match)
     print("\n" + "=" * 105)
-    print("EXPERIMENT 2A: ROUTING CLASSIFIER COMPARISON (5-FOLD STRATIFIED CROSS-VALIDATION, N=180)")
+    print("EXPERIMENT 2A-1: POOLED METRICS OVER ALL 180 QUERIES (EXACT PAPER TABLE IV CONTROL)")
+    print("=" * 105)
+    print(f"{'Method / Architecture':<38} | {'Accuracy (%)':<12} | {'Precision (%)':<13} | {'Recall (%)':<11} | {'F1-Score (%)':<12} | {'Latency (ms)':<12}")
+    print("-" * 105)
+    for r in results:
+        print(f"{r['method']:<38} | {r['pooled_accuracy']:>10.2f}% | {r['pooled_precision']:>11.2f}% | {r['pooled_recall']:>9.2f}% | {r['pooled_f1']:>10.2f}% | {r['latency_ms']:>10.4f} ms")
+    print("=" * 105)
+
+    # Print Table 2: 5-Fold Macro Averages
+    print("\n" + "=" * 105)
+    print("EXPERIMENT 2A-2: 5-FOLD STRATIFIED CROSS-VALIDATION (MACRO FOLD AVERAGE, N=180)")
     print("=" * 105)
     print(f"{'Method / Architecture':<38} | {'Accuracy (%)':<12} | {'Precision (%)':<13} | {'Recall (%)':<11} | {'F1-Score (%)':<12} | {'Latency (ms)':<12}")
     print("-" * 105)
@@ -359,12 +378,12 @@ def main():
         print(f"{r['method']:<38} | {r['accuracy']:>10.2f}% | {r['precision']:>11.2f}% | {r['recall']:>9.2f}% | {r['f1']:>10.2f}% | {r['latency_ms']:>10.4f} ms")
     print("=" * 105)
 
-    # Run Zero-Leakage Spatio-Temporal Disjoint Evaluation
-    print("\nRunning Zero-Leakage Spatio-Temporal Disjoint Evaluation (Pre-2005 Train vs. Post-2005 Test)...")
-    disjoint_results, n_train, n_test = benchmark_disjoint_temporal_split(queries, labels, raw_data)
+    # Run Temporal Hold-Out Evaluation
+    print("\nRunning Temporal Hold-Out Evaluation (Pre-2005 Train vs. Post-2005 Test)...")
+    disjoint_results, n_train, n_test = benchmark_temporal_holdout_split(queries, labels, raw_data)
 
     print("\n" + "=" * 105)
-    print(f"EXPERIMENT 2B: ZERO-LEAKAGE SPATIO-TEMPORAL DISJOINT EVALUATION (TRAIN: N={n_train}, TEST: N={n_test})")
+    print(f"EXPERIMENT 2B: TEMPORAL HOLD-OUT ON DATED GTD QUERIES WITH STRATIFIED CONTROL (TRAIN: N={n_train}, TEST: N={n_test})")
     print("=" * 105)
     print(f"{'Method / Architecture':<38} | {'Accuracy (%)':<12} | {'Precision (%)':<13} | {'Recall (%)':<11} | {'F1-Score (%)':<12} | {'Latency (ms)':<12}")
     print("-" * 105)
@@ -380,10 +399,14 @@ def main():
         "results": [
             {
                 "method": r["method"],
-                "accuracy": round(r["accuracy"], 2),
-                "precision": round(r["precision"], 2),
-                "recall": round(r["recall"], 2),
-                "f1_score": round(r["f1"], 2),
+                "pooled_precision": round(r["pooled_precision"], 2),
+                "pooled_recall": round(r["pooled_recall"], 2),
+                "pooled_f1": round(r["pooled_f1"], 2),
+                "pooled_accuracy": round(r["pooled_accuracy"], 2),
+                "cv_macro_precision": round(r["precision"], 2),
+                "cv_macro_recall": round(r["recall"], 2),
+                "cv_macro_f1": round(r["f1"], 2),
+                "cv_macro_accuracy": round(r["accuracy"], 2),
                 "latency_ms": round(r["latency_ms"], 4)
             }
             for r in results
@@ -394,7 +417,7 @@ def main():
         json.dump(output_data_cv, f, indent=2)
 
     output_data_disjoint = {
-        "evaluation_protocol": "Zero-Leakage Spatio-Temporal Disjoint Hold-Out",
+        "evaluation_protocol": "Temporal Hold-Out on Dated GTD Queries with Stratified Document Control",
         "train_size": n_train,
         "test_size": n_test,
         "results": [
@@ -414,7 +437,7 @@ def main():
         json.dump(output_data_disjoint, f, indent=2)
 
     print(f"\nSaved Standard 5-Fold CV results to: {out_path_cv}")
-    print(f"Saved Zero-Leakage Disjoint results to: {out_path_disjoint}")
+    print(f"Saved Temporal Hold-Out results to: {out_path_disjoint}")
 
 if __name__ == "__main__":
     main()
