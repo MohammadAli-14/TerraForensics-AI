@@ -44,6 +44,14 @@ function buildGeoJson(points = [], maxPoints = MAX_RENDER_POINTS) {
             eventid: point.eventid,
             nkill: Number(point.nkill) || 0,
             nwound: Number(point.nwound) || 0,
+            weight: Math.min(
+              1.0,
+              Math.max(
+                0.1,
+                ((Number(point.nkill) || 0) * 2 + (Number(point.nwound) || 0)) /
+                  10
+              )
+            ),
           },
         };
       })
@@ -263,7 +271,7 @@ function buildMapStyle(basemapMode, pmtilesOk) {
 
 // ─── Add GTD data source + visualization layers to a map instance ───
 // Called on initial load and after each style switch.
-function addGTDDataLayers(map, isDark) {
+function addGTDDataLayers(map, isDark, isHeatmap = false) {
   const emptyGeoJson = { type: "FeatureCollection", features: [] };
 
   if (!map.getSource("gtd-points")) {
@@ -276,58 +284,23 @@ function addGTDDataLayers(map, isDark) {
     });
   }
 
-  if (!map.getLayer("gtd-clusters")) {
-    map.addLayer({
-      id: "gtd-clusters",
-      type: "circle",
-      source: "gtd-points",
-      filter: ["has", "point_count"],
-      paint: {
-        "circle-color": "#f97316",
-        "circle-radius": ["step", ["get", "point_count"], 12, 100, 18, 750, 26],
-        "circle-stroke-color": isDark ? "#374151" : "#1f2937",
-        "circle-stroke-width": 1,
-      },
-    });
-  }
-
-  if (!map.getLayer("gtd-cluster-count")) {
-    map.addLayer({
-      id: "gtd-cluster-count",
-      type: "symbol",
-      source: "gtd-points",
-      filter: ["has", "point_count"],
-      layout: { "text-field": "{point_count_abbreviated}", "text-size": 12 },
-      paint: { "text-color": isDark ? "#f9fafb" : "#111827" },
-    });
-  }
-
-  if (!map.getLayer("gtd-unclustered")) {
-    map.addLayer({
-      id: "gtd-unclustered",
-      type: "circle",
-      source: "gtd-points",
-      filter: ["!", ["has", "point_count"]],
-      paint: {
-        "circle-color": "#22c55e",
-        "circle-radius": 5,
-        "circle-stroke-color": isDark ? "#1e293b" : "#0f172a",
-        "circle-stroke-width": 1,
-      },
-    });
-  }
-
+  // Heatmap layer is added first so it is rendered below vector circles.
+  // Explicit initial layout visibility avoids WebGL framebuffer rendering on default visible state.
   if (!map.getLayer("gtd-heatmap")) {
     map.addLayer({
       id: "gtd-heatmap",
       type: "heatmap",
       source: "gtd-points",
       maxzoom: 10,
+      filter: ["!", ["has", "point_count"]],
+      layout: {
+        visibility: isHeatmap ? "visible" : "none",
+      },
       paint: {
         "heatmap-weight": [
           "interpolate",
           ["linear"],
-          ["get", "weight"],
+          ["coalesce", ["get", "weight"], 0.1],
           0,
           0,
           1,
@@ -355,7 +328,57 @@ function addGTDDataLayers(map, isDark) {
         "heatmap-opacity": 0.8,
       },
     });
-    map.setLayoutProperty("gtd-heatmap", "visibility", "none");
+  }
+
+  if (!map.getLayer("gtd-clusters")) {
+    map.addLayer({
+      id: "gtd-clusters",
+      type: "circle",
+      source: "gtd-points",
+      filter: ["has", "point_count"],
+      layout: {
+        visibility: isHeatmap ? "none" : "visible",
+      },
+      paint: {
+        "circle-color": "#f97316",
+        "circle-radius": ["step", ["get", "point_count"], 12, 100, 18, 750, 26],
+        "circle-stroke-color": isDark ? "#374151" : "#1f2937",
+        "circle-stroke-width": 1,
+      },
+    });
+  }
+
+  if (!map.getLayer("gtd-cluster-count")) {
+    map.addLayer({
+      id: "gtd-cluster-count",
+      type: "symbol",
+      source: "gtd-points",
+      filter: ["has", "point_count"],
+      layout: {
+        visibility: isHeatmap ? "none" : "visible",
+        "text-field": "{point_count_abbreviated}",
+        "text-size": 12,
+      },
+      paint: { "text-color": isDark ? "#f9fafb" : "#111827" },
+    });
+  }
+
+  if (!map.getLayer("gtd-unclustered")) {
+    map.addLayer({
+      id: "gtd-unclustered",
+      type: "circle",
+      source: "gtd-points",
+      filter: ["!", ["has", "point_count"]],
+      layout: {
+        visibility: isHeatmap ? "none" : "visible",
+      },
+      paint: {
+        "circle-color": "#22c55e",
+        "circle-radius": 5,
+        "circle-stroke-color": isDark ? "#1e293b" : "#0f172a",
+        "circle-stroke-width": 1,
+      },
+    });
   }
 }
 
@@ -1229,7 +1252,7 @@ export default function WorkspaceGTDMap() {
           setStatus("Map ready");
 
           // Add data layers (source + clusters/points/heatmap) using shared helper
-          addGTDDataLayers(map, isDarkMode);
+          addGTDDataLayers(map, isDarkMode, showHeatmapRef.current);
 
           map.on("click", "gtd-clusters", (event) => {
             const features = map.queryRenderedFeatures(event.point, {
@@ -1380,13 +1403,14 @@ export default function WorkspaceGTDMap() {
     map.setStyle(newStyle);
 
     // After setStyle() all custom sources/layers are removed.
-    // "styledata" fires when the new style JSON is parsed — addSource/addLayer
-    // are safe at that point even if basemap tiles haven't loaded yet.
-    // Use requestAnimationFrame as a micro-delay to guarantee the internal
-    // style object is fully initialised before we mutate it.
+    // Use a single guarded callback to prevent concurrent double-execution.
+    let switchExecuted = false;
     const reAddLayers = () => {
+      if (switchExecuted) return;
+      switchExecuted = true;
       try {
-        addGTDDataLayers(map, isDarkMode);
+        const currentHeatmap = showHeatmapRef.current;
+        addGTDDataLayers(map, isDarkMode, currentHeatmap);
 
         // Push current data to the new source
         const source = map.getSource("gtd-points");
@@ -1395,8 +1419,7 @@ export default function WorkspaceGTDMap() {
           source.setData(currentGeoJson);
         }
 
-        // Re-apply heatmap visibility
-        const currentHeatmap = showHeatmapRef.current;
+        // Re-apply heatmap / points visibility
         const heatVis = currentHeatmap ? "visible" : "none";
         const pointsVis = currentHeatmap ? "none" : "visible";
         if (map.getLayer("gtd-heatmap"))
@@ -1416,12 +1439,12 @@ export default function WorkspaceGTDMap() {
           "[GTDMap] Style switch: layers not ready, retrying...",
           err.message
         );
+        switchExecuted = false;
         setTimeout(reAddLayers, 100);
       }
     };
 
     map.once("style.load", () => requestAnimationFrame(reAddLayers));
-    map.once("styledata", () => requestAnimationFrame(reAddLayers));
   }, [basemapMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─── Popup CSS: override MapLibre popup container colors for dark/light mode ───
