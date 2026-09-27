@@ -274,6 +274,7 @@ function buildMapStyle(basemapMode, pmtilesOk) {
 function addGTDDataLayers(map, isDark, isHeatmap = false) {
   const emptyGeoJson = { type: "FeatureCollection", features: [] };
 
+  // 1. Clustered source for cluster bubbles & unclustered single points
   if (!map.getSource("gtd-points")) {
     map.addSource("gtd-points", {
       type: "geojson",
@@ -284,15 +285,23 @@ function addGTDDataLayers(map, isDark, isHeatmap = false) {
     });
   }
 
-  // Heatmap layer is added first so it is rendered below vector circles.
-  // Explicit initial layout visibility avoids WebGL framebuffer rendering on default visible state.
+  // 2. Dedicated unclustered source for heatmap (guarantees all points contribute to density)
+  if (!map.getSource("gtd-heatmap-source")) {
+    map.addSource("gtd-heatmap-source", {
+      type: "geojson",
+      data: emptyGeoJson,
+      cluster: false,
+    });
+  }
+
+  // 3. Heatmap layer attached to the unclustered source.
+  // Rendered below vectors; initial layout visibility is set explicitly to avoid WebGL quad glitches.
   if (!map.getLayer("gtd-heatmap")) {
     map.addLayer({
       id: "gtd-heatmap",
       type: "heatmap",
-      source: "gtd-points",
-      maxzoom: 10,
-      filter: ["!", ["has", "point_count"]],
+      source: "gtd-heatmap-source",
+      maxzoom: 18,
       layout: {
         visibility: isHeatmap ? "visible" : "none",
       },
@@ -300,32 +309,58 @@ function addGTDDataLayers(map, isDark, isHeatmap = false) {
         "heatmap-weight": [
           "interpolate",
           ["linear"],
-          ["coalesce", ["get", "weight"], 0.1],
+          ["coalesce", ["get", "weight"], 0.2],
           0,
-          0,
+          0.1,
           1,
           1,
         ],
-        "heatmap-intensity": ["interpolate", ["linear"], ["zoom"], 0, 1, 10, 3],
+        "heatmap-intensity": [
+          "interpolate",
+          ["linear"],
+          ["zoom"],
+          0,
+          1,
+          5,
+          2.2,
+          10,
+          4,
+          15,
+          6,
+        ],
         "heatmap-color": [
           "interpolate",
           ["linear"],
           ["heatmap-density"],
           0,
           "rgba(34,197,94,0)",
-          0.2,
-          "rgba(34,197,94,0.4)",
-          0.4,
-          "rgba(59,130,246,0.5)",
-          0.6,
-          "rgba(249,115,22,0.6)",
-          0.8,
-          "rgba(239,68,68,0.7)",
-          1,
-          "rgba(185,28,28,0.85)",
+          0.15,
+          "rgba(34,197,94,0.45)",
+          0.35,
+          "rgba(59,130,246,0.6)",
+          0.55,
+          "rgba(234,179,8,0.7)",
+          0.75,
+          "rgba(249,115,22,0.8)",
+          1.0,
+          "rgba(239,68,68,0.9)",
         ],
-        "heatmap-radius": ["interpolate", ["linear"], ["zoom"], 0, 4, 10, 25],
-        "heatmap-opacity": 0.8,
+        "heatmap-radius": [
+          "interpolate",
+          ["exponential", 1.4],
+          ["zoom"],
+          0,
+          3,
+          4,
+          8,
+          8,
+          18,
+          12,
+          30,
+          16,
+          45,
+        ],
+        "heatmap-opacity": 0.85,
       },
     });
   }
@@ -427,6 +462,14 @@ export default function WorkspaceGTDMap() {
     return "dark";
   });
   const isDarkMode = basemapMode !== "light";
+  const [layerLoading, setLayerLoading] = useState(false);
+  const [layerLoadingText, setLayerLoadingText] = useState("");
+  const containerBg =
+    basemapMode === "light"
+      ? "#aad3df"
+      : basemapMode === "satellite"
+        ? "#061320"
+        : "#14171a";
   const pmtilesAvailableRef = useRef(false);
   const basemapInitRef = useRef(true); // skip first style-switch effect (initMap handles it)
   const geoJsonRef = useRef(null); // mutable ref for style-switch closure
@@ -1332,16 +1375,25 @@ export default function WorkspaceGTDMap() {
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Push data to map source whenever geoJson changes (separate from map init)
+  // Push data to map sources whenever geoJson changes (separate from map init)
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
 
     // If map style not loaded yet, wait for it
     const pushData = () => {
-      const source = map.getSource("gtd-points");
-      if (source) {
-        source.setData(geoJson);
+      const clusterSource = map.getSource("gtd-points");
+      if (clusterSource) {
+        clusterSource.setData(geoJson);
+      }
+
+      const heatSource = map.getSource("gtd-heatmap-source");
+      if (heatSource) {
+        if (showHeatmapRef.current) {
+          heatSource.setData(geoJson);
+        } else {
+          heatSource.setData({ type: "FeatureCollection", features: [] });
+        }
       }
 
       // Only fitBounds on the FIRST data push (or when bounds become available
@@ -1360,15 +1412,33 @@ export default function WorkspaceGTDMap() {
     }
   }, [geoJson, bounds]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ─── Heatmap toggle effect with tactical transition loader ───
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
 
-    const visibility = showHeatmap ? "visible" : "none";
+    const heatVisibility = showHeatmap ? "visible" : "none";
     const pointsVisibility = showHeatmap ? "none" : "visible";
 
+    setLayerLoading(true);
+    setLayerLoadingText(
+      showHeatmap
+        ? "Generating incident density heatmap across all records..."
+        : "Restoring incident clusters and geographic vectors..."
+    );
+
+    // Sync heatmap source data: feed when active, clear when points mode to release GPU memory
+    const heatSource = map.getSource("gtd-heatmap-source");
+    if (heatSource) {
+      if (showHeatmap && geoJsonRef.current) {
+        heatSource.setData(geoJsonRef.current);
+      } else {
+        heatSource.setData({ type: "FeatureCollection", features: [] });
+      }
+    }
+
     if (map.getLayer("gtd-heatmap")) {
-      map.setLayoutProperty("gtd-heatmap", "visibility", visibility);
+      map.setLayoutProperty("gtd-heatmap", "visibility", heatVisibility);
     }
     if (map.getLayer("gtd-clusters")) {
       map.setLayoutProperty("gtd-clusters", "visibility", pointsVisibility);
@@ -1383,9 +1453,16 @@ export default function WorkspaceGTDMap() {
     if (map.getLayer("gtd-unclustered")) {
       map.setLayoutProperty("gtd-unclustered", "visibility", pointsVisibility);
     }
+
+    const onIdle = () => {
+      setLayerLoading(false);
+    };
+    map.once("idle", onIdle);
+    const fallbackTimer = setTimeout(onIdle, 1000);
+    return () => clearTimeout(fallbackTimer);
   }, [showHeatmap]);
 
-  // ─── Style switch effect: swap basemap when basemapMode changes ───
+  // ─── Style switch effect: swap basemap with seamless tactical loader ───
   // Skips the initial render (initMap handles first load). Only fires on toggle.
   useEffect(() => {
     if (basemapInitRef.current) {
@@ -1399,11 +1476,19 @@ export default function WorkspaceGTDMap() {
       localStorage.setItem("tf_preferred_basemap", basemapMode);
     }
 
+    setLayerLoading(true);
+    const basemapLabels = {
+      dark: "Calibrating Tactical Dark Canvas (Esri)...",
+      satellite: "Acquiring High-Resolution Satellite Reconnaissance Tiles...",
+      light: "Loading Daylight Cartographic Tiles (OSM)...",
+    };
+    setLayerLoadingText(
+      basemapLabels[basemapMode] || "Synchronizing basemap layer..."
+    );
+
     const newStyle = buildMapStyle(basemapMode, pmtilesAvailableRef.current);
     map.setStyle(newStyle);
 
-    // After setStyle() all custom sources/layers are removed.
-    // Use a single guarded callback to prevent concurrent double-execution.
     let switchExecuted = false;
     const reAddLayers = () => {
       if (switchExecuted) return;
@@ -1412,11 +1497,21 @@ export default function WorkspaceGTDMap() {
         const currentHeatmap = showHeatmapRef.current;
         addGTDDataLayers(map, isDarkMode, currentHeatmap);
 
-        // Push current data to the new source
-        const source = map.getSource("gtd-points");
+        // Push data to clustered vector source
+        const clusterSource = map.getSource("gtd-points");
         const currentGeoJson = geoJsonRef.current;
-        if (source && currentGeoJson) {
-          source.setData(currentGeoJson);
+        if (clusterSource && currentGeoJson) {
+          clusterSource.setData(currentGeoJson);
+        }
+
+        // Push data to unclustered heatmap source if heatmap active
+        const heatSource = map.getSource("gtd-heatmap-source");
+        if (heatSource && currentGeoJson) {
+          if (currentHeatmap) {
+            heatSource.setData(currentGeoJson);
+          } else {
+            heatSource.setData({ type: "FeatureCollection", features: [] });
+          }
         }
 
         // Re-apply heatmap / points visibility
@@ -1431,9 +1526,12 @@ export default function WorkspaceGTDMap() {
         if (map.getLayer("gtd-unclustered"))
           map.setLayoutProperty("gtd-unclustered", "visibility", pointsVis);
 
-        requestAnimationFrame(() => {
+        const onMapReady = () => {
+          setLayerLoading(false);
           if (mapRef.current) mapRef.current.resize();
-        });
+        };
+        map.once("idle", onMapReady);
+        setTimeout(onMapReady, 1800);
       } catch (err) {
         console.warn(
           "[GTDMap] Style switch: layers not ready, retrying...",
@@ -1479,7 +1577,36 @@ export default function WorkspaceGTDMap() {
   }, [isDarkMode]);
 
   return (
-    <div className="relative w-full h-screen overflow-hidden select-none bg-slate-950">
+    <div
+      className="relative w-full h-screen overflow-hidden select-none transition-colors duration-500"
+      style={{ backgroundColor: containerBg }}
+    >
+      {/* ── Tactical Layer Switch Transition Loader Overlay ── */}
+      {layerLoading && (
+        <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-sm pointer-events-auto transition-opacity duration-300">
+          <div className="flex items-center gap-3.5 px-6 py-4 rounded-xl bg-slate-900/95 border border-cyan-500/40 shadow-2xl backdrop-blur-md">
+            <div className="relative w-6 h-6 flex items-center justify-center">
+              <span className="absolute inset-0 rounded-full border-2 border-cyan-500/30 border-t-cyan-400 animate-spin" />
+              <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping" />
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-300" />
+            </div>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2">
+                <span className="text-xs font-semibold text-white tracking-wide">
+                  Sovereign Geospatial Engine
+                </span>
+                <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-cyan-950 text-cyan-400 border border-cyan-800/60">
+                  Syncing
+                </span>
+              </div>
+              <span className="text-[11px] text-slate-300 font-mono mt-0.5">
+                {layerLoadingText || "Synchronizing geospatial layer..."}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Base Map Canvas ── */}
       <div
         ref={mapContainerRef}
@@ -1671,7 +1798,12 @@ export default function WorkspaceGTDMap() {
           <div className="mt-3 flex items-center justify-between gap-1 text-xs">
             <button
               onClick={() => setShowHeatmap((prev) => !prev)}
-              className="px-2 py-1 rounded border border-theme-sidebar-border"
+              disabled={layerLoading}
+              className={`px-2.5 py-1 rounded border text-xs font-medium transition-all ${
+                showHeatmap
+                  ? "bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-sm"
+                  : "border-theme-sidebar-border hover:bg-theme-bg-primary text-theme-text-primary"
+              } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
             >
               {showHeatmap ? "Points" : "Heatmap"}
             </button>
@@ -1679,36 +1811,39 @@ export default function WorkspaceGTDMap() {
             <div className="flex items-center gap-0.5 bg-slate-950/70 p-0.5 rounded border border-slate-800/80 font-mono text-[11px]">
               <button
                 type="button"
+                disabled={layerLoading}
                 onClick={() => setBasemapMode("dark")}
-                className={`px-2 py-1 rounded transition-all cursor-pointer ${
+                className={`px-2 py-1 rounded transition-all ${
                   basemapMode === "dark"
                     ? "bg-slate-800 text-cyan-400 font-semibold border border-cyan-500/50 shadow-sm"
                     : "text-slate-400 hover:text-slate-200"
-                }`}
+                } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                 title="Tactical Dark Canvas (Esri)"
               >
                 DARK
               </button>
               <button
                 type="button"
+                disabled={layerLoading}
                 onClick={() => setBasemapMode("satellite")}
-                className={`px-2 py-1 rounded transition-all cursor-pointer ${
+                className={`px-2 py-1 rounded transition-all ${
                   basemapMode === "satellite"
                     ? "bg-cyan-500/20 text-cyan-300 font-semibold border border-cyan-500/50 shadow-sm"
                     : "text-slate-400 hover:text-slate-200"
-                }`}
+                } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                 title="Satellite Orbital Recon (Esri World Imagery)"
               >
                 SAT
               </button>
               <button
                 type="button"
+                disabled={layerLoading}
                 onClick={() => setBasemapMode("light")}
-                className={`px-2 py-1 rounded transition-all cursor-pointer ${
+                className={`px-2 py-1 rounded transition-all ${
                   basemapMode === "light"
                     ? "bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/50 shadow-sm"
                     : "text-slate-400 hover:text-slate-200"
-                }`}
+                } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
                 title="Daylight Cartographic (OSM)"
               >
                 OSM
