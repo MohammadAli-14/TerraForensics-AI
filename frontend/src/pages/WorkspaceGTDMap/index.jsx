@@ -294,7 +294,16 @@ function addGTDDataLayers(map, isDark, isHeatmap = false) {
     });
   }
 
-  // 3. Heatmap layer attached to the unclustered source.
+  // 3. Dedicated source for actively selected incident target reticle
+  if (!map.getSource("gtd-selected-point-source")) {
+    map.addSource("gtd-selected-point-source", {
+      type: "geojson",
+      data: emptyGeoJson,
+      cluster: false,
+    });
+  }
+
+  // 4. Heatmap layer attached to the unclustered source.
   // Rendered below vectors; initial layout visibility is set explicitly to avoid WebGL quad glitches.
   if (!map.getLayer("gtd-heatmap")) {
     map.addLayer({
@@ -306,61 +315,71 @@ function addGTDDataLayers(map, isDark, isHeatmap = false) {
         visibility: isHeatmap ? "visible" : "none",
       },
       paint: {
+        // Minimum weight is 0.3 so single/isolated events always register on the thermal sensor
         "heatmap-weight": [
           "interpolate",
           ["linear"],
-          ["coalesce", ["get", "weight"], 0.2],
+          ["coalesce", ["get", "weight"], 0.3],
           0,
-          0.1,
+          0.3,
           1,
-          1,
+          1.0,
         ],
+        // Intensity dynamically scales with zoom so density remains vibrant when zooming in
         "heatmap-intensity": [
           "interpolate",
           ["linear"],
           ["zoom"],
           0,
-          1,
-          5,
-          2.2,
-          10,
+          1.2,
           4,
-          15,
-          6,
+          2.2,
+          8,
+          4.0,
+          12,
+          6.5,
+          16,
+          9.0,
         ],
+        // Multi-stop radiant thermal gradient: transparent -> emerald -> cyan -> gold -> orange -> crimson -> white
         "heatmap-color": [
           "interpolate",
           ["linear"],
           ["heatmap-density"],
           0,
-          "rgba(34,197,94,0)",
-          0.15,
-          "rgba(34,197,94,0.45)",
-          0.35,
-          "rgba(59,130,246,0.6)",
-          0.55,
-          "rgba(234,179,8,0.7)",
-          0.75,
-          "rgba(249,115,22,0.8)",
+          "rgba(0,0,0,0)",
+          0.04,
+          "rgba(34,197,94,0.7)",
+          0.18,
+          "rgba(56,189,248,0.85)",
+          0.38,
+          "rgba(250,204,21,0.9)",
+          0.62,
+          "rgba(249,115,22,0.95)",
+          0.82,
+          "rgba(239,68,68,0.98)",
           1.0,
-          "rgba(239,68,68,0.9)",
+          "rgba(255,255,255,1.0)",
         ],
+        // Kernel radius expands with zoom
         "heatmap-radius": [
           "interpolate",
-          ["exponential", 1.4],
+          ["linear"],
           ["zoom"],
           0,
+          5,
           3,
-          4,
-          8,
-          8,
+          10,
+          6,
           18,
+          9,
+          26,
           12,
-          30,
+          36,
           16,
-          45,
+          52,
         ],
-        "heatmap-opacity": 0.85,
+        "heatmap-opacity": 0.9,
       },
     });
   }
@@ -405,13 +424,44 @@ function addGTDDataLayers(map, isDark, isHeatmap = false) {
       source: "gtd-points",
       filter: ["!", ["has", "point_count"]],
       layout: {
-        visibility: isHeatmap ? "none" : "visible",
+        visibility: "visible", // Always visible so attack coordinates can be inspected and clicked
       },
       paint: {
-        "circle-color": "#22c55e",
-        "circle-radius": 5,
+        "circle-color": isHeatmap ? "#38bdf8" : "#22c55e",
+        "circle-radius": isHeatmap ? 3.5 : 5,
         "circle-stroke-color": isDark ? "#1e293b" : "#0f172a",
         "circle-stroke-width": 1,
+      },
+    });
+  }
+
+  // 5. Selected Incident Target Reticle (outer glowing ring + center dot)
+  if (!map.getLayer("gtd-selected-point-pulse")) {
+    map.addLayer({
+      id: "gtd-selected-point-pulse",
+      type: "circle",
+      source: "gtd-selected-point-source",
+      layout: { visibility: "visible" },
+      paint: {
+        "circle-radius": 14,
+        "circle-color": "rgba(6,182,212,0.25)",
+        "circle-stroke-color": "#38bdf8",
+        "circle-stroke-width": 2,
+      },
+    });
+  }
+
+  if (!map.getLayer("gtd-selected-point-dot")) {
+    map.addLayer({
+      id: "gtd-selected-point-dot",
+      type: "circle",
+      source: "gtd-selected-point-source",
+      layout: { visibility: "visible" },
+      paint: {
+        "circle-radius": 6,
+        "circle-color": "#06b6d4",
+        "circle-stroke-color": "#ffffff",
+        "circle-stroke-width": 2.5,
       },
     });
   }
@@ -474,6 +524,7 @@ export default function WorkspaceGTDMap() {
   const basemapInitRef = useRef(true); // skip first style-switch effect (initMap handles it)
   const geoJsonRef = useRef(null); // mutable ref for style-switch closure
   const showHeatmapRef = useRef(false); // mutable ref for style-switch closure
+  const selectedPointRef = useRef(null); // mutable ref for style-switch closure
 
   const key = searchParams.get("key");
 
@@ -483,6 +534,7 @@ export default function WorkspaceGTDMap() {
   );
   geoJsonRef.current = geoJson; // keep ref in sync for style-switch closure
   showHeatmapRef.current = showHeatmap; // keep ref in sync for style-switch closure
+  selectedPointRef.current = selectedPoint; // keep ref in sync for style-switch closure
   const bounds = useMemo(() => calculateBounds(geoPoints), [geoPoints]);
 
   // Reliably detect whether there's more data to load
@@ -802,6 +854,9 @@ export default function WorkspaceGTDMap() {
       popupRef.current = new maplibregl.Popup({
         closeButton: true,
         closeOnClick: false,
+      });
+      popupRef.current.on("close", () => {
+        setSelectedPoint(null);
       });
     }
 
@@ -1341,6 +1396,19 @@ export default function WorkspaceGTDMap() {
             showPointPopup(point || props, feature.geometry.coordinates);
           });
 
+          map.on("mouseenter", "gtd-unclustered", () => {
+            map.getCanvas().style.cursor = "pointer";
+          });
+          map.on("mouseleave", "gtd-unclustered", () => {
+            map.getCanvas().style.cursor = "";
+          });
+          map.on("mouseenter", "gtd-clusters", () => {
+            map.getCanvas().style.cursor = "pointer";
+          });
+          map.on("mouseleave", "gtd-clusters", () => {
+            map.getCanvas().style.cursor = "";
+          });
+
           map.on("click", (event) => {
             const features = map.queryRenderedFeatures(event.point, {
               layers: ["gtd-unclustered", "gtd-clusters"],
@@ -1389,11 +1457,7 @@ export default function WorkspaceGTDMap() {
 
       const heatSource = map.getSource("gtd-heatmap-source");
       if (heatSource) {
-        if (showHeatmapRef.current) {
-          heatSource.setData(geoJson);
-        } else {
-          heatSource.setData({ type: "FeatureCollection", features: [] });
-        }
+        heatSource.setData(geoJson);
       }
 
       // Only fitBounds on the FIRST data push (or when bounds become available
@@ -1412,13 +1476,44 @@ export default function WorkspaceGTDMap() {
     }
   }, [geoJson, bounds]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // ─── Sync selected point target reticle with map layer ───
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.isStyleLoaded()) return;
+
+    const selectedSource = map.getSource("gtd-selected-point-source");
+    if (!selectedSource) return;
+
+    if (selectedPoint) {
+      const lat = Number(selectedPoint.lat ?? selectedPoint.latitude);
+      const lon = Number(selectedPoint.lon ?? selectedPoint.longitude);
+      if (Number.isFinite(lat) && Number.isFinite(lon)) {
+        selectedSource.setData({
+          type: "FeatureCollection",
+          features: [
+            {
+              type: "Feature",
+              geometry: {
+                type: "Point",
+                coordinates: [lon, lat],
+              },
+              properties: {},
+            },
+          ],
+        });
+        return;
+      }
+    }
+    selectedSource.setData({ type: "FeatureCollection", features: [] });
+  }, [selectedPoint]);
+
   // ─── Heatmap toggle effect with tactical transition loader ───
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
 
     const heatVisibility = showHeatmap ? "visible" : "none";
-    const pointsVisibility = showHeatmap ? "none" : "visible";
+    const clusterVisibility = showHeatmap ? "none" : "visible";
 
     setLayerLoading(true);
     setLayerLoadingText(
@@ -1427,38 +1522,38 @@ export default function WorkspaceGTDMap() {
         : "Restoring incident clusters and geographic vectors..."
     );
 
-    // Sync heatmap source data: feed when active, clear when points mode to release GPU memory
-    const heatSource = map.getSource("gtd-heatmap-source");
-    if (heatSource) {
-      if (showHeatmap && geoJsonRef.current) {
-        heatSource.setData(geoJsonRef.current);
-      } else {
-        heatSource.setData({ type: "FeatureCollection", features: [] });
-      }
-    }
-
     if (map.getLayer("gtd-heatmap")) {
       map.setLayoutProperty("gtd-heatmap", "visibility", heatVisibility);
     }
     if (map.getLayer("gtd-clusters")) {
-      map.setLayoutProperty("gtd-clusters", "visibility", pointsVisibility);
+      map.setLayoutProperty("gtd-clusters", "visibility", clusterVisibility);
     }
     if (map.getLayer("gtd-cluster-count")) {
       map.setLayoutProperty(
         "gtd-cluster-count",
         "visibility",
-        pointsVisibility
+        clusterVisibility
       );
     }
     if (map.getLayer("gtd-unclustered")) {
-      map.setLayoutProperty("gtd-unclustered", "visibility", pointsVisibility);
+      map.setLayoutProperty("gtd-unclustered", "visibility", "visible");
+      map.setPaintProperty(
+        "gtd-unclustered",
+        "circle-color",
+        showHeatmap ? "#38bdf8" : "#22c55e"
+      );
+      map.setPaintProperty(
+        "gtd-unclustered",
+        "circle-radius",
+        showHeatmap ? 3.5 : 5
+      );
     }
 
     const onIdle = () => {
       setLayerLoading(false);
     };
     map.once("idle", onIdle);
-    const fallbackTimer = setTimeout(onIdle, 1000);
+    const fallbackTimer = setTimeout(onIdle, 600);
     return () => clearTimeout(fallbackTimer);
   }, [showHeatmap]);
 
@@ -1504,27 +1599,54 @@ export default function WorkspaceGTDMap() {
           clusterSource.setData(currentGeoJson);
         }
 
-        // Push data to unclustered heatmap source if heatmap active
+        // Push data to unclustered heatmap source
         const heatSource = map.getSource("gtd-heatmap-source");
         if (heatSource && currentGeoJson) {
-          if (currentHeatmap) {
-            heatSource.setData(currentGeoJson);
-          } else {
-            heatSource.setData({ type: "FeatureCollection", features: [] });
+          heatSource.setData(currentGeoJson);
+        }
+
+        // Push data to selected target source if a point is selected
+        const selectedSource = map.getSource("gtd-selected-point-source");
+        if (selectedSource && selectedPointRef.current) {
+          const pt = selectedPointRef.current;
+          const lat = Number(pt.lat ?? pt.latitude);
+          const lon = Number(pt.lon ?? pt.longitude);
+          if (Number.isFinite(lat) && Number.isFinite(lon)) {
+            selectedSource.setData({
+              type: "FeatureCollection",
+              features: [
+                {
+                  type: "Feature",
+                  geometry: { type: "Point", coordinates: [lon, lat] },
+                  properties: {},
+                },
+              ],
+            });
           }
         }
 
         // Re-apply heatmap / points visibility
         const heatVis = currentHeatmap ? "visible" : "none";
-        const pointsVis = currentHeatmap ? "none" : "visible";
+        const clusterVis = currentHeatmap ? "none" : "visible";
         if (map.getLayer("gtd-heatmap"))
           map.setLayoutProperty("gtd-heatmap", "visibility", heatVis);
         if (map.getLayer("gtd-clusters"))
-          map.setLayoutProperty("gtd-clusters", "visibility", pointsVis);
+          map.setLayoutProperty("gtd-clusters", "visibility", clusterVis);
         if (map.getLayer("gtd-cluster-count"))
-          map.setLayoutProperty("gtd-cluster-count", "visibility", pointsVis);
-        if (map.getLayer("gtd-unclustered"))
-          map.setLayoutProperty("gtd-unclustered", "visibility", pointsVis);
+          map.setLayoutProperty("gtd-cluster-count", "visibility", clusterVis);
+        if (map.getLayer("gtd-unclustered")) {
+          map.setLayoutProperty("gtd-unclustered", "visibility", "visible");
+          map.setPaintProperty(
+            "gtd-unclustered",
+            "circle-color",
+            currentHeatmap ? "#38bdf8" : "#22c55e"
+          );
+          map.setPaintProperty(
+            "gtd-unclustered",
+            "circle-radius",
+            currentHeatmap ? 3.5 : 5
+          );
+        }
 
         const onMapReady = () => {
           setLayerLoading(false);
@@ -1796,17 +1918,35 @@ export default function WorkspaceGTDMap() {
           </div>
 
           <div className="mt-3 flex items-center justify-between gap-1 text-xs">
-            <button
-              onClick={() => setShowHeatmap((prev) => !prev)}
-              disabled={layerLoading}
-              className={`px-2.5 py-1 rounded border text-xs font-medium transition-all ${
-                showHeatmap
-                  ? "bg-rose-500/20 text-rose-300 border-rose-500/50 shadow-sm"
-                  : "border-theme-sidebar-border hover:bg-theme-bg-primary text-theme-text-primary"
-              } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-            >
-              {showHeatmap ? "Points" : "Heatmap"}
-            </button>
+            {/* View Mode Segmented Controller: [ CLUSTERS | HEATMAP ] */}
+            <div className="flex items-center gap-0.5 bg-slate-950/70 p-0.5 rounded border border-slate-800/80 font-mono text-[11px]">
+              <button
+                type="button"
+                disabled={layerLoading}
+                onClick={() => setShowHeatmap(false)}
+                className={`px-2.5 py-1 rounded transition-all ${
+                  !showHeatmap
+                    ? "bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/50 shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                title="Clustered Incident Vectors"
+              >
+                CLUSTERS
+              </button>
+              <button
+                type="button"
+                disabled={layerLoading}
+                onClick={() => setShowHeatmap(true)}
+                className={`px-2.5 py-1 rounded transition-all ${
+                  showHeatmap
+                    ? "bg-rose-500/20 text-rose-300 font-semibold border border-rose-500/50 shadow-sm"
+                    : "text-slate-400 hover:text-slate-200"
+                } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                title="Thermal Incident Density Heatmap"
+              >
+                HEATMAP
+              </button>
+            </div>
             {/* Tactical 3-Way Basemap Controller */}
             <div className="flex items-center gap-0.5 bg-slate-950/70 p-0.5 rounded border border-slate-800/80 font-mono text-[11px]">
               <button
