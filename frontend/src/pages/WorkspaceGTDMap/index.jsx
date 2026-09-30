@@ -12,15 +12,16 @@ import * as basemaps from "@protomaps/basemaps";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { API_BASE } from "@/utils/constants";
 import { baseHeaders } from "@/utils/request";
+import { getGTDMapData } from "@/utils/gtdStorage";
 
 const PMTILES_URL = import.meta.env.VITE_PMTILES_URL || "/tiles/world.pmtiles";
 const PAGE_SIZE = 50;
-const MAX_RENDER_POINTS = 50000;
-const MAX_REFETCH_LIMIT = 50000;
+const MAX_RENDER_POINTS = 200000;
+const MAX_REFETCH_LIMIT = 200000;
 const LOAD_MORE_CHUNK = 50000; // geo_points per "Load More" click
-const SERVER_PAGE_SIZE = 25000; // records per server round-trip (fits in 50K cap)
-const BATCH_SIZE = 20000; // render-batch increment
-const BATCH_DELAY_MS = 400;
+const SERVER_PAGE_SIZE = 25000; // records per server round-trip
+const BATCH_SIZE = 25000; // render-batch increment
+const BATCH_DELAY_MS = 300;
 
 function buildGeoJson(points = [], maxPoints = MAX_RENDER_POINTS) {
   const toRender =
@@ -91,7 +92,6 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
   const isDark = activeMode === "dark" || !activeMode;
   const isSat = activeMode === "satellite";
   const isLight = activeMode === "light";
-  const initialBg = isSat ? "#061320" : isLight ? "#aad3df" : "#14171a";
 
   const cartoKey =
     typeof import.meta !== "undefined"
@@ -111,7 +111,7 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
         ],
         tileSize: 256,
         attribution:
-          "\u00a9 <a href='https://www.esri.com/'>Esri</a> \u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>",
+          "© <a href='https://www.esri.com/'>Esri</a> © <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>",
       },
       "esri-dark-ref": {
         type: "raster",
@@ -126,7 +126,7 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
           "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         ],
         tileSize: 256,
-        attribution: "\u00a9 Esri, Maxar, Earthstar Geographics",
+        attribution: "© Esri, Maxar, Earthstar Geographics",
       },
       "esri-satellite-ref": {
         type: "raster",
@@ -134,30 +134,25 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
           "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
         ],
         tileSize: 256,
-        attribution: "\u00a9 Esri, HERE, Garmin",
+        attribution: "© Esri, HERE, Garmin",
       },
       "osm-raster": {
         type: "raster",
         tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
         tileSize: 256,
         attribution:
-          "\u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>",
+          "© <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>",
       },
     },
     layers: [
-      {
-        id: "basemap-bg",
-        type: "background",
-        paint: { "background-color": initialBg },
-      },
-      // 1. Tactical Dark Canvas Layers
+      // 1. Tactical Dark Canvas Layers (seamless raster with no underlying background layer)
       {
         id: "esri-dark-base-tiles",
         type: "raster",
         source: "esri-dark-base",
         layout: { visibility: isDark ? "visible" : "none" },
         minzoom: 0,
-        maxzoom: 16,
+        maxzoom: 20,
       },
       {
         id: "esri-dark-ref-tiles",
@@ -165,7 +160,7 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
         source: "esri-dark-ref",
         layout: { visibility: isDark ? "visible" : "none" },
         minzoom: 0,
-        maxzoom: 16,
+        maxzoom: 20,
       },
       // 2. High-Resolution Satellite Reconnaissance Layers
       {
@@ -174,7 +169,7 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
         source: "esri-satellite-base",
         layout: { visibility: isSat ? "visible" : "none" },
         minzoom: 0,
-        maxzoom: 19,
+        maxzoom: 20,
       },
       {
         id: "esri-sat-ref-tiles",
@@ -182,7 +177,7 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
         source: "esri-satellite-ref",
         layout: { visibility: isSat ? "visible" : "none" },
         minzoom: 0,
-        maxzoom: 19,
+        maxzoom: 20,
       },
       // 3. Daylight Cartographic Tiles (OSM)
       {
@@ -191,7 +186,7 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
         source: "osm-raster",
         layout: { visibility: isLight ? "visible" : "none" },
         minzoom: 0,
-        maxzoom: 19,
+        maxzoom: 20,
       },
     ],
   };
@@ -202,27 +197,18 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
 function addGTDDataLayers(map, isDark, isHeatmap = false) {
   const emptyGeoJson = { type: "FeatureCollection", features: [] };
 
-  // 1. Clustered source for cluster bubbles & unclustered single points
+  // 1. Unified clustered source for cluster bubbles, unclustered single points, AND thermal heatmap
   if (!map.getSource("gtd-points")) {
     map.addSource("gtd-points", {
       type: "geojson",
       data: emptyGeoJson,
       cluster: true,
-      clusterMaxZoom: 6,
-      clusterRadius: 50,
+      clusterMaxZoom: 14,
+      clusterRadius: 48,
     });
   }
 
-  // 2. Dedicated unclustered source for heatmap (guarantees all points contribute to density)
-  if (!map.getSource("gtd-heatmap-source")) {
-    map.addSource("gtd-heatmap-source", {
-      type: "geojson",
-      data: emptyGeoJson,
-      cluster: false,
-    });
-  }
-
-  // 3. Dedicated source for actively selected incident target reticle
+  // 2. Dedicated source for actively selected incident target reticle
   if (!map.getSource("gtd-selected-point-source")) {
     map.addSource("gtd-selected-point-source", {
       type: "geojson",
@@ -231,87 +217,78 @@ function addGTDDataLayers(map, isDark, isHeatmap = false) {
     });
   }
 
-  // 4. Heatmap layer attached to the unclustered source.
-  // Rendered below vectors; initial layout visibility is set explicitly to avoid WebGL quad glitches.
+  // 3. Casualty & Incident Density Heatmap Layer
+  // Attached to gtd-points with cluster-aware weighting — generates radiant thermal discs at all zooms
   if (!map.getLayer("gtd-heatmap")) {
     map.addLayer({
       id: "gtd-heatmap",
       type: "heatmap",
-      source: "gtd-heatmap-source",
-      maxzoom: 18,
+      source: "gtd-points",
+      maxzoom: 16,
       layout: {
         visibility: isHeatmap ? "visible" : "none",
       },
       paint: {
-        // Minimum weight is 0.3 so single/isolated events always register on the thermal sensor
         "heatmap-weight": [
           "interpolate",
           ["linear"],
-          ["coalesce", ["get", "weight"], 0.3],
-          0,
-          0.3,
+          ["case", ["has", "point_count"], ["get", "point_count"], 1],
           1,
-          1.0,
+          0.5,
+          25,
+          1.5,
+          100,
+          3,
+          1000,
+          6,
         ],
-        // Intensity dynamically scales with zoom so density remains vibrant when zooming in
         "heatmap-intensity": [
           "interpolate",
           ["linear"],
           ["zoom"],
           0,
           1.2,
+          3,
+          2,
+          9,
           4,
-          2.2,
-          8,
-          4.0,
-          12,
-          6.5,
-          16,
-          9.0,
         ],
-        // Multi-stop radiant thermal gradient: transparent -> emerald -> cyan -> gold -> orange -> crimson -> white
         "heatmap-color": [
           "interpolate",
           ["linear"],
           ["heatmap-density"],
           0,
-          "rgba(0,0,0,0)",
-          0.04,
-          "rgba(34,197,94,0.7)",
-          0.18,
-          "rgba(56,189,248,0.85)",
-          0.38,
-          "rgba(250,204,21,0.9)",
-          0.62,
-          "rgba(249,115,22,0.95)",
-          0.82,
-          "rgba(239,68,68,0.98)",
+          "rgba(0, 0, 0, 0)",
+          0.1,
+          "rgba(56, 189, 248, 0.6)",
+          0.3,
+          "rgba(245, 158, 11, 0.8)",
+          0.6,
+          "rgba(239, 68, 68, 0.92)",
+          0.85,
+          "rgba(220, 38, 38, 0.98)",
           1.0,
-          "rgba(255,255,255,1.0)",
+          "rgba(254, 240, 138, 1.0)",
         ],
-        // Kernel radius expands with zoom
         "heatmap-radius": [
           "interpolate",
           ["linear"],
           ["zoom"],
           0,
-          5,
+          20,
           3,
-          10,
+          28,
           6,
-          18,
+          38,
           9,
-          26,
-          12,
-          36,
-          16,
-          52,
+          50,
         ],
-        "heatmap-opacity": 0.9,
+        "heatmap-opacity": 0.92,
       },
     });
   }
 
+  // 4. Cluster circles (color-graded by attack frequency)
   if (!map.getLayer("gtd-clusters")) {
     map.addLayer({
       id: "gtd-clusters",
@@ -322,14 +299,40 @@ function addGTDDataLayers(map, isDark, isHeatmap = false) {
         visibility: isHeatmap ? "none" : "visible",
       },
       paint: {
-        "circle-color": "#f97316",
-        "circle-radius": ["step", ["get", "point_count"], 12, 100, 18, 750, 26],
-        "circle-stroke-color": isDark ? "#374151" : "#1f2937",
-        "circle-stroke-width": 1,
+        "circle-color": [
+          "step",
+          ["get", "point_count"],
+          "#f59e0b", // amber (<25)
+          25,
+          "#f97316", // orange (25-99)
+          100,
+          "#ef4444", // red (100-499)
+          500,
+          "#dc2626", // deep red (500-1999)
+          2000,
+          "#991b1b", // intense crimson (>=2000)
+        ],
+        "circle-radius": [
+          "step",
+          ["get", "point_count"],
+          14,
+          25,
+          18,
+          100,
+          22,
+          500,
+          28,
+          2000,
+          34,
+        ],
+        "circle-stroke-width": 2,
+        "circle-stroke-color": "rgba(255, 255, 255, 0.45)",
+        "circle-opacity": 0.92,
       },
     });
   }
 
+  // 5. Cluster Count Text
   if (!map.getLayer("gtd-cluster-count")) {
     map.addLayer({
       id: "gtd-cluster-count",
@@ -339,12 +342,16 @@ function addGTDDataLayers(map, isDark, isHeatmap = false) {
       layout: {
         visibility: isHeatmap ? "none" : "visible",
         "text-field": "{point_count_abbreviated}",
-        "text-size": 12,
+        "text-size": 11,
+        "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
       },
-      paint: { "text-color": isDark ? "#f9fafb" : "#111827" },
+      paint: {
+        "text-color": "#ffffff",
+      },
     });
   }
 
+  // 6. Individual unclustered incident points
   if (!map.getLayer("gtd-unclustered")) {
     map.addLayer({
       id: "gtd-unclustered",
@@ -352,13 +359,14 @@ function addGTDDataLayers(map, isDark, isHeatmap = false) {
       source: "gtd-points",
       filter: ["!", ["has", "point_count"]],
       layout: {
-        visibility: "visible", // Always visible so attack coordinates can be inspected and clicked
+        visibility: isHeatmap ? "none" : "visible",
       },
       paint: {
-        "circle-color": isHeatmap ? "#38bdf8" : "#22c55e",
-        "circle-radius": isHeatmap ? 3.5 : 5,
-        "circle-stroke-color": isDark ? "#1e293b" : "#0f172a",
-        "circle-stroke-width": 1,
+        "circle-color": "#38bdf8",
+        "circle-radius": 5,
+        "circle-stroke-width": 1.5,
+        "circle-stroke-color": "#ffffff",
+        "circle-opacity": 0.95,
       },
     });
   }
@@ -577,46 +585,69 @@ export default function WorkspaceGTDMap() {
     refetchAbortRef.current = abortController;
 
     const loadMapData = async () => {
-      // 1. If key is present in localStorage, or active workspace chat data exists
-      let stored = null;
+      // 1. Try reading full dataset from IndexedDB bridge first (handles full 180K+ points without quota issues)
+      let parsed = null;
       let isChatQuery = false;
 
       if (key) {
-        stored = localStorage.getItem(`gtd-map:${key}`);
-        isChatQuery = true;
-      } else if (slug) {
-        if (typeof window !== "undefined" && window.__tfLatestGtdData) {
-          stored = JSON.stringify(window.__tfLatestGtdData);
-          isChatQuery = true;
-        } else {
-          const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
-          if (cached) {
-            stored = cached;
+        try {
+          parsed = await getGTDMapData(`gtd-map:${key}`);
+          if (parsed) isChatQuery = true;
+        } catch (e) {
+          console.warn("[GTDMap] IndexedDB read error for key:", e);
+        }
+      }
+
+      if (!parsed && slug) {
+        try {
+          parsed = await getGTDMapData(`tf:latest-gtd-data:${slug}`);
+          if (parsed) isChatQuery = true;
+        } catch (e) {}
+      }
+
+      // 2. Check localStorage / in-memory window as fallback
+      if (!parsed) {
+        if (key) {
+          const stored = localStorage.getItem(`gtd-map:${key}`);
+          if (stored) {
+            try {
+              parsed = JSON.parse(stored);
+              isChatQuery = true;
+            } catch (e) {}
+          }
+        } else if (slug) {
+          if (typeof window !== "undefined" && window.__tfLatestGtdData) {
+            parsed = window.__tfLatestGtdData;
             isChatQuery = true;
+          } else {
+            const cached = localStorage.getItem(`tf:latest-gtd-data:${slug}`);
+            if (cached) {
+              try {
+                parsed = JSON.parse(cached);
+                isChatQuery = true;
+              } catch (e) {}
+            }
           }
         }
       }
 
-      if (stored) {
+      if (parsed) {
         try {
-          const parsed = JSON.parse(stored);
+          const pts = parsed.geo_points || [];
           setPayload(parsed);
-          setGeoPoints(parsed.geo_points || []);
-          setAllLoaded(false);
+          setGeoPoints(pts);
+          setAllLoaded(Boolean(parsed.load_all_hint || (pts.length > 0 && pts.length >= (parsed.total_count || 0))));
           setPage(0);
           setSelectedPoint(null);
           setClusterPoints([]);
           setClusterInfo(null);
           setError(null);
 
-          if (
-            Array.isArray(parsed.geo_points) &&
-            parsed.geo_points.length > 0
-          ) {
+          if (Array.isArray(pts) && pts.length > 0) {
             setStatus(
               isChatQuery && parsed.query
-                ? `Showing ${parsed.geo_points.length.toLocaleString()} points for query: "${parsed.query}"`
-                : `Showing ${parsed.geo_points.length.toLocaleString()} points`
+                ? `Showing ${pts.length.toLocaleString()} points for query: "${parsed.query}"`
+                : `Showing ${pts.length.toLocaleString()} points`
             );
             return;
           }
@@ -810,12 +841,7 @@ export default function WorkspaceGTDMap() {
     if (loadingMoreRef.current) return;
     loadingMoreRef.current = true;
 
-    const filter = payload?.filter || payload?.simpleFilter;
-    if (!filter) {
-      setError("No filter available to load more records.");
-      loadingMoreRef.current = false;
-      return;
-    }
+    const filter = payload?.filter || payload?.simpleFilter || {};
 
     // Abort any in-flight initial refetch to prevent duplicate requests
     if (refetchAbortRef.current) {
@@ -1021,12 +1047,7 @@ export default function WorkspaceGTDMap() {
     if (loadingMoreRef.current) return;
     loadingMoreRef.current = true;
 
-    const filter = payload?.filter || payload?.simpleFilter;
-    if (!filter) {
-      setError("No filter available to load all records.");
-      loadingMoreRef.current = false;
-      return;
-    }
+    const filter = payload?.filter || payload?.simpleFilter || {};
 
     // Abort any in-flight initial refetch
     if (refetchAbortRef.current) {
@@ -1383,11 +1404,6 @@ export default function WorkspaceGTDMap() {
         clusterSource.setData(geoJson);
       }
 
-      const heatSource = map.getSource("gtd-heatmap-source");
-      if (heatSource) {
-        heatSource.setData(geoJson);
-      }
-
       // Only fitBounds on the FIRST data push (or when bounds become available
       // for the first time). During batch rendering / Load More the user has
       // already seen the map — resetting the viewport is disorienting.
@@ -1464,16 +1480,10 @@ export default function WorkspaceGTDMap() {
       );
     }
     if (map.getLayer("gtd-unclustered")) {
-      map.setLayoutProperty("gtd-unclustered", "visibility", "visible");
-      map.setPaintProperty(
+      map.setLayoutProperty(
         "gtd-unclustered",
-        "circle-color",
-        showHeatmap ? "#38bdf8" : "#22c55e"
-      );
-      map.setPaintProperty(
-        "gtd-unclustered",
-        "circle-radius",
-        showHeatmap ? 3.5 : 5
+        "visibility",
+        clusterVisibility
       );
     }
 
@@ -1513,12 +1523,11 @@ export default function WorkspaceGTDMap() {
     const isDark = basemapMode === "dark" || !basemapMode;
     const isSat = basemapMode === "satellite";
     const isLight = basemapMode === "light";
-    const targetBg = isSat ? "#061320" : isLight ? "#aad3df" : "#14171a";
 
-    // 1. Update background canvas color
-    if (map.getLayer("basemap-bg")) {
-      map.setPaintProperty("basemap-bg", "background-color", targetBg);
-    }
+    // 1. Trigger map resize to ensure WebGL quads align edge-to-edge
+    requestAnimationFrame(() => {
+      if (mapRef.current) mapRef.current.resize();
+    });
 
     // 2. Toggle raster layer visibilities instantaneously
     if (map.getLayer("esri-dark-base-tiles")) {
@@ -1667,6 +1676,7 @@ export default function WorkspaceGTDMap() {
           width: "100%",
           height: "100%",
           zIndex: 0,
+          backgroundColor: containerBg,
         }}
       />
 
@@ -1767,24 +1777,22 @@ export default function WorkspaceGTDMap() {
                 Showing {geoPoints.length.toLocaleString()} of{" "}
                 {totalExpected.toLocaleString()}
               </div>
-              {hasFilter && (
-                <div className="flex flex-col gap-1">
-                  <button
-                    onClick={handleLoadMore}
-                    className="px-2.5 py-1 text-[11px] rounded font-medium bg-amber-600 hover:bg-amber-700 text-white transition-colors"
-                  >
-                    {totalExpected - geoPoints.length > LOAD_MORE_CHUNK
-                      ? `Load Next ${LOAD_MORE_CHUNK.toLocaleString()} Records`
-                      : `Load Remaining ${(totalExpected - geoPoints.length).toLocaleString()} Records`}
-                  </button>
-                  <button
-                    onClick={handleLoadAll}
-                    className="px-2.5 py-1 text-[11px] rounded font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors"
-                  >
-                    Load All {totalExpected.toLocaleString()} Records
-                  </button>
-                </div>
-              )}
+              <div className="flex flex-col gap-1">
+                <button
+                  onClick={handleLoadMore}
+                  className="px-2.5 py-1 text-[11px] rounded font-medium bg-amber-600 hover:bg-amber-700 text-white transition-colors cursor-pointer"
+                >
+                  {totalExpected - geoPoints.length > LOAD_MORE_CHUNK
+                    ? `Load Next ${LOAD_MORE_CHUNK.toLocaleString()} Records`
+                    : `Load Remaining ${(totalExpected - geoPoints.length).toLocaleString()} Records`}
+                </button>
+                <button
+                  onClick={handleLoadAll}
+                  className="px-2.5 py-1 text-[11px] rounded font-medium bg-blue-600 hover:bg-blue-700 text-white transition-colors cursor-pointer"
+                >
+                  Load All {totalExpected.toLocaleString()} Records
+                </button>
+              </div>
             </div>
           )}
 
