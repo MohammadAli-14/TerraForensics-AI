@@ -87,163 +87,55 @@ function calculateBounds(points = []) {
 const MAP_GLYPHS_URL =
   "https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf";
 
-function buildMapStyle(basemapMode, pmtilesOk) {
-  if (pmtilesOk && basemapMode !== "satellite") {
-    const flavor = basemapMode === "light" ? "light" : "dark";
-    return {
-      version: 8,
-      glyphs: MAP_GLYPHS_URL,
-      sprite: `https://protomaps.github.io/basemaps-assets/sprites/v4/${flavor}`,
-      sources: {
-        basemap: {
-          type: "vector",
-          url: `pmtiles://${PMTILES_URL}`,
-          attribution:
-            "<a href='https://github.com/protomaps/basemaps'>Protomaps</a> \u00a9 <a href='https://openstreetmap.org'>OpenStreetMap</a>",
-        },
-      },
-      layers: basemaps.layers("basemap", basemaps.namedFlavor(flavor), {
-        lang: "en",
-      }),
-    };
-  }
+function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
+  const isDark = activeMode === "dark" || !activeMode;
+  const isSat = activeMode === "satellite";
+  const isLight = activeMode === "light";
+  const initialBg = isSat ? "#061320" : isLight ? "#aad3df" : "#14171a";
 
-  // 1. High-Resolution Satellite Reconnaissance (Esri World Imagery + Boundaries & Places)
-  if (basemapMode === "satellite") {
-    return {
-      version: 8,
-      glyphs: MAP_GLYPHS_URL,
-      sources: {
-        "esri-satellite-base": {
-          type: "raster",
-          tiles: [
-            "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-          ],
-          tileSize: 256,
-          attribution: "\u00a9 Esri, Maxar, Earthstar Geographics",
-        },
-        "esri-satellite-ref": {
-          type: "raster",
-          tiles: [
-            "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
-          ],
-          tileSize: 256,
-          attribution: "\u00a9 Esri, HERE, Garmin",
-        },
-      },
-      layers: [
-        {
-          id: "basemap-bg",
-          type: "background",
-          paint: { "background-color": "#061320" },
-        },
-        {
-          id: "esri-sat-base-tiles",
-          type: "raster",
-          source: "esri-satellite-base",
-          minzoom: 0,
-          maxzoom: 19,
-        },
-        {
-          id: "esri-sat-ref-tiles",
-          type: "raster",
-          source: "esri-satellite-ref",
-          minzoom: 0,
-          maxzoom: 19,
-        },
-      ],
-    };
-  }
+  const cartoKey =
+    typeof import.meta !== "undefined"
+      ? import.meta.env?.VITE_CARTO_API_KEY
+      : null;
 
-  // 2. Tactical Dark Canvas (Esri Dark Gray Base + Reference Labels, or optional Carto)
-  if (basemapMode === "dark" || !basemapMode) {
-    const cartoKey = import.meta.env.VITE_CARTO_API_KEY;
-    if (cartoKey) {
-      return {
-        version: 8,
-        glyphs: MAP_GLYPHS_URL,
-        sources: {
-          "carto-dark": {
-            type: "raster",
-            tiles: [
-              `https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey}`,
-              `https://b.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey}`,
-              `https://c.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey}`,
-              `https://d.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey}`,
-            ],
-            tileSize: 256,
-            attribution:
-              "\u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap</a> \u00a9 <a href='https://carto.com/attributions'>CARTO</a>",
-          },
-        },
-        layers: [
-          {
-            id: "basemap-bg",
-            type: "background",
-            paint: { "background-color": "#14171a" },
-          },
-          {
-            id: "carto-dark-tiles",
-            type: "raster",
-            source: "carto-dark",
-            minzoom: 0,
-            maxzoom: 20,
-          },
-        ],
-      };
-    }
-
-    // Free, high-performance, dark basemap with zero API key required and no watermarks (Esri Dark Gray Canvas)
-    return {
-      version: 8,
-      glyphs: MAP_GLYPHS_URL,
-      sources: {
-        "esri-dark-base": {
-          type: "raster",
-          tiles: [
-            "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
-          ],
-          tileSize: 256,
-          attribution:
-            "\u00a9 <a href='https://www.esri.com/'>Esri</a> \u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>",
-        },
-        "esri-dark-ref": {
-          type: "raster",
-          tiles: [
-            "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
-          ],
-          tileSize: 256,
-        },
-      },
-      layers: [
-        {
-          id: "basemap-bg",
-          type: "background",
-          paint: { "background-color": "#14171a" },
-        },
-        {
-          id: "esri-dark-base-tiles",
-          type: "raster",
-          source: "esri-dark-base",
-          minzoom: 0,
-          maxzoom: 16,
-        },
-        {
-          id: "esri-dark-ref-tiles",
-          type: "raster",
-          source: "esri-dark-ref",
-          minzoom: 0,
-          maxzoom: 16,
-        },
-      ],
-    };
-  }
-
-  // 3. Light raster fallback (OSM)
   return {
     version: 8,
     glyphs: MAP_GLYPHS_URL,
     sources: {
+      "esri-dark-base": {
+        type: "raster",
+        tiles: [
+          cartoKey
+            ? `https://a.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}@2x.png?api_key=${cartoKey}`
+            : "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
+        ],
+        tileSize: 256,
+        attribution:
+          "\u00a9 <a href='https://www.esri.com/'>Esri</a> \u00a9 <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>",
+      },
+      "esri-dark-ref": {
+        type: "raster",
+        tiles: [
+          "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
+        ],
+        tileSize: 256,
+      },
+      "esri-satellite-base": {
+        type: "raster",
+        tiles: [
+          "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        ],
+        tileSize: 256,
+        attribution: "\u00a9 Esri, Maxar, Earthstar Geographics",
+      },
+      "esri-satellite-ref": {
+        type: "raster",
+        tiles: [
+          "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+        ],
+        tileSize: 256,
+        attribution: "\u00a9 Esri, HERE, Garmin",
+      },
       "osm-raster": {
         type: "raster",
         tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
@@ -256,12 +148,48 @@ function buildMapStyle(basemapMode, pmtilesOk) {
       {
         id: "basemap-bg",
         type: "background",
-        paint: { "background-color": "#aad3df" },
+        paint: { "background-color": initialBg },
       },
+      // 1. Tactical Dark Canvas Layers
+      {
+        id: "esri-dark-base-tiles",
+        type: "raster",
+        source: "esri-dark-base",
+        layout: { visibility: isDark ? "visible" : "none" },
+        minzoom: 0,
+        maxzoom: 16,
+      },
+      {
+        id: "esri-dark-ref-tiles",
+        type: "raster",
+        source: "esri-dark-ref",
+        layout: { visibility: isDark ? "visible" : "none" },
+        minzoom: 0,
+        maxzoom: 16,
+      },
+      // 2. High-Resolution Satellite Reconnaissance Layers
+      {
+        id: "esri-sat-base-tiles",
+        type: "raster",
+        source: "esri-satellite-base",
+        layout: { visibility: isSat ? "visible" : "none" },
+        minzoom: 0,
+        maxzoom: 19,
+      },
+      {
+        id: "esri-sat-ref-tiles",
+        type: "raster",
+        source: "esri-satellite-ref",
+        layout: { visibility: isSat ? "visible" : "none" },
+        minzoom: 0,
+        maxzoom: 19,
+      },
+      // 3. Daylight Cartographic Tiles (OSM)
       {
         id: "osm-tiles",
         type: "raster",
         source: "osm-raster",
+        layout: { visibility: isLight ? "visible" : "none" },
         minzoom: 0,
         maxzoom: 19,
       },
@@ -1320,8 +1248,8 @@ export default function WorkspaceGTDMap() {
         // Store PMTiles availability for later style switches
         pmtilesAvailableRef.current = pmtilesAvailable;
 
-        // Build initial style from active basemapMode (dark, satellite, or light)
-        const style = buildMapStyle(basemapMode, pmtilesAvailable);
+        // Build initial style with unified basemap layers (dark, satellite, and light)
+        const style = buildUnifiedMapStyle(basemapMode, pmtilesAvailable);
 
         const map = new maplibregl.Map({
           container: mapContainerRef.current,
@@ -1558,14 +1486,15 @@ export default function WorkspaceGTDMap() {
   }, [showHeatmap]);
 
   // ─── Style switch effect: swap basemap with seamless tactical loader ───
-  // Skips the initial render (initMap handles first load). Only fires on toggle.
+  // Instantaneous (0ms) layer visibility toggle — zero WebGL style teardown,
+  // zero data reloading, and no Web Worker serialization lag.
   useEffect(() => {
     if (basemapInitRef.current) {
       basemapInitRef.current = false;
       return;
     }
     const map = mapRef.current;
-    if (!map) return;
+    if (!map || !map.isStyleLoaded()) return;
 
     if (typeof window !== "undefined") {
       localStorage.setItem("tf_preferred_basemap", basemapMode);
@@ -1581,90 +1510,88 @@ export default function WorkspaceGTDMap() {
       basemapLabels[basemapMode] || "Synchronizing basemap layer..."
     );
 
-    const newStyle = buildMapStyle(basemapMode, pmtilesAvailableRef.current);
-    map.setStyle(newStyle);
+    const isDark = basemapMode === "dark" || !basemapMode;
+    const isSat = basemapMode === "satellite";
+    const isLight = basemapMode === "light";
+    const targetBg = isSat ? "#061320" : isLight ? "#aad3df" : "#14171a";
 
-    let switchExecuted = false;
-    const reAddLayers = () => {
-      if (switchExecuted) return;
-      switchExecuted = true;
-      try {
-        const currentHeatmap = showHeatmapRef.current;
-        addGTDDataLayers(map, isDarkMode, currentHeatmap);
+    // 1. Update background canvas color
+    if (map.getLayer("basemap-bg")) {
+      map.setPaintProperty("basemap-bg", "background-color", targetBg);
+    }
 
-        // Push data to clustered vector source
-        const clusterSource = map.getSource("gtd-points");
-        const currentGeoJson = geoJsonRef.current;
-        if (clusterSource && currentGeoJson) {
-          clusterSource.setData(currentGeoJson);
-        }
+    // 2. Toggle raster layer visibilities instantaneously
+    if (map.getLayer("esri-dark-base-tiles")) {
+      map.setLayoutProperty(
+        "esri-dark-base-tiles",
+        "visibility",
+        isDark ? "visible" : "none"
+      );
+    }
+    if (map.getLayer("esri-dark-ref-tiles")) {
+      map.setLayoutProperty(
+        "esri-dark-ref-tiles",
+        "visibility",
+        isDark ? "visible" : "none"
+      );
+    }
+    if (map.getLayer("esri-sat-base-tiles")) {
+      map.setLayoutProperty(
+        "esri-sat-base-tiles",
+        "visibility",
+        isSat ? "visible" : "none"
+      );
+    }
+    if (map.getLayer("esri-sat-ref-tiles")) {
+      map.setLayoutProperty(
+        "esri-sat-ref-tiles",
+        "visibility",
+        isSat ? "visible" : "none"
+      );
+    }
+    if (map.getLayer("osm-tiles")) {
+      map.setLayoutProperty(
+        "osm-tiles",
+        "visibility",
+        isLight ? "visible" : "none"
+      );
+    }
 
-        // Push data to unclustered heatmap source
-        const heatSource = map.getSource("gtd-heatmap-source");
-        if (heatSource && currentGeoJson) {
-          heatSource.setData(currentGeoJson);
-        }
+    // 3. Update vector stroke/text contrast for light vs dark basemaps
+    if (map.getLayer("gtd-clusters")) {
+      map.setPaintProperty(
+        "gtd-clusters",
+        "circle-stroke-color",
+        isLight ? "#1f2937" : "#374151"
+      );
+    }
+    if (map.getLayer("gtd-cluster-count")) {
+      map.setPaintProperty(
+        "gtd-cluster-count",
+        "text-color",
+        isLight ? "#111827" : "#f9fafb"
+      );
+    }
+    if (map.getLayer("gtd-unclustered")) {
+      map.setPaintProperty(
+        "gtd-unclustered",
+        "circle-stroke-color",
+        isLight ? "#0f172a" : "#1e293b"
+      );
+    }
 
-        // Push data to selected target source if a point is selected
-        const selectedSource = map.getSource("gtd-selected-point-source");
-        if (selectedSource && selectedPointRef.current) {
-          const pt = selectedPointRef.current;
-          const lat = Number(pt.lat ?? pt.latitude);
-          const lon = Number(pt.lon ?? pt.longitude);
-          if (Number.isFinite(lat) && Number.isFinite(lon)) {
-            selectedSource.setData({
-              type: "FeatureCollection",
-              features: [
-                {
-                  type: "Feature",
-                  geometry: { type: "Point", coordinates: [lon, lat] },
-                  properties: {},
-                },
-              ],
-            });
-          }
-        }
-
-        // Re-apply heatmap / points visibility
-        const heatVis = currentHeatmap ? "visible" : "none";
-        const clusterVis = currentHeatmap ? "none" : "visible";
-        if (map.getLayer("gtd-heatmap"))
-          map.setLayoutProperty("gtd-heatmap", "visibility", heatVis);
-        if (map.getLayer("gtd-clusters"))
-          map.setLayoutProperty("gtd-clusters", "visibility", clusterVis);
-        if (map.getLayer("gtd-cluster-count"))
-          map.setLayoutProperty("gtd-cluster-count", "visibility", clusterVis);
-        if (map.getLayer("gtd-unclustered")) {
-          map.setLayoutProperty("gtd-unclustered", "visibility", "visible");
-          map.setPaintProperty(
-            "gtd-unclustered",
-            "circle-color",
-            currentHeatmap ? "#38bdf8" : "#22c55e"
-          );
-          map.setPaintProperty(
-            "gtd-unclustered",
-            "circle-radius",
-            currentHeatmap ? 3.5 : 5
-          );
-        }
-
-        const onMapReady = () => {
-          setLayerLoading(false);
-          if (mapRef.current) mapRef.current.resize();
-        };
-        map.once("idle", onMapReady);
-        setTimeout(onMapReady, 1800);
-      } catch (err) {
-        console.warn(
-          "[GTDMap] Style switch: layers not ready, retrying...",
-          err.message
-        );
-        switchExecuted = false;
-        setTimeout(reAddLayers, 100);
-      }
+    // 4. Dismiss transition loader as soon as tiles render or after 400ms
+    const onMapReady = () => {
+      setLayerLoading(false);
+      if (mapRef.current) mapRef.current.resize();
     };
+    map.once("idle", onMapReady);
+    const fallbackTimer = setTimeout(onMapReady, 400);
 
-    map.once("style.load", () => requestAnimationFrame(reAddLayers));
+    return () => {
+      clearTimeout(fallbackTimer);
+      map.off("idle", onMapReady);
+    };
   }, [basemapMode]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // ─── Popup CSS: override MapLibre popup container colors for dark/light mode ───
