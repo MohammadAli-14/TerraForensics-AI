@@ -24,6 +24,7 @@ import { v4 as uuidv4 } from "uuid";
 import { API_BASE } from "@/utils/constants";
 import { baseHeaders } from "@/utils/request";
 import { syncActiveGTDData } from "@/utils/chat";
+import { setGTDMapData } from "@/utils/gtdStorage";
 
 const GEO_POINTS_PAGE_SIZE = 50;
 const LOAD_ALL_SERVER_PAGE_SIZE = 25000; // records per server round-trip when loading all
@@ -248,12 +249,34 @@ export default function GTDDataDisplay({ gtdData: gtdDataProp, llmOutput }) {
         geo_points_max: gtdData?.geo_points_max || MAX_LOCALSTORAGE_POINTS,
         bbox: gtdData?.bbox || null,
         created_at: Date.now(),
+        query: gtdData?.query || null,
         // If all points were loaded in the card, hint the map to load all too
         load_all_hint: allPointsLoaded,
       };
 
       const mapKey = uuidv4();
-      localStorage.setItem(`gtd-map:${mapKey}`, JSON.stringify(payload));
+
+      // 1. Store full dataset in IndexedDB (immune to 5MB localStorage quotas, enables full 180k+ transfer)
+      if (Array.isArray(allPoints) && allPoints.length > 0) {
+        setGTDMapData(`gtd-map:${mapKey}`, {
+          ...payload,
+          geo_points: allPoints,
+        });
+        if (slug) {
+          setGTDMapData(`tf:latest-gtd-data:${slug}`, {
+            ...payload,
+            geo_points: allPoints,
+          });
+        }
+      }
+
+      // 2. Also keep lightweight metadata in localStorage as backup pointer
+      try {
+        localStorage.setItem(`gtd-map:${mapKey}`, JSON.stringify(payload));
+      } catch (storageErr) {
+        console.warn("[GTDDataDisplay] localStorage quota exceeded for metadata:", storageErr);
+      }
+
       window.open(
         `/workspace/${slug}/gtd-map?key=${mapKey}`,
         "_blank",
@@ -334,6 +357,12 @@ export default function GTDDataDisplay({ gtdData: gtdDataProp, llmOutput }) {
       });
 
       if (!res.ok) {
+        if (res.status === 401) {
+          setRefetchError(
+            "Your login session has expired. Please log out and log back in to refresh your credentials."
+          );
+          return;
+        }
         const errText = await res.text().catch(() => res.statusText);
         setRefetchError(`Server error ${res.status}: ${errText}`);
         return;
@@ -422,6 +451,11 @@ export default function GTDDataDisplay({ gtdData: gtdDataProp, llmOutput }) {
         });
 
         if (!res.ok) {
+          if (res.status === 401) {
+            throw new Error(
+              "Your login session has expired. Please log out and log back in to refresh your credentials."
+            );
+          }
           const errText = await res.text().catch(() => res.statusText);
           throw new Error(`Server error ${res.status}: ${errText}`);
         }
