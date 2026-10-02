@@ -455,14 +455,7 @@ export default function WorkspaceGTDMap() {
   const isDarkMode = basemapMode !== "light";
   const [layerLoading, setLayerLoading] = useState(false);
   const [layerLoadingText, setLayerLoadingText] = useState("");
-  const containerBg =
-    basemapMode === "light"
-      ? "#aad3df"
-      : basemapMode === "satellite"
-        ? "#061320"
-        : "#14171a";
   const pmtilesAvailableRef = useRef(false);
-  const basemapInitRef = useRef(true); // skip first style-switch effect (initMap handles it)
   const geoJsonRef = useRef(null); // mutable ref for style-switch closure
   const showHeatmapRef = useRef(false); // mutable ref for style-switch closure
   const selectedPointRef = useRef(null); // mutable ref for style-switch closure
@@ -1451,20 +1444,15 @@ export default function WorkspaceGTDMap() {
     selectedSource.setData({ type: "FeatureCollection", features: [] });
   }, [selectedPoint]);
 
-  // ─── Heatmap toggle effect with tactical transition loader ───
-  useEffect(() => {
+  // ─── Direct synchronous Heatmap vs Clusters switcher (0ms, no reflow) ───
+  const toggleHeatmapMode = useCallback((enableHeatmap) => {
+    setShowHeatmap(enableHeatmap);
+    showHeatmapRef.current = enableHeatmap;
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
 
-    const heatVisibility = showHeatmap ? "visible" : "none";
-    const clusterVisibility = showHeatmap ? "none" : "visible";
-
-    setLayerLoading(true);
-    setLayerLoadingText(
-      showHeatmap
-        ? "Generating incident density heatmap across all records..."
-        : "Restoring incident clusters and geographic vectors..."
-    );
+    const heatVisibility = enableHeatmap ? "visible" : "none";
+    const clusterVisibility = enableHeatmap ? "none" : "visible";
 
     if (map.getLayer("gtd-heatmap")) {
       map.setLayoutProperty("gtd-heatmap", "visibility", heatVisibility);
@@ -1473,100 +1461,42 @@ export default function WorkspaceGTDMap() {
       map.setLayoutProperty("gtd-clusters", "visibility", clusterVisibility);
     }
     if (map.getLayer("gtd-cluster-count")) {
-      map.setLayoutProperty(
-        "gtd-cluster-count",
-        "visibility",
-        clusterVisibility
-      );
+      map.setLayoutProperty("gtd-cluster-count", "visibility", clusterVisibility);
     }
     if (map.getLayer("gtd-unclustered")) {
-      map.setLayoutProperty(
-        "gtd-unclustered",
-        "visibility",
-        clusterVisibility
-      );
+      map.setLayoutProperty("gtd-unclustered", "visibility", clusterVisibility);
     }
+  }, []);
 
-    const onIdle = () => {
-      setLayerLoading(false);
-    };
-    map.once("idle", onIdle);
-    const fallbackTimer = setTimeout(onIdle, 600);
-    return () => clearTimeout(fallbackTimer);
-  }, [showHeatmap]);
-
-  // ─── Style switch effect: swap basemap with seamless tactical loader ───
-  // Instantaneous (0ms) layer visibility toggle — zero WebGL style teardown,
-  // zero data reloading, and no Web Worker serialization lag.
-  useEffect(() => {
-    if (basemapInitRef.current) {
-      basemapInitRef.current = false;
-      return;
+  // ─── Direct synchronous Basemap switcher matching WorkstationMapPanel (0ms, zero resize) ───
+  const toggleBasemap = useCallback((nextMode) => {
+    setBasemapMode(nextMode);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tf_preferred_basemap", nextMode);
     }
     const map = mapRef.current;
     if (!map || !map.isStyleLoaded()) return;
 
-    if (typeof window !== "undefined") {
-      localStorage.setItem("tf_preferred_basemap", basemapMode);
-    }
+    const isDark = nextMode === "dark" || !nextMode;
+    const isSat = nextMode === "satellite";
+    const isLight = nextMode === "light";
 
-    setLayerLoading(true);
-    const basemapLabels = {
-      dark: "Calibrating Tactical Dark Canvas (Esri)...",
-      satellite: "Acquiring High-Resolution Satellite Reconnaissance Tiles...",
-      light: "Loading Daylight Cartographic Tiles (OSM)...",
+    const setVisibility = (layerId, isVisible) => {
+      if (map.getLayer(layerId)) {
+        map.setLayoutProperty(
+          layerId,
+          "visibility",
+          isVisible ? "visible" : "none"
+        );
+      }
     };
-    setLayerLoadingText(
-      basemapLabels[basemapMode] || "Synchronizing basemap layer..."
-    );
 
-    const isDark = basemapMode === "dark" || !basemapMode;
-    const isSat = basemapMode === "satellite";
-    const isLight = basemapMode === "light";
+    setVisibility("esri-dark-base-tiles", isDark);
+    setVisibility("esri-dark-ref-tiles", isDark);
+    setVisibility("esri-sat-base-tiles", isSat);
+    setVisibility("esri-sat-ref-tiles", isSat);
+    setVisibility("osm-tiles", isLight);
 
-    // 1. Trigger map resize to ensure WebGL quads align edge-to-edge
-    requestAnimationFrame(() => {
-      if (mapRef.current) mapRef.current.resize();
-    });
-
-    // 2. Toggle raster layer visibilities instantaneously
-    if (map.getLayer("esri-dark-base-tiles")) {
-      map.setLayoutProperty(
-        "esri-dark-base-tiles",
-        "visibility",
-        isDark ? "visible" : "none"
-      );
-    }
-    if (map.getLayer("esri-dark-ref-tiles")) {
-      map.setLayoutProperty(
-        "esri-dark-ref-tiles",
-        "visibility",
-        isDark ? "visible" : "none"
-      );
-    }
-    if (map.getLayer("esri-sat-base-tiles")) {
-      map.setLayoutProperty(
-        "esri-sat-base-tiles",
-        "visibility",
-        isSat ? "visible" : "none"
-      );
-    }
-    if (map.getLayer("esri-sat-ref-tiles")) {
-      map.setLayoutProperty(
-        "esri-sat-ref-tiles",
-        "visibility",
-        isSat ? "visible" : "none"
-      );
-    }
-    if (map.getLayer("osm-tiles")) {
-      map.setLayoutProperty(
-        "osm-tiles",
-        "visibility",
-        isLight ? "visible" : "none"
-      );
-    }
-
-    // 3. Update vector stroke/text contrast for light vs dark basemaps
     if (map.getLayer("gtd-clusters")) {
       map.setPaintProperty(
         "gtd-clusters",
@@ -1588,20 +1518,7 @@ export default function WorkspaceGTDMap() {
         isLight ? "#0f172a" : "#1e293b"
       );
     }
-
-    // 4. Dismiss transition loader as soon as tiles render or after 400ms
-    const onMapReady = () => {
-      setLayerLoading(false);
-      if (mapRef.current) mapRef.current.resize();
-    };
-    map.once("idle", onMapReady);
-    const fallbackTimer = setTimeout(onMapReady, 400);
-
-    return () => {
-      clearTimeout(fallbackTimer);
-      map.off("idle", onMapReady);
-    };
-  }, [basemapMode]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   // ─── Popup CSS: override MapLibre popup container colors for dark/light mode ───
   useEffect(() => {
@@ -1635,10 +1552,7 @@ export default function WorkspaceGTDMap() {
   }, [isDarkMode]);
 
   return (
-    <div
-      className="relative w-full h-screen overflow-hidden select-none transition-colors duration-500"
-      style={{ backgroundColor: containerBg }}
-    >
+    <div className="relative w-full h-screen overflow-hidden select-none bg-[#0b0f19]">
       {/* ── Tactical Layer Switch Transition Loader Overlay ── */}
       {layerLoading && (
         <div className="absolute inset-0 z-40 flex items-center justify-center bg-black/40 backdrop-blur-sm pointer-events-auto transition-opacity duration-300">
@@ -1668,7 +1582,7 @@ export default function WorkspaceGTDMap() {
       {/* ── Base Map Canvas ── */}
       <div
         ref={mapContainerRef}
-        className="absolute inset-0 w-full h-full"
+        className="absolute inset-0 w-full h-full bg-[#0b0f19]"
         style={{
           position: "absolute",
           top: 0,
@@ -1676,7 +1590,6 @@ export default function WorkspaceGTDMap() {
           width: "100%",
           height: "100%",
           zIndex: 0,
-          backgroundColor: containerBg,
         }}
       />
 
@@ -1857,26 +1770,24 @@ export default function WorkspaceGTDMap() {
             <div className="flex items-center gap-0.5 bg-slate-950/70 p-0.5 rounded border border-slate-800/80 font-mono text-[11px]">
               <button
                 type="button"
-                disabled={layerLoading}
-                onClick={() => setShowHeatmap(false)}
-                className={`px-2.5 py-1 rounded transition-all ${
+                onClick={() => toggleHeatmapMode(false)}
+                className={`px-2.5 py-1 rounded transition-all cursor-pointer ${
                   !showHeatmap
                     ? "bg-emerald-500/20 text-emerald-300 font-semibold border border-emerald-500/50 shadow-sm"
                     : "text-slate-400 hover:text-slate-200"
-                } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                }`}
                 title="Clustered Incident Vectors"
               >
                 CLUSTERS
               </button>
               <button
                 type="button"
-                disabled={layerLoading}
-                onClick={() => setShowHeatmap(true)}
-                className={`px-2.5 py-1 rounded transition-all ${
+                onClick={() => toggleHeatmapMode(true)}
+                className={`px-2.5 py-1 rounded transition-all cursor-pointer ${
                   showHeatmap
                     ? "bg-rose-500/20 text-rose-300 font-semibold border border-rose-500/50 shadow-sm"
                     : "text-slate-400 hover:text-slate-200"
-                } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                }`}
                 title="Thermal Incident Density Heatmap"
               >
                 HEATMAP
@@ -1886,39 +1797,36 @@ export default function WorkspaceGTDMap() {
             <div className="flex items-center gap-0.5 bg-slate-950/70 p-0.5 rounded border border-slate-800/80 font-mono text-[11px]">
               <button
                 type="button"
-                disabled={layerLoading}
-                onClick={() => setBasemapMode("dark")}
-                className={`px-2 py-1 rounded transition-all ${
+                onClick={() => toggleBasemap("dark")}
+                className={`px-2 py-1 rounded transition-all cursor-pointer ${
                   basemapMode === "dark"
                     ? "bg-slate-800 text-cyan-400 font-semibold border border-cyan-500/50 shadow-sm"
                     : "text-slate-400 hover:text-slate-200"
-                } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                }`}
                 title="Tactical Dark Canvas (Esri)"
               >
                 DARK
               </button>
               <button
                 type="button"
-                disabled={layerLoading}
-                onClick={() => setBasemapMode("satellite")}
-                className={`px-2 py-1 rounded transition-all ${
+                onClick={() => toggleBasemap("satellite")}
+                className={`px-2 py-1 rounded transition-all cursor-pointer ${
                   basemapMode === "satellite"
                     ? "bg-cyan-500/20 text-cyan-300 font-semibold border border-cyan-500/50 shadow-sm"
                     : "text-slate-400 hover:text-slate-200"
-                } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                }`}
                 title="Satellite Orbital Recon (Esri World Imagery)"
               >
                 SAT
               </button>
               <button
                 type="button"
-                disabled={layerLoading}
-                onClick={() => setBasemapMode("light")}
-                className={`px-2 py-1 rounded transition-all ${
+                onClick={() => toggleBasemap("light")}
+                className={`px-2 py-1 rounded transition-all cursor-pointer ${
                   basemapMode === "light"
                     ? "bg-amber-500/20 text-amber-300 font-semibold border border-amber-500/50 shadow-sm"
                     : "text-slate-400 hover:text-slate-200"
-                } ${layerLoading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                }`}
                 title="Daylight Cartographic (OSM)"
               >
                 OSM
