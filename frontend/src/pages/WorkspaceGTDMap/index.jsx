@@ -31,7 +31,7 @@ function buildGeoJson(points = [], maxPoints = MAX_RENDER_POINTS) {
     features: toRender
       .map((point) => {
         const lat = Number(point.lat ?? point.latitude);
-        const lon = Number(point.lon ?? point.longitude);
+        const lon = Number(point.lon ?? point.longitude ?? point.lng);
         if (!Number.isFinite(lat) || !Number.isFinite(lon)) return null;
         if (lat < -85.05112878 || lat > 85.05112878) return null;
         if (lon < -180 || lon > 180) return null;
@@ -61,32 +61,29 @@ function buildGeoJson(points = [], maxPoints = MAX_RENDER_POINTS) {
 }
 
 function calculateBounds(points = []) {
-  let minLat = Infinity;
-  let minLon = Infinity;
-  let maxLat = -Infinity;
-  let maxLon = -Infinity;
+  if (!Array.isArray(points) || points.length === 0) return null;
+  const bounds = new maplibregl.LngLatBounds();
+  let count = 0;
 
   for (const point of points) {
     const lat = Number(point.lat ?? point.latitude);
-    const lon = Number(point.lon ?? point.longitude);
+    const lon = Number(point.lon ?? point.longitude ?? point.lng);
     if (!Number.isFinite(lat) || !Number.isFinite(lon)) continue;
-    if (lat < minLat) minLat = lat;
-    if (lat > maxLat) maxLat = lat;
-    if (lon < minLon) minLon = lon;
-    if (lon > maxLon) maxLon = lon;
+    if (lat < -85.05112878 || lat > 85.05112878) continue;
+    if (lon < -180 || lon > 180) continue;
+    bounds.extend([lon, lat]);
+    count++;
   }
 
-  if (!Number.isFinite(minLat) || !Number.isFinite(minLon)) return null;
-  return [
-    [minLon, minLat],
-    [maxLon, maxLat],
-  ];
+  if (count === 0 || bounds.isEmpty()) return null;
+  return bounds;
 }
 
 // ─── Build basemap style object for MapLibre ───
 // Supports: Esri Satellite Recon raster, Esri Dark Gray Canvas raster, CARTO dark raster, OSM light raster, and PMTiles vector
+// Canonical MapLibre demo fonts containing Open Sans and Arial Unicode for reliable symbol display
 const MAP_GLYPHS_URL =
-  "https://protomaps.github.io/basemaps-assets/fonts/{fontstack}/{range}.pbf";
+  "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf";
 
 function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
   const isDark = activeMode === "dark" || !activeMode;
@@ -194,18 +191,26 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
 
 // ─── Add GTD data source + visualization layers to a map instance ───
 // Called on initial load and after each style switch.
-function addGTDDataLayers(map, isDark, isHeatmap = false) {
+function addGTDDataLayers(map, isDark, isHeatmap = false, initialGeoJson = null) {
   const emptyGeoJson = { type: "FeatureCollection", features: [] };
+  const sourceData =
+    initialGeoJson &&
+    Array.isArray(initialGeoJson.features) &&
+    initialGeoJson.features.length > 0
+      ? initialGeoJson
+      : emptyGeoJson;
 
   // 1. Unified clustered source for cluster bubbles, unclustered single points, AND thermal heatmap
   if (!map.getSource("gtd-points")) {
     map.addSource("gtd-points", {
       type: "geojson",
-      data: emptyGeoJson,
+      data: sourceData,
       cluster: true,
       clusterMaxZoom: 14,
       clusterRadius: 48,
     });
+  } else if (sourceData !== emptyGeoJson) {
+    map.getSource("gtd-points").setData(sourceData);
   }
 
   // 2. Dedicated source for actively selected incident target reticle
@@ -343,7 +348,6 @@ function addGTDDataLayers(map, isDark, isHeatmap = false) {
         visibility: isHeatmap ? "none" : "visible",
         "text-field": "{point_count_abbreviated}",
         "text-size": 11,
-        "text-font": ["Open Sans Bold", "Arial Unicode MS Bold"],
       },
       paint: {
         "text-color": "#ffffff",
@@ -421,6 +425,7 @@ export default function WorkspaceGTDMap() {
   const paginationRef = useRef({ skip: 0, deterministicStarted: false });
   const cachedTotalsRef = useRef(null); // cache killed/wounded once computed
   const [status, setStatus] = useState("Loading map...");
+  const [mapReady, setMapReady] = useState(false);
   const [error, setError] = useState(null);
   const [payload, setPayload] = useState(null);
   const [geoPoints, setGeoPoints] = useState([]);
@@ -1298,8 +1303,9 @@ export default function WorkspaceGTDMap() {
           if (!isMounted) return;
           setStatus("Map ready");
 
-          // Add data layers (source + clusters/points/heatmap) using shared helper
-          addGTDDataLayers(map, isDarkMode, showHeatmapRef.current);
+          // Add data layers (source + clusters/points/heatmap) with any pre-loaded data
+          addGTDDataLayers(map, isDarkMode, showHeatmapRef.current, geoJsonRef.current);
+          setMapReady(true);
 
           map.on("click", "gtd-clusters", (event) => {
             const features = map.queryRenderedFeatures(event.point, {
@@ -1392,33 +1398,27 @@ export default function WorkspaceGTDMap() {
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Push data to map sources whenever geoJson changes (separate from map init)
+  // Push data to map sources whenever geoJson changes or map becomes ready
   useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
     const map = mapRef.current;
-    if (!map) return;
+    if (!map.isStyleLoaded()) return;
 
-    // If map style not loaded yet, wait for it
-    const pushData = () => {
-      const clusterSource = map.getSource("gtd-points");
-      if (clusterSource) {
-        clusterSource.setData(geoJson);
-      }
-
-      // Only fitBounds on the FIRST data push (or when bounds become available
-      // for the first time). During batch rendering / Load More the user has
-      // already seen the map — resetting the viewport is disorienting.
-      if (bounds && !initialBoundsRef.current) {
-        initialBoundsRef.current = bounds;
-        map.fitBounds(bounds, { padding: 40, maxZoom: 8 });
-      }
-    };
-
-    if (map.isStyleLoaded()) {
-      pushData();
-    } else {
-      map.once("load", pushData);
+    const clusterSource = map.getSource("gtd-points");
+    if (clusterSource && geoJson) {
+      clusterSource.setData(geoJson);
     }
-  }, [geoJson, bounds]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // Only fitBounds on the FIRST data push (or when bounds become available
+    // for the first time). During batch rendering / Load More the user has
+    // already seen the map — resetting the viewport is disorienting.
+    if (bounds && !initialBoundsRef.current && geoPoints.length > 0) {
+      initialBoundsRef.current = bounds;
+      try {
+        map.fitBounds(bounds, { padding: 40, maxZoom: 8 });
+      } catch (e) {}
+    }
+  }, [mapReady, geoJson, bounds, geoPoints.length]);
 
   // ─── Sync selected point target reticle with map layer ───
   useEffect(() => {
@@ -1430,7 +1430,7 @@ export default function WorkspaceGTDMap() {
 
     if (selectedPoint) {
       const lat = Number(selectedPoint.lat ?? selectedPoint.latitude);
-      const lon = Number(selectedPoint.lon ?? selectedPoint.longitude);
+      const lon = Number(selectedPoint.lon ?? selectedPoint.longitude ?? selectedPoint.lng);
       if (Number.isFinite(lat) && Number.isFinite(lon)) {
         selectedSource.setData({
           type: "FeatureCollection",
