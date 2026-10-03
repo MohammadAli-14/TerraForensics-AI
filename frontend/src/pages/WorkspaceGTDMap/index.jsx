@@ -7,14 +7,11 @@ import React, {
 } from "react";
 import { useParams, useSearchParams, Link } from "react-router-dom";
 import maplibregl from "maplibre-gl";
-import { Protocol } from "pmtiles";
-import * as basemaps from "@protomaps/basemaps";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { API_BASE } from "@/utils/constants";
 import { baseHeaders } from "@/utils/request";
 import { getGTDMapData } from "@/utils/gtdStorage";
 
-const PMTILES_URL = import.meta.env.VITE_PMTILES_URL || "/tiles/world.pmtiles";
 const PAGE_SIZE = 50;
 const MAX_RENDER_POINTS = 200000;
 const MAX_REFETCH_LIMIT = 200000;
@@ -80,11 +77,7 @@ function calculateBounds(points = []) {
 }
 
 // ─── Build basemap style object for MapLibre ───
-// Supports: Esri Satellite Recon raster, Esri Dark Gray Canvas raster, CARTO dark raster, OSM light raster, and PMTiles vector
-// Canonical MapLibre demo fonts containing Open Sans and Arial Unicode for reliable symbol display
-const MAP_GLYPHS_URL =
-  "https://demotiles.maplibre.org/font/{fontstack}/{range}.pbf";
-
+// Supports: Esri Satellite Recon raster, Esri Dark Gray Canvas raster, CARTO dark raster, OSM light raster
 function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
   const isDark = activeMode === "dark" || !activeMode;
   const isSat = activeMode === "satellite";
@@ -97,7 +90,6 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
 
   return {
     version: 8,
-    glyphs: MAP_GLYPHS_URL,
     sources: {
       "esri-dark-base": {
         type: "raster",
@@ -107,6 +99,7 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
             : "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Base/MapServer/tile/{z}/{y}/{x}",
         ],
         tileSize: 256,
+        maxzoom: 19,
         attribution:
           "© <a href='https://www.esri.com/'>Esri</a> © <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>",
       },
@@ -116,6 +109,7 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
           "https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/World_Dark_Gray_Reference/MapServer/tile/{z}/{y}/{x}",
         ],
         tileSize: 256,
+        maxzoom: 19,
       },
       "esri-satellite-base": {
         type: "raster",
@@ -123,6 +117,7 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
           "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
         ],
         tileSize: 256,
+        maxzoom: 19,
         attribution: "© Esri, Maxar, Earthstar Geographics",
       },
       "esri-satellite-ref": {
@@ -131,12 +126,14 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
           "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
         ],
         tileSize: 256,
+        maxzoom: 19,
         attribution: "© Esri, HERE, Garmin",
       },
       "osm-raster": {
         type: "raster",
         tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
         tileSize: 256,
+        maxzoom: 19,
         attribution:
           "© <a href='https://openstreetmap.org/copyright'>OpenStreetMap contributors</a>",
       },
@@ -192,28 +189,41 @@ function buildUnifiedMapStyle(activeMode = "dark", pmtilesOk = false) {
 // ─── Add GTD data source + visualization layers to a map instance ───
 // Called on initial load and after each style switch.
 function addGTDDataLayers(map, isDark, isHeatmap = false, initialGeoJson = null) {
-  const emptyGeoJson = { type: "FeatureCollection", features: [] };
-  const sourceData =
-    initialGeoJson &&
-    Array.isArray(initialGeoJson.features) &&
-    initialGeoJson.features.length > 0
-      ? initialGeoJson
-      : emptyGeoJson;
+  console.log("[GTDMap] addGTDDataLayers called! features count:", initialGeoJson?.features?.length || 0);
+  try {
+    const emptyGeoJson = { type: "FeatureCollection", features: [] };
+    const sourceData =
+      initialGeoJson &&
+      Array.isArray(initialGeoJson.features) &&
+      initialGeoJson.features.length > 0
+        ? initialGeoJson
+        : emptyGeoJson;
 
-  // 1. Unified clustered source for cluster bubbles, unclustered single points, AND thermal heatmap
-  if (!map.getSource("gtd-points")) {
-    map.addSource("gtd-points", {
-      type: "geojson",
-      data: sourceData,
-      cluster: true,
-      clusterMaxZoom: 14,
-      clusterRadius: 48,
-    });
-  } else if (sourceData !== emptyGeoJson) {
-    map.getSource("gtd-points").setData(sourceData);
-  }
+    // 1. Clustered source for cluster bubbles & unclustered single points
+    if (!map.getSource("gtd-points")) {
+      map.addSource("gtd-points", {
+        type: "geojson",
+        data: sourceData,
+        cluster: true,
+        clusterMaxZoom: 14,
+        clusterRadius: 48,
+      });
+    } else if (sourceData !== emptyGeoJson) {
+      map.getSource("gtd-points").setData(sourceData);
+    }
 
-  // 2. Dedicated source for actively selected incident target reticle
+    // 2. Dedicated unclustered GeoJSON source for continuous thermal heatmap
+    if (!map.getSource("gtd-heatmap-source")) {
+      map.addSource("gtd-heatmap-source", {
+        type: "geojson",
+        data: sourceData,
+        cluster: false,
+      });
+    } else if (sourceData !== emptyGeoJson) {
+      map.getSource("gtd-heatmap-source").setData(sourceData);
+    }
+
+  // 3. Dedicated source for actively selected incident target reticle
   if (!map.getSource("gtd-selected-point-source")) {
     map.addSource("gtd-selected-point-source", {
       type: "geojson",
@@ -222,13 +232,13 @@ function addGTDDataLayers(map, isDark, isHeatmap = false, initialGeoJson = null)
     });
   }
 
-  // 3. Casualty & Incident Density Heatmap Layer
-  // Attached to gtd-points with cluster-aware weighting — generates radiant thermal discs at all zooms
+  // 4. Casualty & Incident Density Heatmap Layer
+  // Attached to unclustered gtd-heatmap-source for continuous density surface
   if (!map.getLayer("gtd-heatmap")) {
     map.addLayer({
       id: "gtd-heatmap",
       type: "heatmap",
-      source: "gtd-points",
+      source: "gtd-heatmap-source",
       maxzoom: 16,
       layout: {
         visibility: isHeatmap ? "visible" : "none",
@@ -237,26 +247,22 @@ function addGTDDataLayers(map, isDark, isHeatmap = false, initialGeoJson = null)
         "heatmap-weight": [
           "interpolate",
           ["linear"],
-          ["case", ["has", "point_count"], ["get", "point_count"], 1],
+          ["get", "weight"],
+          0,
+          0.3,
           1,
-          0.5,
-          25,
           1.5,
-          100,
-          3,
-          1000,
-          6,
         ],
         "heatmap-intensity": [
           "interpolate",
           ["linear"],
           ["zoom"],
           0,
-          1.2,
+          2.5,
           3,
-          2,
+          3.5,
           9,
-          4,
+          5.0,
         ],
         "heatmap-color": [
           "interpolate",
@@ -264,13 +270,13 @@ function addGTDDataLayers(map, isDark, isHeatmap = false, initialGeoJson = null)
           ["heatmap-density"],
           0,
           "rgba(0, 0, 0, 0)",
-          0.1,
-          "rgba(56, 189, 248, 0.6)",
-          0.3,
-          "rgba(245, 158, 11, 0.8)",
-          0.6,
-          "rgba(239, 68, 68, 0.92)",
-          0.85,
+          0.04,
+          "rgba(56, 189, 248, 0.65)",
+          0.15,
+          "rgba(245, 158, 11, 0.85)",
+          0.4,
+          "rgba(239, 68, 68, 0.95)",
+          0.7,
           "rgba(220, 38, 38, 0.98)",
           1.0,
           "rgba(254, 240, 138, 1.0)",
@@ -280,15 +286,15 @@ function addGTDDataLayers(map, isDark, isHeatmap = false, initialGeoJson = null)
           ["linear"],
           ["zoom"],
           0,
-          20,
+          25,
           3,
-          28,
+          35,
           6,
-          38,
+          45,
           9,
-          50,
+          55,
         ],
-        "heatmap-opacity": 0.92,
+        "heatmap-opacity": 0.95,
       },
     });
   }
@@ -404,6 +410,9 @@ function addGTDDataLayers(map, isDark, isHeatmap = false, initialGeoJson = null)
         "circle-stroke-width": 2.5,
       },
     });
+  }
+  } catch (err) {
+    console.error("[GTDMap] addGTDDataLayers EXCEPTION:", err);
   }
 }
 
@@ -1210,184 +1219,129 @@ export default function WorkspaceGTDMap() {
     };
   }, []);
 
-  // Initialize map ONCE — no dependency on geoJson so it won't be destroyed/recreated
+  // Initialize map ONCE — synchronous mount matching WorkstationMapPanel
   useEffect(() => {
-    let isMounted = true;
+    if (!mapContainerRef.current || mapRef.current) return;
 
-    const initMap = async () => {
-      try {
-        setStatus("Loading basemap...");
+    setStatus("Loading basemap...");
 
-        // Pre-flight: check WebGL availability before MapLibre tries (and fails opaquely)
-        const testCanvas = document.createElement("canvas");
-        const gl =
-          testCanvas.getContext("webgl2") ||
-          testCanvas.getContext("webgl") ||
-          testCanvas.getContext("experimental-webgl");
-        if (!gl) {
-          throw new Error(
-            "WebGL is not available. Please enable hardware acceleration in your browser " +
-              "(Chrome: Settings \u2192 System \u2192 Use hardware acceleration when available, then restart)."
-          );
-        }
+    // Build initial style with unified basemap layers (dark, satellite, and light)
+    const style = buildUnifiedMapStyle(basemapMode, false);
 
-        // Validate PMTiles availability — check both local paths AND remote URLs.
-        // Remote CDN builds (e.g., build.protomaps.com) expire after a few days, so
-        // a 404 here is the most common reason the basemap appears as blank grey.
-        let pmtilesAvailable = false;
-        try {
-          const pmtilesCheck = await fetch(PMTILES_URL, {
-            method: "HEAD",
-            // Only send the pmtiles protocol Range header for remote URLs
-            ...(PMTILES_URL.startsWith("http")
-              ? { headers: { Range: "bytes=0-127" } }
-              : {}),
-          });
-          // 200 or 206 (Partial Content for range request) both mean the file is reachable
-          pmtilesAvailable = pmtilesCheck.ok || pmtilesCheck.status === 206;
-          if (!pmtilesAvailable) {
-            console.warn(
-              `[GTDMap] PMTiles URL returned ${pmtilesCheck.status} — falling back to OpenStreetMap raster tiles.`,
-              `\nURL: ${PMTILES_URL}`,
-              "\nFix: update VITE_PMTILES_URL in frontend/.env to a valid PMTiles file or download world.pmtiles to frontend/public/tiles/"
-            );
-          }
-        } catch (pingErr) {
-          console.warn(
-            "[GTDMap] PMTiles reachability check failed:",
-            pingErr.message,
-            "— falling back to OSM raster tiles."
-          );
-          pmtilesAvailable = false;
-        }
+    const map = new maplibregl.Map({
+      container: mapContainerRef.current,
+      style,
+      center: [20, 20],
+      zoom: 1.8,
+      attributionControl: true,
+    });
 
-        const protocol = new Protocol();
-        maplibregl.addProtocol("pmtiles", protocol.tile);
+    map.addControl(new maplibregl.NavigationControl({ showCompass: true }));
+    mapRef.current = map;
+    if (typeof window !== "undefined") window.__gtdMap = map;
 
-        // Store PMTiles availability for later style switches
-        pmtilesAvailableRef.current = pmtilesAvailable;
-
-        // Build initial style with unified basemap layers (dark, satellite, and light)
-        const style = buildUnifiedMapStyle(basemapMode, pmtilesAvailable);
-
-        const map = new maplibregl.Map({
-          container: mapContainerRef.current,
-          style,
-          center: [0, 20],
-          zoom: 2,
-          attributionControl: true,
-        });
-
-        // Catch runtime WebGL / tile-loading errors so they surface in the UI
-        map.on("error", (e) => {
-          const msg = e?.error?.message || e?.message || "Unknown map error";
-          console.error("[MapLibre error]", msg);
-          if (/webgl/i.test(msg)) {
-            setError(
-              "WebGL context lost. Try closing other GPU-heavy tabs or enable hardware acceleration."
-            );
-          }
-        });
-
-        map.addControl(new maplibregl.NavigationControl({ showCompass: true }));
-        mapRef.current = map;
-
-        map.on("load", () => {
-          if (!isMounted) return;
-          setStatus("Map ready");
-
-          // Add data layers (source + clusters/points/heatmap) with any pre-loaded data
-          addGTDDataLayers(map, isDarkMode, showHeatmapRef.current, geoJsonRef.current);
-          setMapReady(true);
-
-          map.on("click", "gtd-clusters", (event) => {
-            const features = map.queryRenderedFeatures(event.point, {
-              layers: ["gtd-clusters"],
-            });
-            const clusterId = features[0]?.properties?.cluster_id;
-            const clusterCount = features[0]?.properties?.point_count || 0;
-            const source = map.getSource("gtd-points");
-            if (!source || clusterId === undefined) return;
-
-            source.getClusterLeaves(clusterId, PAGE_SIZE, 0, (err, leaves) => {
-              if (err) return;
-              const points = leaves
-                .map((leaf) => leaf.properties || {})
-                .map((props) => {
-                  const eventId = props.eventid ? String(props.eventid) : null;
-                  return eventId
-                    ? pointByEventIdRef.current.get(eventId) || props
-                    : props;
-                });
-              setClusterPoints(points);
-              setClusterInfo({ count: clusterCount });
-            });
-
-            source.getClusterExpansionZoom(clusterId, (err, zoom) => {
-              if (err) return;
-              map.easeTo({
-                center: features[0].geometry.coordinates,
-                zoom,
-              });
-            });
-          });
-
-          map.on("click", "gtd-unclustered", (event) => {
-            const feature = event.features?.[0];
-            if (!feature) return;
-            const props = feature.properties || {};
-            const eventId = props.eventid ? String(props.eventid) : null;
-            const point = eventId
-              ? pointByEventIdRef.current.get(eventId)
-              : null;
-            setSelectedPoint(point || props);
-            showPointPopup(point || props, feature.geometry.coordinates);
-          });
-
-          map.on("mouseenter", "gtd-unclustered", () => {
-            map.getCanvas().style.cursor = "pointer";
-          });
-          map.on("mouseleave", "gtd-unclustered", () => {
-            map.getCanvas().style.cursor = "";
-          });
-          map.on("mouseenter", "gtd-clusters", () => {
-            map.getCanvas().style.cursor = "pointer";
-          });
-          map.on("mouseleave", "gtd-clusters", () => {
-            map.getCanvas().style.cursor = "";
-          });
-
-          map.on("click", (event) => {
-            const features = map.queryRenderedFeatures(event.point, {
-              layers: ["gtd-unclustered", "gtd-clusters"],
-            });
-            if (!features.length) {
-              clearSelection();
-            }
-          });
-
-          requestAnimationFrame(() => {
-            if (mapRef.current) mapRef.current.resize();
-          });
-        });
-
-        const onResize = () => {
-          if (mapRef.current) mapRef.current.resize();
-        };
-        window.addEventListener("resize", onResize);
-      } catch (mapError) {
-        if (!isMounted) return;
-        setError(mapError.message);
-        setStatus("No data");
+    // Catch runtime WebGL / tile-loading errors so they surface in the UI
+    map.on("error", (e) => {
+      const msg = e?.error?.message || e?.message || "Unknown map error";
+      console.warn("[MapLibre error]", msg);
+      if (/webgl/i.test(msg)) {
+        setError(
+          "WebGL context lost. Try closing other GPU-heavy tabs or enable hardware acceleration."
+        );
       }
-    };
+    });
 
-    initMap();
+    map.on("load", () => {
+      console.log("[GTDMap] map.on('load') triggered successfully!");
+      setStatus("Map ready");
+
+      // Add data layers (source + clusters/points/heatmap) with any pre-loaded data
+      addGTDDataLayers(map, isDarkMode, showHeatmapRef.current, geoJsonRef.current);
+      setMapReady(true);
+
+      map.on("click", "gtd-clusters", (event) => {
+        const features = map.queryRenderedFeatures(event.point, {
+          layers: ["gtd-clusters"],
+        });
+        const clusterId = features[0]?.properties?.cluster_id;
+        const clusterCount = features[0]?.properties?.point_count || 0;
+        const source = map.getSource("gtd-points");
+        if (!source || clusterId === undefined) return;
+
+        source.getClusterLeaves(clusterId, PAGE_SIZE, 0, (err, leaves) => {
+          if (err) return;
+          const points = leaves
+            .map((leaf) => leaf.properties || {})
+            .map((props) => {
+              const eventId = props.eventid ? String(props.eventid) : null;
+              return eventId
+                ? pointByEventIdRef.current.get(eventId) || props
+                : props;
+            });
+          setClusterPoints(points);
+          setClusterInfo({ count: clusterCount });
+        });
+
+        source.getClusterExpansionZoom(clusterId, (err, zoom) => {
+          if (err) return;
+          map.easeTo({
+            center: features[0].geometry.coordinates,
+            zoom,
+          });
+        });
+      });
+
+      map.on("click", "gtd-unclustered", (event) => {
+        const feature = event.features?.[0];
+        if (!feature) return;
+        const props = feature.properties || {};
+        const eventId = props.eventid ? String(props.eventid) : null;
+        const point = eventId
+          ? pointByEventIdRef.current.get(eventId)
+          : null;
+        setSelectedPoint(point || props);
+        showPointPopup(point || props, feature.geometry.coordinates);
+      });
+
+      map.on("mouseenter", "gtd-unclustered", () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      map.on("mouseleave", "gtd-unclustered", () => {
+        map.getCanvas().style.cursor = "";
+      });
+      map.on("mouseenter", "gtd-clusters", () => {
+        map.getCanvas().style.cursor = "pointer";
+      });
+      map.on("mouseleave", "gtd-clusters", () => {
+        map.getCanvas().style.cursor = "";
+      });
+
+      map.on("click", (event) => {
+        const features = map.queryRenderedFeatures(event.point, {
+          layers: ["gtd-unclustered", "gtd-clusters"],
+        });
+        if (!features.length) {
+          clearSelection();
+        }
+      });
+
+      requestAnimationFrame(() => {
+        if (mapRef.current) mapRef.current.resize();
+      });
+    });
+
+    const onResize = () => {
+      if (mapRef.current) mapRef.current.resize();
+    };
+    window.addEventListener("resize", onResize);
 
     return () => {
-      isMounted = false;
+      window.removeEventListener("resize", onResize);
       if (popupRef.current) popupRef.current.remove();
-      if (mapRef.current) mapRef.current.remove();
+      if (mapRef.current) {
+        mapRef.current.remove();
+        mapRef.current = null;
+      }
     };
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -1395,28 +1349,37 @@ export default function WorkspaceGTDMap() {
   useEffect(() => {
     if (!mapReady || !mapRef.current) return;
     const map = mapRef.current;
-    if (!map.isStyleLoaded()) return;
 
     const clusterSource = map.getSource("gtd-points");
     if (clusterSource && geoJson) {
       clusterSource.setData(geoJson);
     }
 
-    // Only fitBounds on the FIRST data push (or when bounds become available
-    // for the first time). During batch rendering / Load More the user has
-    // already seen the map — resetting the viewport is disorienting.
+    const heatmapSource = map.getSource("gtd-heatmap-source");
+    if (heatmapSource && geoJson) {
+      heatmapSource.setData(geoJson);
+    }
+
+    // Only fitBounds on filtered queries or regional incident subsets.
+    // For the global threat catalog (unfiltered), keep the stable [20, 20] center at zoom 1.8
+    // to prevent Mercator projection clamp that drops tile row 0 (above 41N).
     if (bounds && !initialBoundsRef.current && geoPoints.length > 0) {
       initialBoundsRef.current = bounds;
-      try {
-        map.fitBounds(bounds, { padding: 40, maxZoom: 8 });
-      } catch (e) {}
+      const isGlobalCatalog = !hasFilter;
+      if (isGlobalCatalog) {
+        map.jumpTo({ center: [20, 20], zoom: 1.8 });
+      } else {
+        try {
+          map.fitBounds(bounds, { padding: 45, maxZoom: 8 });
+        } catch (e) {}
+      }
     }
   }, [mapReady, geoJson, bounds, geoPoints.length]);
 
   // ─── Sync selected point target reticle with map layer ───
   useEffect(() => {
     const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
+    if (!map || !mapReady) return;
 
     const selectedSource = map.getSource("gtd-selected-point-source");
     if (!selectedSource) return;
@@ -1442,44 +1405,16 @@ export default function WorkspaceGTDMap() {
       }
     }
     selectedSource.setData({ type: "FeatureCollection", features: [] });
-  }, [selectedPoint]);
+  }, [selectedPoint, mapReady]);
 
-  // ─── Direct synchronous Heatmap vs Clusters switcher (0ms, no reflow) ───
-  const toggleHeatmapMode = useCallback((enableHeatmap) => {
-    setShowHeatmap(enableHeatmap);
-    showHeatmapRef.current = enableHeatmap;
+  // ─── Reactive Basemap Switcher (synchronizes layer visibilities and colors) ───
+  useEffect(() => {
     const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
+    if (!map || !mapReady) return;
 
-    const heatVisibility = enableHeatmap ? "visible" : "none";
-    const clusterVisibility = enableHeatmap ? "none" : "visible";
-
-    if (map.getLayer("gtd-heatmap")) {
-      map.setLayoutProperty("gtd-heatmap", "visibility", heatVisibility);
-    }
-    if (map.getLayer("gtd-clusters")) {
-      map.setLayoutProperty("gtd-clusters", "visibility", clusterVisibility);
-    }
-    if (map.getLayer("gtd-cluster-count")) {
-      map.setLayoutProperty("gtd-cluster-count", "visibility", clusterVisibility);
-    }
-    if (map.getLayer("gtd-unclustered")) {
-      map.setLayoutProperty("gtd-unclustered", "visibility", clusterVisibility);
-    }
-  }, []);
-
-  // ─── Direct synchronous Basemap switcher matching WorkstationMapPanel (0ms, zero resize) ───
-  const toggleBasemap = useCallback((nextMode) => {
-    setBasemapMode(nextMode);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("tf_preferred_basemap", nextMode);
-    }
-    const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
-
-    const isDark = nextMode === "dark" || !nextMode;
-    const isSat = nextMode === "satellite";
-    const isLight = nextMode === "light";
+    const isDark = basemapMode === "dark" || !basemapMode;
+    const isSat = basemapMode === "satellite";
+    const isLight = basemapMode === "light";
 
     const setVisibility = (layerId, isVisible) => {
       if (map.getLayer(layerId)) {
@@ -1501,22 +1436,57 @@ export default function WorkspaceGTDMap() {
       map.setPaintProperty(
         "gtd-clusters",
         "circle-stroke-color",
-        isLight ? "#1f2937" : "#374151"
+        isLight ? "#1f2937" : "rgba(255, 255, 255, 0.45)"
       );
     }
     if (map.getLayer("gtd-cluster-count")) {
       map.setPaintProperty(
         "gtd-cluster-count",
         "text-color",
-        isLight ? "#111827" : "#f9fafb"
+        isLight ? "#111827" : "#ffffff"
       );
     }
     if (map.getLayer("gtd-unclustered")) {
       map.setPaintProperty(
         "gtd-unclustered",
         "circle-stroke-color",
-        isLight ? "#0f172a" : "#1e293b"
+        isLight ? "#0f172a" : "#ffffff"
       );
+    }
+  }, [basemapMode, mapReady]);
+
+  // ─── Reactive Heatmap vs Clusters Switcher ───
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !mapReady) return;
+
+    const heatVisibility = showHeatmap ? "visible" : "none";
+    const clusterVisibility = showHeatmap ? "none" : "visible";
+
+    if (map.getLayer("gtd-heatmap")) {
+      map.setLayoutProperty("gtd-heatmap", "visibility", heatVisibility);
+    }
+    if (map.getLayer("gtd-clusters")) {
+      map.setLayoutProperty("gtd-clusters", "visibility", clusterVisibility);
+    }
+    if (map.getLayer("gtd-cluster-count")) {
+      map.setLayoutProperty("gtd-cluster-count", "visibility", clusterVisibility);
+    }
+    if (map.getLayer("gtd-unclustered")) {
+      map.setLayoutProperty("gtd-unclustered", "visibility", clusterVisibility);
+    }
+  }, [showHeatmap, mapReady]);
+
+  // Direct handlers for instant click response
+  const toggleHeatmapMode = useCallback((enableHeatmap) => {
+    setShowHeatmap(enableHeatmap);
+    showHeatmapRef.current = enableHeatmap;
+  }, []);
+
+  const toggleBasemap = useCallback((nextMode) => {
+    setBasemapMode(nextMode);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("tf_preferred_basemap", nextMode);
     }
   }, []);
 
@@ -1835,9 +1805,15 @@ export default function WorkspaceGTDMap() {
             <button
               onClick={() => {
                 const map = mapRef.current;
-                const targetBounds = bounds || initialBoundsRef.current;
-                if (map && targetBounds) {
-                  map.fitBounds(targetBounds, { padding: 40, maxZoom: 8 });
+                if (!map) return;
+                const isGlobal = !hasFilter;
+                if (isGlobal) {
+                  map.easeTo({ center: [20, 20], zoom: 1.8 });
+                } else {
+                  const targetBounds = bounds || initialBoundsRef.current;
+                  if (targetBounds) {
+                    map.fitBounds(targetBounds, { padding: 45, maxZoom: 8 });
+                  }
                 }
               }}
               className="px-2 py-1 rounded border border-theme-sidebar-border"
